@@ -1,6 +1,6 @@
 # 3m-ui 官网
 
-静态官网，托管于 GitHub Pages，自定义域名 **https://3m-ui.top**。
+静态官网，托管于 GitHub Pages， https://3m-ui.top
 
 - 站点文件：`index.html`、`styles.css`、`logo.png`
 - 域名：`CNAME` → `3m-ui.top`
