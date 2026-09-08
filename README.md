@@ -7,3 +7,7 @@
 - Cloudflare 接入步骤见 [CLOUDFLARE.md](./CLOUDFLARE.md)
 
 源码与面板：https://github.com/kazeyukiro/3m-ui
+
+
+文档站：https://3m-ui-docs.pages.dev
+文档仓库：https://github.com/kazeyukiro/3m-ui-docs
