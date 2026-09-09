@@ -16,7 +16,7 @@
     </a>
     <nav class="nav-links">
       <a href="../index.html#features" data-i18n="nav_features">Features</a>
-      <a href="../docs/" class="active" data-i18n="nav_docs">Docs</a>
+      <a href="../docs/" data-i18n="nav_docs" class="active">Docs</a>
       <a href="../index.html#install" data-i18n="nav_install">Install</a>
       <label class="lang-wrap" title="Language"><select id="lang-select" aria-label="Language"></select></label>
       <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="nav_github">GitHub</a>
@@ -26,12 +26,12 @@
 </header>
 <div class="doc-layout">
 <aside class="doc-sidebar"><div class="doc-sidebar-inner">
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_start">Getting started</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_start">doc_cat_start</div><ul>
 <li><a href="quick-start.html" data-i18n="doc_quick-start">Quick start</a></li>
 <li><a href="install.html" data-i18n="doc_install">Install</a></li>
 <li><a href="dev-channel.html" data-i18n="doc_dev-channel">Pre-release channel</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_panel">Panel</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_panel">doc_cat_panel</div><ul>
 <li><a href="panel-config.html" data-i18n="doc_panel-config">Panel config</a></li>
 <li><a href="nat-port.html" data-i18n="doc_nat-port">NAT & ports</a></li>
 <li><a href="listeners.html" data-i18n="doc_listeners">Listeners</a></li>
@@ -40,25 +40,29 @@
 <li><a href="core.html" data-i18n="doc_core">Core</a></li>
 <li><a href="share.html" data-i18n="doc_share">Share</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_ops">Operations</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_ops">doc_cat_ops</div><ul>
 <li><a href="cluster.html" data-i18n="doc_cluster">Cluster</a></li>
 <li><a href="telegram-bot.html" data-i18n="doc_telegram-bot">Telegram</a></li>
 <li><a href="ssl-cert.html" data-i18n="doc_ssl-cert">SSL certificates</a></li>
 <li><a href="system-settings.html" data-i18n="doc_system-settings">System settings</a></li>
 <li><a href="backup-restore.html" data-i18n="doc_backup-restore">Backup & restore</a></li>
-<li><a href="security.html" class="active" data-i18n="doc_security">Security</a></li>
+<li><a href="security.html" data-i18n="doc_security" class="active">Security</a></li>
 <li><a href="verify-release-signature.html" data-i18n="doc_verify-release-signature">Verify signatures</a></li>
 <li><a href="troubleshoot.html" data-i18n="doc_troubleshoot">Troubleshooting</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_api">API</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_api">doc_cat_api</div><ul>
 <li><a href="api-auth.html" data-i18n="doc_api-auth">API & auth</a></li>
 </ul></div>
 </div></aside>
   <main class="doc-main">
     <div class="doc-content">
       <h1 data-i18n="doc_security">Security</h1>
-      <p class="notice" data-i18n="docs_note">Article body is currently maintained in Chinese; navigation follows your language.</p>
-      <h2>密钥管理</h2>
+      <p class="notice" data-i18n="docs_note">Switch language in the top bar. Chinese and English article bodies are provided.</p>
+      <div data-doc-lang="en">
+<h2>Security</h2>
+<p>Change the admin password on first login. Prefer unique JWT/credential secrets in config. Restrict panel port exposure; use HTTPS when possible.</p>
+</div>
+      <div data-doc-lang="zh-CN" hidden><h2>密钥管理</h2>
 <ol>
 <li><strong>JWT Secret</strong> 与 <strong>Credential Key</strong> 必须使用独立、随机、至少 32 字节的值。安装脚本会自动生成；手动部署时用 <code>openssl rand -hex 32</code> 生成。</li>
 <li>密钥泄露后立即轮换。轮换 JWT Secret 会使所有已签发的 token 失效（用户需重新登录）；轮换 Credential Key 会导致已加密存储的用户密码无法解密，需重新设置。</li>
@@ -95,34 +99,25 @@
 <h3>Cron 调度语法</h3>
 <p>Telegram 报告调度器支持：<code>@hourly</code>、<code>@daily</code>、<code>@weekly</code>、<code>@monthly</code>、<code>@every &lt;duration&gt;</code>、5 字段 cron（含 <code>*</code>、逗号列表、<code>*/N</code> 步进、<code>A-B</code> 范围）。不支持 <code>@reboot</code>。</p>
 <h2>报告漏洞</h2>
-<p>请通过 GitHub Security Advisory 或仓库 Issues（勿公开 0-day 细节）联系维护者。</p>
+<p>请通过 GitHub Security Advisory 或仓库 Issues（勿公开 0-day 细节）联系维护者。</p></div>
     </div>
   </main>
 </div>
 <footer class="footer">
   <div class="wrap footer-inner">
-    <div class="footer-brand">
-      <strong>3m-ui</strong>
-      <p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p>
-    </div>
+    <div class="footer-brand"><strong>3m-ui</strong><p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p></div>
     <div class="footer-cols">
-      <div>
-        <h4 data-i18n="foot_product">Product</h4>
+      <div><h4 data-i18n="foot_product">Product</h4>
         <a href="../index.html#features" data-i18n="foot_features">Features</a>
         <a href="../index.html#install" data-i18n="foot_install">Install</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a>
-      </div>
-      <div>
-        <h4 data-i18n="foot_docs">Docs</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a></div>
+      <div><h4 data-i18n="foot_docs">Docs</h4>
         <a href="../docs/" data-i18n="foot_docs_home">Docs home</a>
         <a href="../docs/quick-start.html" data-i18n="foot_qs">Quick start</a>
-        <a href="../docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a>
-      </div>
-      <div>
-        <h4 data-i18n="foot_community">Community</h4>
-        <a href="https://github.com/kazeyukiro/3m-ui" data-i18n="foot_github">GitHub</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/issues" data-i18n="foot_issues">Issues</a>
-      </div>
+        <a href="../docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a></div>
+      <div><h4 data-i18n="foot_community">Community</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a></div>
     </div>
   </div>
   <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>

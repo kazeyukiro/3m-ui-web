@@ -16,7 +16,7 @@
     </a>
     <nav class="nav-links">
       <a href="../index.html#features" data-i18n="nav_features">Features</a>
-      <a href="../docs/" class="active" data-i18n="nav_docs">Docs</a>
+      <a href="../docs/" data-i18n="nav_docs" class="active">Docs</a>
       <a href="../index.html#install" data-i18n="nav_install">Install</a>
       <label class="lang-wrap" title="Language"><select id="lang-select" aria-label="Language"></select></label>
       <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="nav_github">GitHub</a>
@@ -26,21 +26,21 @@
 </header>
 <div class="doc-layout">
 <aside class="doc-sidebar"><div class="doc-sidebar-inner">
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_start">Getting started</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_start">doc_cat_start</div><ul>
 <li><a href="quick-start.html" data-i18n="doc_quick-start">Quick start</a></li>
 <li><a href="install.html" data-i18n="doc_install">Install</a></li>
 <li><a href="dev-channel.html" data-i18n="doc_dev-channel">Pre-release channel</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_panel">Panel</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_panel">doc_cat_panel</div><ul>
 <li><a href="panel-config.html" data-i18n="doc_panel-config">Panel config</a></li>
 <li><a href="nat-port.html" data-i18n="doc_nat-port">NAT & ports</a></li>
 <li><a href="listeners.html" data-i18n="doc_listeners">Listeners</a></li>
 <li><a href="users-traffic.html" data-i18n="doc_users-traffic">Users & traffic</a></li>
-<li><a href="subscription.html" class="active" data-i18n="doc_subscription">Subscriptions</a></li>
+<li><a href="subscription.html" data-i18n="doc_subscription" class="active">Subscriptions</a></li>
 <li><a href="core.html" data-i18n="doc_core">Core</a></li>
 <li><a href="share.html" data-i18n="doc_share">Share</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_ops">Operations</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_ops">doc_cat_ops</div><ul>
 <li><a href="cluster.html" data-i18n="doc_cluster">Cluster</a></li>
 <li><a href="telegram-bot.html" data-i18n="doc_telegram-bot">Telegram</a></li>
 <li><a href="ssl-cert.html" data-i18n="doc_ssl-cert">SSL certificates</a></li>
@@ -50,15 +50,25 @@
 <li><a href="verify-release-signature.html" data-i18n="doc_verify-release-signature">Verify signatures</a></li>
 <li><a href="troubleshoot.html" data-i18n="doc_troubleshoot">Troubleshooting</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_api">API</div><ul>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_api">doc_cat_api</div><ul>
 <li><a href="api-auth.html" data-i18n="doc_api-auth">API & auth</a></li>
 </ul></div>
 </div></aside>
   <main class="doc-main">
     <div class="doc-content">
       <h1 data-i18n="doc_subscription">Subscriptions</h1>
-      <p class="notice" data-i18n="docs_note">Article body is currently maintained in Chinese; navigation follows your language.</p>
-      <p>订阅是一个 URL，客户端定期拉取即可同步节点与流量信息。</p>
+      <p class="notice" data-i18n="docs_note">Switch language in the top bar. Chinese and English article bodies are provided.</p>
+      <div data-doc-lang="en">
+<h2>Subscriptions</h2>
+<p>Each user has a subscription token URL under <code>/api/v1/client/sub/&lt;token&gt;</code>.</p>
+<ul>
+<li>Default / Clash Meta: Mihomo client YAML</li>
+<li><code>?target=v2ray</code>: Base64 URI list</li>
+<li><code>?target=singbox</code>: sing-box JSON</li>
+<li><code>?html=1</code>: HTML info page with QR</li>
+</ul>
+</div>
+      <div data-doc-lang="zh-CN" hidden><p>订阅是一个 URL，客户端定期拉取即可同步节点与流量信息。</p>
 <h2>URL 形式</h2>
 <p>主路径（推荐）：</p>
 <pre><code class="language-text">/api/v1/client/sub/&lt;sub_token&gt;
@@ -227,34 +237,25 @@
 <li><code>sub_token</code> 等同于密码，勿提交到公开仓库</li>
 <li>生产环境务必 HTTPS</li>
 <li>用户禁用/到期/超流量后订阅应失败，属预期行为</li>
-</ul>
+</ul></div>
     </div>
   </main>
 </div>
 <footer class="footer">
   <div class="wrap footer-inner">
-    <div class="footer-brand">
-      <strong>3m-ui</strong>
-      <p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p>
-    </div>
+    <div class="footer-brand"><strong>3m-ui</strong><p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p></div>
     <div class="footer-cols">
-      <div>
-        <h4 data-i18n="foot_product">Product</h4>
+      <div><h4 data-i18n="foot_product">Product</h4>
         <a href="../index.html#features" data-i18n="foot_features">Features</a>
         <a href="../index.html#install" data-i18n="foot_install">Install</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a>
-      </div>
-      <div>
-        <h4 data-i18n="foot_docs">Docs</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a></div>
+      <div><h4 data-i18n="foot_docs">Docs</h4>
         <a href="../docs/" data-i18n="foot_docs_home">Docs home</a>
         <a href="../docs/quick-start.html" data-i18n="foot_qs">Quick start</a>
-        <a href="../docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a>
-      </div>
-      <div>
-        <h4 data-i18n="foot_community">Community</h4>
-        <a href="https://github.com/kazeyukiro/3m-ui" data-i18n="foot_github">GitHub</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/issues" data-i18n="foot_issues">Issues</a>
-      </div>
+        <a href="../docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a></div>
+      <div><h4 data-i18n="foot_community">Community</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a></div>
     </div>
   </div>
   <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
