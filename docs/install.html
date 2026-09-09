@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>安装 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html" class="active">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>安装</h1>
+      <h2>环境要求</h2>
+<ul>
+<li>Linux（glibc 或 musl / Alpine 均可）</li>
+<li>root 权限</li>
+<li>出站网络</li>
+</ul>
+<p>不需要预装 Go、Node、系统 libsqlite3。官方二进制为纯 Go 静态构建。</p>
+<h2>一键安装</h2>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<p>自定义端口：</p>
+<pre><code class="language-bash">PANEL_PORT=8443 curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<p>非交互（如 cloud-init）可设置 <code>THREE_M_UI_NONINTERACTIVE=1</code>；安装结果会写入 <code>/etc/3m-ui/install-result.env</code>（默认账号策略不变）。</p>
+<h2>安装后</h2>
+<p>初始管理员：<code>admin / admin</code>，首次登录<strong>强制修改密码</strong>。</p>
+<p>管理入口：</p>
+<pre><code class="language-bash">sudo 3m-ui          # 交互菜单
+sudo 3m-ui help     # 子命令列表
+</code></pre>
+<h2>端口管理</h2>
+<h3>方式 1：命令行（推荐）</h3>
+<pre><code class="language-bash">sudo 3m-ui config port 9000
+</code></pre>
+<p>自动修改 <code>config.yaml</code> 并重启服务。</p>
+<h3>方式 2：交互菜单</h3>
+<pre><code class="language-bash">sudo 3m-ui
+</code></pre>
+<p>选择「修改面板端口」。</p>
+<h3>方式 3：面板 UI</h3>
+<p>在「系统设置 → 面板 / 外观」修改端口并保存后，需重启服务：</p>
+<pre><code class="language-bash">sudo 3m-ui restart
+# 或 systemctl restart 3m-ui
+</code></pre>
+<h3>方式 4：安装时环境变量</h3>
+<pre><code class="language-bash">PANEL_PORT=9000 curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<h2>升级</h2>
+<p><strong>推荐</strong>（v1.0.0 起入口脚本已支持）：</p>
+<pre><code class="language-bash">sudo 3m-ui update
+# 指定版本：
+sudo 3m-ui update v1.0.0
+</code></pre>
+<p>若本机仍是旧入口脚本（<code>未知命令: update</code>），可先用：</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/update.sh | sudo bash
+</code></pre>
+<p>之后即可使用 <code>sudo 3m-ui update</code>。</p>
+<p>也可在交互菜单中选择「更新 3m-ui」。</p>
+<p>升级前会自动备份（默认保留最近 5 份）；新版本启动失败会尝试回滚。</p>
+<h2>测试通道</h2>
+<p>预发布（标签 <code>pre</code>）安装与通道切换见 <a href="/dev-channel">测试通道（Pre-release）</a>。</p>
+<h2>服务管理</h2>
+<pre><code class="language-bash">sudo 3m-ui status
+sudo 3m-ui start
+sudo 3m-ui restart
+sudo 3m-ui stop
+sudo 3m-ui logs
+sudo 3m-ui version
+sudo 3m-ui config show
+sudo 3m-ui config port &lt;端口&gt;
+sudo 3m-ui install      # 安装 / 修复
+sudo 3m-ui uninstall    # 卸载
+</code></pre>
+<h2>卸载</h2>
+<pre><code class="language-bash">sudo 3m-ui uninstall
+# 或交互菜单选择「卸载」
+</code></pre>
+<p>彻底清理数据请使用官方 <code>uninstall.sh</code> 的 purge 选项（见脚本 <code>--help</code>）。</p>
+<h2>安装布局</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/usr/local/bin/3m-ui</code></td>
+<td>命令入口</td>
+</tr>
+<tr>
+<td><code>/usr/local/lib/3m-ui/</code></td>
+<td>面板二进制 + 管理脚本</td>
+</tr>
+<tr>
+<td><code>/etc/3m-ui/config.yaml</code></td>
+<td>面板配置（权限 0600）</td>
+</tr>
+<tr>
+<td><code>/var/lib/3m-ui/3m-ui.db</code></td>
+<td>SQLite 数据库</td>
+</tr>
+<tr>
+<td><code>/var/lib/3m-ui/listener-certs/</code></td>
+<td>节点自签证书（<strong>请与数据库一并备份</strong>）</td>
+</tr>
+<tr>
+<td><code>/var/lib/3m-ui/mihomo/</code></td>
+<td>Mihomo 数据与配置</td>
+</tr>
+<tr>
+<td><code>/var/log/3m-ui/</code></td>
+<td>日志</td>
+</tr>
+<tr>
+<td>systemd / OpenRC</td>
+<td><code>3m-ui</code> 服务</td>
+</tr>
+</tbody>
+</table>
+<h2>Docker</h2>
+<pre><code class="language-bash">docker compose up -d
+</code></pre>
+<p>默认绑定与卷权限以主仓库 <code>docker-compose.yml</code> 为准。挂载目录需保证容器运行用户可读写。</p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

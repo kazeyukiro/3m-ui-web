@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>用户与流量 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html" class="active">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>用户与流量</h1>
+      <h2>用户字段</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户名</td>
+<td>唯一；删除后可重新创建同名（硬删除）</td>
+</tr>
+<tr>
+<td>备注</td>
+<td>展示名、订阅标题回退等</td>
+</tr>
+<tr>
+<td>启用</td>
+<td>关闭后订阅与认证失败</td>
+</tr>
+<tr>
+<td>流量上限</td>
+<td>字节；<code>0</code> 不限制</td>
+</tr>
+<tr>
+<td>已用流量</td>
+<td>上/下行累计</td>
+</tr>
+<tr>
+<td>到期时间</td>
+<td>空表示不限</td>
+</tr>
+<tr>
+<td>IP 限制</td>
+<td>并发 IP 上限，<code>0</code> 不限</td>
+</tr>
+<tr>
+<td>在线</td>
+<td>根据连接情况更新（若已启用探测）</td>
+</tr>
+<tr>
+<td>sub_token</td>
+<td>订阅路径中的公开令牌</td>
+</tr>
+</tbody>
+</table>
+<h2>批量操作</h2>
+<p>支持对多选用户：启用、禁用、重置流量、删除。</p>
+<p><strong>清理耗尽用户</strong>：删除已到期或超流量用户（保留仅被手动禁用的账号）。</p>
+<h2>流量监控</h2>
+<p><strong>流量监控</strong> 页查看汇总与趋势；用户列表展示已用/上限。</p>
+<p>到达上限或过期后，凭据判定为不可用，订阅返回错误，Telegram 可告警（见 <a href="/telegram-bot">Telegram-Bot</a>）。</p>
+<h2>分享</h2>
+<p>用户详情/分享弹窗提供：</p>
+<ul>
+<li>Mihomo / Clash 订阅</li>
+<li>V2Ray / Base64</li>
+<li>Sing-box</li>
+<li>单节点 URI 与二维码（若已实现）</li>
+</ul>
+<p>复制链接时注意使用 HTTPS 与正确公网 Host。</p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

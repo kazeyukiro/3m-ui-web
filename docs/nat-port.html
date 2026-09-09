@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NAT 与端口 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html" class="active">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>NAT 与端口</h1>
+      <p>适用于家宽 / 内网穿透 / 仅映射部分端口的 VPS。核心需求：<strong>自定义面板端口</strong>、<strong>正确公网地址</strong>，让订阅与管理面板在 NAT 后仍可访问。</p>
+<h2>快速改端口</h2>
+<h3>安装时指定</h3>
+<pre><code class="language-bash">PANEL_PORT=8443 curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>环境变量</th>
+<th>作用</th>
+<th>默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PANEL_PORT</code> / <code>THREE_M_UI_PORT</code></td>
+<td>面板监听端口</td>
+<td><code>8080</code></td>
+</tr>
+<tr>
+<td><code>PANEL_LISTEN</code> / <code>THREE_M_UI_LISTEN</code></td>
+<td>绑定地址</td>
+<td>空（全部网卡，双栈友好）</td>
+</tr>
+<tr>
+<td><code>PUBLIC_URL</code> / <code>THREE_M_UI_PUBLIC_URL</code></td>
+<td>公网面板 URL（订阅/外链）</td>
+<td>空</td>
+</tr>
+</tbody>
+</table>
+<p>示例（仅本机反代访问 + 固定公网 URL）：</p>
+<pre><code class="language-bash">PANEL_PORT=8080 PANEL_LISTEN=127.0.0.1 PUBLIC_URL=https://panel.example.com \
+  curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<h3>已安装：改配置文件</h3>
+<p>编辑 <code>/etc/3m-ui/config.yaml</code>：</p>
+<pre><code class="language-yaml">server:
+  port: 8443
+  listen: &quot;&quot;                              # 空 = 所有接口
+  public_url: &quot;https://your-domain:8443&quot;  # NAT 后订阅用
+  mode: release
+</code></pre>
+<p>重启生效：</p>
+<pre><code class="language-bash">systemctl restart 3m-ui
+# OpenRC: rc-service 3m-ui restart
+</code></pre>
+<h3>面板 UI</h3>
+<p><strong>系统设置 → 面板 / NAT</strong>：</p>
+<ul>
+<li><strong>面板端口</strong>：写入 <code>config.yaml</code> 的 <code>server.port</code></li>
+<li><strong>监听地址</strong>：<code>server.listen</code>（<code>127.0.0.1</code> 适合仅反代）</li>
+<li><strong>面板公网 URL</strong>：<code>server.public_url</code></li>
+</ul>
+<p>保存后提示 <strong>重启服务</strong> 后端口/监听才会切换；<code>public_url</code> 会立即用于部分链接生成逻辑（进程内配置已更新）。</p>
+<h3>API</h3>
+<pre><code class="language-http">GET  /api/v1/system/panel-server
+PUT  /api/v1/system/panel-server
+Content-Type: application/json
+
+{&quot;port&quot;:8443,&quot;listen&quot;:&quot;&quot;,&quot;public_url&quot;:&quot;https://panel.example.com:8443&quot;}
+</code></pre>
+<p>需管理员 JWT。返回中 <code>restart_required: true</code> 表示需重启进程。</p>
+<h3>环境变量覆盖（一次启动）</h3>
+<p>进程启动时读取（优先级高于 YAML 中的同名项）：</p>
+<ul>
+<li><code>THREE_M_UI_PORT</code> / <code>PANEL_PORT</code></li>
+<li><code>THREE_M_UI_LISTEN</code> / <code>PANEL_LISTEN</code></li>
+<li><code>THREE_M_UI_PUBLIC_URL</code> / <code>PUBLIC_URL</code></li>
+</ul>
+<p>systemd 示例（<code>/etc/systemd/system/3m-ui.service.d/override.conf</code>）：</p>
+<pre><code class="language-ini">[Service]
+Environment=THREE_M_UI_PORT=8443
+Environment=THREE_M_UI_PUBLIC_URL=https://panel.example.com:8443
+</code></pre>
+<pre><code class="language-bash">systemctl daemon-reload &amp;&amp; systemctl restart 3m-ui
+</code></pre>
+<h2>NAT 网络建议</h2>
+<ol>
+<li><strong>面板端口</strong>：路由器/云安全组把公网端口映射到内网机的 <code>server.port</code>。</li>
+<li><strong>节点端口</strong>：每个 Listener 的入站端口同样需要映射；与面板端口无关。</li>
+<li><strong>Public Host / Public Port</strong>：在节点或系统设置的访问配置中填写<strong>客户端真实连接</strong>的地址/端口（公网 IP 或域名、映射后的端口）。</li>
+<li><strong>public_url</strong>：填写浏览器能打开的面板完整 URL，订阅信息页、部分外链会参考它。</li>
+<li><strong>仅反代暴露</strong>：<code>listen: "127.0.0.1"</code>，由 Nginx/Caddy 提供 443；面板不必对公网直接开放。</li>
+</ol>
+<h2>与节点分享地址的区别</h2>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>server.port</code> / <code>listen</code></td>
+<td>面板 HTTP(S) 进程绑定</td>
+</tr>
+<tr>
+<td><code>server.public_url</code></td>
+<td>面板自身的对外 URL</td>
+</tr>
+<tr>
+<td>节点 Public Host/Port、access profile</td>
+<td>客户端连 <strong>代理协议</strong> 的地址</td>
+</tr>
+<tr>
+<td>订阅链接里的 host</td>
+<td>来自 Public Host / 请求 Host / public_url 等解析逻辑</td>
+</tr>
+</tbody>
+</table>
+<p>改面板端口 <strong>不会</strong> 自动改节点入站端口。</p>
+<h2>故障排查</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>改端口后打不开</td>
+<td>是否已 <code>restart</code>；防火墙/安全组是否放行新端口</td>
+</tr>
+<tr>
+<td>订阅里 host 仍是内网 IP</td>
+<td>设置节点 Public Host 或 <code>public_url</code> / 访问配置</td>
+</tr>
+<tr>
+<td>端口被占用</td>
+<td><code>ss -lntp \| grep &lt;port&gt;</code>，换端口或停掉占用进程</td>
+</tr>
+<tr>
+<td>仅 IPv6 / 仅 IPv4</td>
+<td>调整 <code>server.listen</code>（如 <code>127.0.0.1</code>、<code>::1</code> 或留空双栈）</td>
+</tr>
+</tbody>
+</table>
+<p>相关文档：<a href="/panel-config">面板配置</a> · <a href="/system-settings">系统设置</a> · <a href="/subscription">订阅</a> · <a href="/install">安装与升级</a></p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

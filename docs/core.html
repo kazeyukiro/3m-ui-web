@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>核心 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html" class="active">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>核心</h1>
+      <p>面板通过本地 Mihomo 进程管理代理核心。</p>
+<h2>操作</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>状态</td>
+<td>是否运行、版本、PID 等</td>
+</tr>
+<tr>
+<td>启动</td>
+<td>使用当前生成配置启动</td>
+</tr>
+<tr>
+<td>停止</td>
+<td>结束进程</td>
+</tr>
+<tr>
+<td>重启</td>
+<td>停止后再启动</td>
+</tr>
+</tbody>
+</table>
+<p>配置应用流程概要：</p>
+<pre><code class="language-text">编辑 → 预览 → 校验 → 备份 → 应用 → 启动/重启 → 健康检查
+                                      ├ 成功：保留
+                                      └ 失败：回滚配置
+</code></pre>
+<p>首次启动若尚无配置文件，可能软失败并提示，而不是整面板崩溃。</p>
+<h2>路径</h2>
+<p>在 <code>config.yaml</code> 的 <code>mihomo</code> 段配置：</p>
+<ul>
+<li>二进制路径</li>
+<li>配置文件路径</li>
+<li>工作/数据目录（GeoIP 等）</li>
+</ul>
+<p><strong>系统设置</strong> 中可一键更新 MetaCubeX GeoIP / GeoSite 到 Mihomo 数据目录。</p>
+<h2>日志</h2>
+<p><strong>运行日志</strong> 页查看面板与核心相关输出；系统级用：</p>
+<pre><code class="language-bash">journalctl -u 3m-ui -f
+</code></pre>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

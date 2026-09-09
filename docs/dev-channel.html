@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>测试通道 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html" class="active">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>测试通道</h1>
+      <p>本文说明 <strong>滚动 Pre-release</strong>（固定标签 <code>pre</code>）的用途与安装方式。生产环境请使用正式 Release（<code>v*</code> 标签，例如 <code>v1.0.1</code>）。</p>
+<h2>正式版与测试版</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>正式版</th>
+<th>测试版</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发布方式</td>
+<td>推送 <code>v*</code> 标签，或由 Release 工作流发布</td>
+<td>GitHub Actions 手动运行 <strong>Pre-release · rolling (pre)</strong></td>
+</tr>
+<tr>
+<td>标签</td>
+<td><code>v1.0.1</code> 等</td>
+<td>固定 <code>pre</code>（每次覆盖同一 Pre-release）</td>
+</tr>
+<tr>
+<td><code>latest</code></td>
+<td>会更新</td>
+<td>不会覆盖 <code>latest</code></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>生产与日常使用</td>
+<td>功能验证</td>
+</tr>
+</tbody>
+</table>
+<p><code>test</code> 代码分支已弃用；预发布仅通过上述 Actions 从 <code>main</code> 构建。</p>
+<h2>安装 / 切换到测试版</h2>
+<p>使用 <code>main</code> 上的脚本，并指定测试通道：</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | sudo bash -s -- --pre
+</code></pre>
+<p>已安装时：</p>
+<pre><code class="language-bash">3m-ui channel pre
+# 或
+3m-ui update --pre
+</code></pre>
+<h2>切回正式版</h2>
+<pre><code class="language-bash">3m-ui channel stable
+# 或
+3m-ui update --stable
+# 或指定版本
+3m-ui update v1.0.1
+</code></pre>
+<p>当前通道保存在 <code>/usr/local/lib/3m-ui/CHANNEL</code>。</p>
+<h2>维护者：发布 Pre-release</h2>
+<ol>
+<li>打开仓库 <strong>Actions</strong> → <strong>Pre-release · rolling (pre)</strong></li>
+<li><strong>Run workflow</strong>（可选填写说明）</li>
+<li>成功后，资产位于 <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a> 中标签为 <code>pre</code> 的 Pre-release</li>
+</ol>
+<h2>说明</h2>
+<ul>
+<li>测试版可能包含未充分验证的功能，请勿默认用于生产。</li>
+<li>正式版与测试版可随时通过通道参数互相切换，无需重装系统依赖。</li>
+</ul>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

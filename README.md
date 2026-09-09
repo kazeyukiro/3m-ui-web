@@ -1,13 +1,9 @@
-# 3m-ui 官网
+# 3m-ui 官网与文档
 
-静态官网，托管于 GitHub Pages， https://3m-ui.top
+托管于 GitHub Pages，域名 **https://3m-ui.top**。
 
-- 站点文件：`index.html`、`styles.css`、`logo.png`
-- 域名：`CNAME` → `3m-ui.top`
-- Cloudflare 接入步骤见 [CLOUDFLARE.md](./CLOUDFLARE.md)
+- 首页：Tailscale 风格产品站
+- 文档：原 `3m-ui-docs` 内容已整合至 `/docs/`
+- 独立文档站已废弃，请使用本站文档
 
-源码与面板：https://github.com/kazeyukiro/3m-ui
-
-
-文档站：https://3m-ui-docs.pages.dev
-文档仓库：https://github.com/kazeyukiro/3m-ui-docs
+源码面板：https://github.com/kazeyukiro/3m-ui

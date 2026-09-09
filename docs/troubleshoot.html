@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>排障 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html" class="active">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>排障</h1>
+      <h2>面板无法启动</h2>
+<h3>端口被占用</h3>
+<pre><code class="language-bash">lsof -i :8080
+# 或
+ss -tlnp | grep 8080
+</code></pre>
+<p>解决：释放端口或修改面板端口：</p>
+<pre><code class="language-bash">3m-ui config port 9000
+</code></pre>
+<h3>配置文件无效</h3>
+<p>检查 <code>/etc/3m-ui/config.yaml</code>：</p>
+<pre><code class="language-bash">cat /etc/3m-ui/config.yaml
+</code></pre>
+<p>JWT Secret 和 Credential Key 必须是 32+ 字节的随机值。如果使用了占位符 <code>CHANGE_ME_TO_RANDOM_32_PLUS_BYTES</code> 或默认值，面板会拒绝启动。</p>
+<p>生成新密钥：</p>
+<pre><code class="language-bash">openssl rand -hex 32
+</code></pre>
+<h3>数据库恢复后无法启动</h3>
+<p>恢复备份后必须重启面板：</p>
+<pre><code class="language-bash">systemctl restart 3m-ui
+</code></pre>
+<p>如果恢复的是损坏的数据库文件，删除后重新恢复：</p>
+<pre><code class="language-bash">systemctl stop 3m-ui
+rm /var/lib/3m-ui/3m-ui.db
+# 重新上传备份恢复
+systemctl start 3m-ui
+</code></pre>
+<h2>Mihomo 核心问题</h2>
+<h3>核心无法启动</h3>
+<pre><code class="language-bash">3m-ui logs  # 查看面板日志
+journalctl -u 3m-ui -n 50  # 查看系统日志
+</code></pre>
+<p>常见原因：<br />
+- 配置文件语法错误（面板会自动回滚到上一个有效配置）<br />
+- 端口冲突（检查 listener 端口是否被占用）<br />
+- 二进制路径不正确（检查 <code>config.yaml</code> 中的 <code>mihomo.binary</code>）<br />
+- Mihomo 二进制缺少执行权限</p>
+<h3>核心崩溃</h3>
+<p>面板会自动检测核心崩溃并通过 Telegram 通知（如已启用 <code>crash</code> 事件）。自动重启会在配置验证通过后尝试。</p>
+<h3>流量数据不更新</h3>
+<p>检查 Mihomo external-controller 是否正常：</p>
+<pre><code class="language-bash">curl -H &quot;Authorization: Bearer &lt;secret&gt;&quot; http://127.0.0.1:9090/connections
+</code></pre>
+<p>如果返回空或错误，核心可能未正常运行。</p>
+<h2>Telegram Bot 问题</h2>
+<h3>Bot 不响应</h3>
+<ol>
+<li>检查 Token 是否正确（在面板「系统设置 → Telegram 通知」中重新输入）</li>
+<li>检查 Bot 是否被禁用</li>
+<li>查看 <code>journalctl -u 3m-ui</code> 中是否有 <code>telegram: getUpdates</code> 错误</li>
+<li>401 错误表示 Token 无效，Bot 会每 5 分钟重试一次</li>
+</ol>
+<h3>Bot 命令菜单不显示</h3>
+<p>点击面板中的「注册命令菜单」按钮，或调用：</p>
+<pre><code class="language-bash">curl -X POST -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+  https://panel.example.com/api/v1/telegram/set-my-commands
+</code></pre>
+<h2>订阅问题</h2>
+<h3>订阅链接返回 404</h3>
+<p>Token 可能已轮换。在「用户管理」中重新获取订阅链接。</p>
+<h3>订阅内容为空</h3>
+<p>检查用户是否绑定了至少一个启用的 Listener。在「用户管理 → 绑定节点」中确认。</p>
+<h2>集群问题</h2>
+<h3>远程操作返回 401</h3>
+<p>集群的 <code>api_token</code> 必须是远程面板签发的 JWT（不是 Access Token）。获取方式：</p>
+<pre><code class="language-bash">curl -X POST https://remote-panel.com/api/v1/auth/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;&lt;password&gt;&quot;}'
+</code></pre>
+<p>返回的 <code>token</code> 字段即为 JWT，填入集群设置的 <code>api_token</code>。</p>
+<h3>远程健康检查超时</h3>
+<p>多个远程服务器会<strong>并行</strong>健康检查。如果某个服务器网络不稳定，可能需要增加超时时间或检查网络连接。</p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telegram · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html" class="active">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>Telegram</h1>
+      <h2>配置</h2>
+<ol>
+<li>在 <a href="https://t.me/BotFather">@BotFather</a> 创建 Bot，获取 Bot Token。</li>
+<li>获取你的数字 Telegram 用户 ID（给 Bot 发 <code>/id</code> 即可获取）。</li>
+<li>在面板「系统设置 → Telegram 通知」中填入 Token 和 Chat ID（多个用逗号分隔）。</li>
+<li>保存后点「注册命令菜单」让 Telegram 客户端显示命令补全。</li>
+<li>点击「发送测试消息」验证连接。</li>
+</ol>
+<h2>命令</h2>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>权限</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/start</code> <code>/help</code></td>
+<td>所有人</td>
+<td>显示帮助 + 内联按钮菜单</td>
+</tr>
+<tr>
+<td><code>/status</code></td>
+<td>所有人</td>
+<td>确认 Bot 在线</td>
+</tr>
+<tr>
+<td><code>/id</code></td>
+<td>所有人</td>
+<td>显示你的 Telegram 数字 ID</td>
+</tr>
+<tr>
+<td><code>/usage</code></td>
+<td>管理员</td>
+<td>搜索用户用量</td>
+</tr>
+<tr>
+<td><code>/usage</code></td>
+<td>已绑定用户</td>
+<td>查询自己的用量/到期/订阅链接</td>
+</tr>
+<tr>
+<td><code>/users</code></td>
+<td>管理员</td>
+<td>用户列表</td>
+</tr>
+<tr>
+<td><code>/online</code></td>
+<td>管理员</td>
+<td>在线用户</td>
+</tr>
+<tr>
+<td><code>/listeners</code></td>
+<td>管理员</td>
+<td>节点列表</td>
+</tr>
+<tr>
+<td><code>/traffic</code></td>
+<td>管理员</td>
+<td>流量快照</td>
+</tr>
+<tr>
+<td><code>/restart</code></td>
+<td>管理员</td>
+<td>重启 Mihomo 核心</td>
+</tr>
+<tr>
+<td><code>/deldepleted</code></td>
+<td>管理员</td>
+<td>清理到期/超额用户</td>
+</tr>
+<tr>
+<td><code>/search &lt;关键字&gt;</code></td>
+<td>管理员</td>
+<td>按用户名/备注搜索</td>
+</tr>
+<tr>
+<td><code>/backup</code></td>
+<td>管理员</td>
+<td>备份提示</td>
+</tr>
+</tbody>
+</table>
+<h2>内联按钮</h2>
+<p>管理员菜单（8 按钮）：状态、用户、流量、在线、节点、清理、备份、重启。<br />
+用户菜单（2 按钮）：我的用量、订阅链接。</p>
+<h2>定期报告</h2>
+<p>通过 <code>schedule</code> 字段设置 cron 表达式或预设：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@daily</code></td>
+<td>每天午夜</td>
+</tr>
+<tr>
+<td><code>@hourly</code></td>
+<td>每小时整点</td>
+</tr>
+<tr>
+<td><code>@every 6h</code></td>
+<td>每 6 小时</td>
+</tr>
+<tr>
+<td><code>0 9 * * *</code></td>
+<td>每天 9:00</td>
+</tr>
+<tr>
+<td><code>*/30 * * * *</code></td>
+<td>每 30 分钟</td>
+</tr>
+</tbody>
+</table>
+<p>支持的 cron 语法：<code>*</code>、逗号列表、<code>*/N</code>（步进）、<code>A-B</code>（范围）、<code>A-B/N</code>（步进范围）。</p>
+<h2>事件告警</h2>
+<p>通过 <code>enabled_events</code> 选择要接收的事件（默认 <code>login,cpu,crash</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>触发</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>login</code></td>
+<td>面板登录成功和失败</td>
+</tr>
+<tr>
+<td><code>cpu</code></td>
+<td>CPU 超过阈值</td>
+</tr>
+<tr>
+<td><code>memory</code></td>
+<td>内存超过阈值</td>
+</tr>
+<tr>
+<td><code>crash</code></td>
+<td>Mihomo 核心崩溃（非正常退出）</td>
+</tr>
+<tr>
+<td><code>expiry</code></td>
+<td>用户即将到期</td>
+</tr>
+<tr>
+<td><code>traffic</code></td>
+<td>用户流量即将耗尽</td>
+</tr>
+</tbody>
+</table>
+<h2>用户绑定</h2>
+<p>在「用户管理」中为代理用户绑定 Telegram ID。绑定后用户可通过 Bot 自助查询用量和订阅链接。</p>
+<p>API：</p>
+<pre><code>PUT /api/v1/users/:id/telegram  { telegram_id, telegram_name }
+DELETE /api/v1/users/:id/telegram
+</code></pre>
+<h2>代理支持</h2>
+<p>Bot 支持 HTTP/HTTPS/SOCKS5 代理连接 Telegram API。在 <code>proxy_url</code> 字段填入：</p>
+<ul>
+<li><code>http://host:port</code></li>
+<li><code>socks5://host:port</code></li>
+</ul>
+<h2>自定义 API 服务器</h2>
+<p><code>api_server</code> 字段可设置自定义 Telegram Bot API 服务器地址（留空使用官方 <code>https://api.telegram.org</code>）。</p>
+<h2>安全提示</h2>
+<ul>
+<li>Bot Token 掌控着你的 Bot，务必妥善保密。</li>
+<li>仅添加可信的管理员 Chat ID。</li>
+<li>登录告警不包含密码。</li>
+<li>Bot 对管理员的失败操作不会发送密码或密钥信息。</li>
+</ul>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

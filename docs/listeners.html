@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>节点 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html" class="active">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>节点</h1>
+      <p>对应 Mihomo 的 <strong>inbound / listener</strong>，在面板中称为节点。</p>
+<h2>创建与编辑</h2>
+<p><strong>节点管理</strong> 中可配置：</p>
+<ul>
+<li>名称、协议、端口、绑定地址</li>
+<li>启用 / 禁用</li>
+<li>协议相关字段（UUID、密码、路径、SNI、REALITY 等）</li>
+<li>TLS 证书路径或由上层反代终止 TLS</li>
+<li><strong>Public Host / Public Port</strong>：客户端看到的地址（CDN、多 IP、IPv6 时很有用）</li>
+</ul>
+<p>保存后走配置生成 → 校验 → 应用；失败会尝试回滚，避免写坏核心配置。</p>
+<p>在 <strong>配置引擎</strong> 中可将「生成 / 校验 / 应用」分开操作：生成只预览 YAML，不会写盘；确认后再应用。误操作可用回滚恢复上一份配置。</p>
+<h2>协议</h2>
+<p>常见支持（以当前版本协议表为准）：</p>
+<ul>
+<li>VLESS / VMess / Trojan / Shadowsocks</li>
+<li>Hysteria2 / TUIC / 其它面板列出的类型</li>
+</ul>
+<p>具体字段随协议变化，未知字段不要手改数据库。</p>
+<h2>搜索与批量</h2>
+<p>列表支持按名称、协议、端口、绑定地址搜索（若版本已启用）。</p>
+<h2>与用户的关系</h2>
+<p>用户可绑定一个或多个 Listener；订阅与分享链接只包含其有权使用的入站。</p>
+<h2>配置引擎</h2>
+<p><strong>配置</strong> 页面可预览生成的 Mihomo YAML、做可视化或高级编辑。生产环境建议以面板表单为主，减少手工改 YAML 导致的不一致。</p>
+<h2>TLS 自签证书</h2>
+<p>需要服务端证书且未填写 PEM 时，面板会签发自签证书（标记 Organization=<code>3m-ui</code>），并写入：</p>
+<p><code>/var/lib/3m-ui/listener-certs/{id}.crt</code> / <code>.key</code></p>
+<ul>
+<li>更新面板二进制时，会尽量从该目录恢复，避免无故换证</li>
+<li>客户端订阅/URI 对面板自签会带上 <code>skip-cert-verify</code> / <code>insecure=1</code></li>
+<li><strong>Reality</strong> 或完整 TLS 包装（shadow-tls / jls 等）不会强制自签</li>
+<li>备份时请包含 <code>listener-certs/</code>（见 <a href="/backup-restore">备份与恢复</a>）</li>
+</ul>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

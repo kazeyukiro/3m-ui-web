@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>签名校验 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html" class="active">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>签名校验</h1>
+      <p>3M-UI 的每个 Release 资产都经过两层校验，确保你下载和运行的代码来自本项目且未被篡改：</p>
+<ol>
+<li><strong>完整性</strong>（默认强制）：<code>SHA256SUMS</code> 防止二进制损坏或中间人篡改。</li>
+<li><strong>真实性</strong>可选但推荐：<code>SHA256SUMS.pem</code> + <code>SHA256SUMS.sig</code> 由 <strong>Sigstore cosign keyless OIDC</strong> 签发，证明 <code>SHA256SUMS</code> 本身由本项目 <code>release.yml</code> workflow 在对应 tag 上生成。</li>
+</ol>
+<p>两层一起构成端到端供应链验证：即便 CDN 或 release 被劫持，攻击者也无法同时伪造 <code>SHA256SUMS</code> 与 cosign 签名（签名密钥是 GitHub Actions 的临时 OIDC token，不存储在仓库里）。</p>
+<h2>资产清单</h2>
+<p>每个 Release（v1.0.0 起）附带：</p>
+<table>
+<thead>
+<tr>
+<th>资产</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>3m-ui-linux-&lt;arch&gt;</code></td>
+<td>各架构纯 Go 静态二进制</td>
+</tr>
+<tr>
+<td><code>3m-ui-linux-&lt;arch&gt;.tar.gz</code></td>
+<td>打包版本</td>
+</tr>
+<tr>
+<td><code>install.sh</code> / <code>update.sh</code> / <code>uninstall.sh</code> / <code>3m-ui.sh</code> / <code>3m-ui</code></td>
+<td>安装器与入口脚本</td>
+</tr>
+<tr>
+<td><code>SHA256SUMS</code></td>
+<td>上述全部资产的 SHA-256 校验和</td>
+</tr>
+<tr>
+<td><code>SHA256SUMS.pem</code></td>
+<td>cosign 签名证书（含 OIDC 身份）</td>
+</tr>
+<tr>
+<td><code>SHA256SUMS.sig</code></td>
+<td>cosign 签名（base64）</td>
+</tr>
+</tbody>
+</table>
+<h2>一、验证二进制完整性（默认强制）</h2>
+<h3>方式 A：安装器自动验证（推荐）</h3>
+<p><code>install.sh</code> / <code>update.sh</code> 默认 fail-closed 校验 <code>SHA256SUMS</code>：</p>
+<pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<p>若 <code>SHA256SUMS</code> 缺失或校验和不匹配，安装会<strong>中止</strong>。GitHub 不可用时如需绕过，显式设置 <code>THREE_M_UI_INSECURE=1</code>（<strong>不推荐</strong>，会打印醒目警告）。</p>
+<h3>方式 B：手动验证</h3>
+<p>下载二进制与 <code>SHA256SUMS</code> 后：</p>
+<pre><code class="language-bash">sha256sum -c SHA256SUMS --ignore-missing
+</code></pre>
+<p><code>--ignore-missing</code> 允许你只下载了部分资产（例如只下了 <code>3m-ui-linux-amd64</code>）。</p>
+<h2>二、验证签名真实性（推荐）</h2>
+<h3>前置：安装 cosign</h3>
+<pre><code class="language-bash"># Linux x86_64 示例；其它架构见 https://github.com/sigstore/cosign/releases
+curl -fsSL -o /usr/local/bin/cosign \
+  https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64
+chmod +x /usr/local/bin/cosign
+cosign version
+</code></pre>
+<h3>方式 A：安装器自动验证</h3>
+<p>安装/升级时启用 cosign 校验（OPT-IN）：</p>
+<pre><code class="language-bash">THREE_M_UI_VERIFY_COSIGN=1 \
+  curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<p>安装器会：</p>
+<ol>
+<li>检查 <code>cosign</code> 是否在 <code>PATH</code> 中；不在则打印警告并跳过（不中止安装）。</li>
+<li>下载 <code>SHA256SUMS</code> / <code>SHA256SUMS.pem</code> / <code>SHA256SUMS.sig</code>。</li>
+<li>依次尝试两种 OIDC 身份验证：<br />
+   - <code>https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/tags/&lt;tag&gt;</code>（tag push 触发的 release）<br />
+   - <code>https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/heads/main</code>（workflow_dispatch 回填的 release）</li>
+<li>任一匹配即通过；都失败则<strong>中止</strong>（仅 <code>THREE_M_UI_INSECURE=1</code> 可绕过，不推荐）。</li>
+</ol>
+<p>升级同理：</p>
+<pre><code class="language-bash">THREE_M_UI_VERIFY_COSIGN=1 \
+  curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/update.sh | bash
+</code></pre>
+<h3>方式 B：手动验证</h3>
+<p>下载 <code>SHA256SUMS</code>、<code>SHA256SUMS.pem</code>、<code>SHA256SUMS.sig</code> 三个文件后：</p>
+<pre><code class="language-bash"># 1. 先验证二进制完整性
+sha256sum -c SHA256SUMS --ignore-missing
+
+# 2. 验证 SHA256SUMS 的真实性
+cosign verify-blob \
+  --certificate SHA256SUMS.pem \
+  --signature SHA256SUMS.sig \
+  --certificate-identity 'https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/tags/&lt;tag&gt;' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  SHA256SUMS
+</code></pre>
+<ul>
+<li>把 <code>&lt;tag&gt;</code> 替换为实际 release tag（例如 <code>v1.0.0</code>）。</li>
+<li><strong>若该 release 是通过 <code>workflow_dispatch</code> 回填签名的</strong>（如 v1.0.0），OIDC 身份为 <code>@refs/heads/main</code> 而非 <code>@refs/tags/&lt;tag&gt;</code>。手动验证时改用：<br />
+<code>bash
+  --certificate-identity 'https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/heads/main'</code></li>
+<li>验证成功输出：<code>Verified OK</code>。</li>
+</ul>
+<h3>方式 C：查看证书身份（可选）</h3>
+<p>想确认证书 OIDC 身份确实绑定到本仓库：</p>
+<pre><code class="language-bash"># cosign 的 .pem 是 base64 编码的 DER，需先解码
+base64 -d SHA256SUMS.pem | openssl x509 -noout -text | grep -A1 &quot;URI:&quot;
+</code></pre>
+<p>应看到形如：</p>
+<pre><code>URI:https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/tags/v1.0.0
+</code></pre>
+<p>或回填的：</p>
+<pre><code>URI:https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/heads/main
+</code></pre>
+<h2>三、完整端到端示例</h2>
+<p>以 v1.0.0、x86_64 为例：</p>
+<pre><code class="language-bash">set -e
+TAG=v1.0.0
+ARCH=linux-amd64
+
+# 1. 下载资产
+curl -fLO https://github.com/kazeyukiro/3m-ui/releases/download/${TAG}/3m-ui-${ARCH}
+curl -fLO https://github.com/kazeyukiro/3m-ui/releases/download/${TAG}/SHA256SUMS
+curl -fLO https://github.com/kazeyukiro/3m-ui/releases/download/${TAG}/SHA256SUMS.pem
+curl -fLO https://github.com/kazeyukiro/3m-ui/releases/download/${TAG}/SHA256SUMS.sig
+
+# 2. 验证完整性
+sha256sum -c SHA256SUMS --ignore-missing
+
+# 3. 验证真实性（v1.0.0 是回填签名，用 refs/heads/main）
+cosign verify-blob \
+  --certificate SHA256SUMS.pem \
+  --signature SHA256SUMS.sig \
+  --certificate-identity 'https://github.com/kazeyukiro/3m-ui/.github/workflows/release.yml@refs/heads/main' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  SHA256SUMS
+
+# 4. 赋予执行权限并使用
+chmod +x 3m-ui-${ARCH}
+./3m-ui-${ARCH} --version
+</code></pre>
+<h2>四、Mihomo 核心的校验（说明）</h2>
+<p>3M-UI 的二进制完整性已经 fail-closed 保护（<code>SHA256SUMS</code> + cosign），但安装器也会下载 Mihomo 核心二进制。Mihomo 的校验情况特殊：</p>
+<ul>
+<li><strong>Mihomo 官方不发布 <code>SHA256SUMS</code> 文件</strong>（已核实 v1.17.0 ~ v1.19.30 全部 404）。</li>
+<li>我们改用 <strong>GitHub Release API 的 per-asset <code>digest</code> 字段</strong>——GitHub 在上传资产时服务端计算 SHA-256，权威可信。</li>
+<li><strong>匿名 GitHub API 限流 60 次/小时/IP</strong>，共享 NAT 或多次重试可能耗尽。</li>
+</ul>
+<p>因此 Mihomo 校验采用<strong>分层策略</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>默认</td>
+<td>校验失败仅警告，不中止</td>
+<td>普通用户（已有 HTTPS 传输完整性 + ELF 格式校验兜底）</td>
+</tr>
+<tr>
+<td><code>THREE_M_UI_VERIFY_MIHOMO=1</code></td>
+<td>校验失败即中止（fail-closed）</td>
+<td>严格要求 Mihomo 真实性的场景（需 GitHub API 可达）</td>
+</tr>
+<tr>
+<td><code>THREE_M_UI_INSECURE=1</code></td>
+<td>完全跳过所有校验</td>
+<td>仅紧急情况，<strong>不推荐</strong></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash"># 默认安装（Mihomo 校验失败仅警告，3m-ui 二进制仍 fail-closed）
+curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+
+# 严格模式（Mihomo 也强制校验，需 GitHub API 可达）
+THREE_M_UI_VERIFY_MIHOMO=1 \
+  curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | bash
+</code></pre>
+<p><strong>威胁模型说明</strong>：我们的核心责任是 3m-ui 二进制的真实性（已端到端保护）。Mihomo 是独立项目，其供应链应由 MetaCubeX 社区负责。即便 Mihomo 校验降级为 best-effort，仍受以下保护：<br />
+1. HTTPS 下载到 GitHub（传输层完整性）<br />
+2. 下载后 ELF 格式 smoke-test（捕获截断/错误文件）<br />
+3. 可选的 <code>THREE_M_UI_VERIFY_MIHOMO=1</code> 严格模式</p>
+<h2>常见问题</h2>
+<h3>Q：旧版本 release 没有签名资产怎么办？</h3>
+<p>v1.0.0 之前的 release 没有 <code>SHA256SUMS.pem</code> / <code>SHA256SUMS.sig</code>。安装器会检测到缺失并打印警告继续（不影响 <code>SHA256SUMS</code> 的 fail-closed 校验）。建议升级到 v1.0.0+。</p>
+<h3>Q：<code>THREE_M_UI_INSECURE=1</code> 何时使用？</h3>
+<p>仅当 GitHub Release 临时不可用、你又必须紧急安装/升级时。该环境变量会同时跳过 <code>SHA256SUMS</code> 校验与 cosign 签名校验，并打印醒目警告。<strong>生产环境不应使用</strong>。</p>
+<h3>Q：cosign keyless 签名的密钥存放在哪？</h3>
+<p>不存放任何长期密钥。每次 release workflow 运行时，GitHub 向 Sigstore Fulcio 出示 OIDC token 证明"我是 <code>kazeyukiro/3m-ui</code> 的 <code>release.yml</code> workflow"，Fulcio 签发短时证书，cosign 用该证书签名 <code>SHA256SUMS</code>。验证方只需信任 Sigstore 根 CA 与 GitHub OIDC issuer，无需信任任何项目维护者的长期密钥。</p>
+<h3>Q：如何验证 cosign 本身的供应链？</h3>
+<p>cosign 是 <a href="https://github.com/sigstore/cosign">Sigstore</a> 项目，自身也用 Sigstore 签名，且其 Releases 经过 SLSA-3 验证。从官方 Release 下载即可。</p>
+<h2>相关</h2>
+<ul>
+<li><a href="/install">安装与升级</a></li>
+<li><a href="/security">安全建议</a></li>
+<li><a href="/panel-config">面板配置</a></li>
+</ul>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

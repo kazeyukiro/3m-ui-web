@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>快速开始 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html" class="active">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>快速开始</h1>
+      <p>按下面顺序即可跑通「节点 + 用户 + 订阅」。</p>
+<h2>1. 安装并登录</h2>
+<p>见 <a href="/install">安装与升级</a>。使用管理员账号登录面板。</p>
+<h2>2. 确认 Mihomo 可用</h2>
+<p>进入 <strong>核心管理</strong>：</p>
+<ol>
+<li>确认 Mihomo 二进制路径正确（安装脚本通常已配置）</li>
+<li>点击 <strong>启动</strong> 或 <strong>重启</strong></li>
+<li>状态应显示运行中</li>
+</ol>
+<p>若启动失败，查看 <strong>运行日志</strong> 与 <code>journalctl -u 3m-ui -f</code>。</p>
+<h2>3. 创建 Listener（节点）</h2>
+<p>进入 <strong>节点管理</strong> → 新建：</p>
+<ul>
+<li>协议：如 VLESS / VMess / Trojan / Hysteria2 等</li>
+<li>端口、绑定地址（IPv4 <code>0.0.0.0</code>、IPv6 <code>::</code> 或双栈相关设置）</li>
+<li>TLS / REALITY 等安全选项按需填写</li>
+<li><strong>Public Host / Public Port</strong>（可选）：生成分享链接与订阅时对外展示的地址</li>
+</ul>
+<p>保存后，面板会生成/更新 Mihomo 配置并尝试应用。</p>
+<h2>4. 创建用户</h2>
+<p>进入 <strong>用户管理</strong> → 新建：</p>
+<ul>
+<li>用户名、备注</li>
+<li>流量上限（0 表示不限）</li>
+<li>到期时间（空表示不限）</li>
+<li>IP 限制（可选）</li>
+<li>绑定到一个或多个 Listener</li>
+</ul>
+<p>保存后会生成 <code>sub_token</code> 与客户端凭据。</p>
+<h2>5. 获取订阅</h2>
+<p>在用户行打开分享 / 订阅：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mihomo / Clash</td>
+<td>YAML 配置，适合 Clash Meta / Mihomo 客户端</td>
+</tr>
+<tr>
+<td>V2Ray</td>
+<td>Base64 节点列表（可用 <code>?encrypt=0</code> 要明文）</td>
+</tr>
+<tr>
+<td>Sing-box</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>HTML</td>
+<td>浏览器打开的信息页</td>
+</tr>
+</tbody>
+</table>
+<p>订阅 URL 形态示例：</p>
+<pre><code class="language-text">https://你的面板或域名/api/v1/client/sub/&lt;sub_token&gt;
+https://…/api/v1/client/v2ray/&lt;sub_token&gt;
+https://…/api/v1/client/clash/&lt;sub_token&gt;
+https://…/api/v1/client/json/&lt;sub_token&gt;
+</code></pre>
+<p>兼容短路径：<code>/sub/&lt;token&gt;</code>、<code>/clash/&lt;token&gt;</code>、<code>/json/&lt;token&gt;</code>。</p>
+<p>详情见 <a href="/subscription">订阅</a>。</p>
+<h2>6. （可选）加固</h2>
+<ul>
+<li>修改默认端口与 JWT / 凭据密钥 → <a href="/panel-config">面板配置</a></li>
+<li>开启面板 HTTPS → <a href="/ssl-cert">SSL与证书</a></li>
+<li>配置 Telegram 告警 → <a href="/telegram-bot">Telegram-Bot</a></li>
+<li>只暴露反代后的域名，防火墙限制 8080</li>
+</ul>
+<h2>6. 配置引擎（可选）</h2>
+<p><strong>配置</strong> 页可预览 Mihomo YAML。建议流程：<strong>生成 → 校验 → 应用</strong>；不要把「生成」当成已经上线。失败时用 <strong>回滚</strong>。</p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>

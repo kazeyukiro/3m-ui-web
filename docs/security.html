@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>安全 · 3m-ui 文档</title>
+  <link rel="icon" href="../logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <img src="../logo.png" alt="" width="28" height="28" onerror="this.style.display='none'" />
+      <span>3m-ui</span>
+    </a>
+    <nav class="nav-links">
+      <a href="../index.html#features">功能</a>
+      <a href="../docs/" class="active">文档</a>
+      <a href="../index.html#install">安装</a>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+    </nav>
+  </div>
+</header>
+<div class="doc-layout">
+<aside class="doc-sidebar"><div class="doc-sidebar-inner">
+<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
+<li><a href="quick-start.html">快速开始</a></li>
+<li><a href="install.html">安装</a></li>
+<li><a href="dev-channel.html">测试通道</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
+<li><a href="panel-config.html">面板配置</a></li>
+<li><a href="nat-port.html">NAT 与端口</a></li>
+<li><a href="listeners.html">节点</a></li>
+<li><a href="users-traffic.html">用户与流量</a></li>
+<li><a href="subscription.html">订阅</a></li>
+<li><a href="core.html">核心</a></li>
+<li><a href="share.html">分享</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
+<li><a href="cluster.html">多机节点</a></li>
+<li><a href="telegram-bot.html">Telegram</a></li>
+<li><a href="ssl-cert.html">SSL 证书</a></li>
+<li><a href="system-settings.html">系统设置</a></li>
+<li><a href="backup-restore.html">备份恢复</a></li>
+<li><a href="security.html" class="active">安全</a></li>
+<li><a href="verify-release-signature.html">签名校验</a></li>
+<li><a href="troubleshoot.html">排障</a></li>
+</ul></div>
+<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
+<li><a href="api-auth.html">API 与鉴权</a></li>
+</ul></div>
+</div></aside>
+  <main class="doc-main">
+    <div class="doc-content">
+      <h1>安全</h1>
+      <h2>密钥管理</h2>
+<ol>
+<li><strong>JWT Secret</strong> 与 <strong>Credential Key</strong> 必须使用独立、随机、至少 32 字节的值。安装脚本会自动生成；手动部署时用 <code>openssl rand -hex 32</code> 生成。</li>
+<li>密钥泄露后立即轮换。轮换 JWT Secret 会使所有已签发的 token 失效（用户需重新登录）；轮换 Credential Key 会导致已加密存储的用户密码无法解密，需重新设置。</li>
+<li><code>config.yaml</code> 文件权限应为 <code>0600</code>（安装脚本自动设置）。数据库文件权限 <code>0600</code>，目录 <code>0700</code>。</li>
+</ol>
+<h2>管理员密码</h2>
+<ol start="4">
+<li>初始管理员为 <code>admin / admin</code>，首次登录<strong>强制修改密码</strong>（<code>MustChangePassword</code>）。仅 <code>/auth/password</code> 和 <code>/auth/me</code> 接口在未改密前可访问。</li>
+<li>改密接口有速率限制（3 次 / 15 分钟 / IP），防止暴力枚举 <code>current_password</code>。</li>
+<li>密码修改后 <code>SessionVersion</code> 递增，所有已签发的 JWT 立即失效。</li>
+</ol>
+<h2>暴露面</h2>
+<ol start="7">
+<li>面板端口默认不对公网裸奔。Docker 部署默认绑定 <code>127.0.0.1:8080</code>，需通过反向代理（nginx/Caddy）暴露。</li>
+<li>仅开放 443 到反代；面板端口不对公网开放。</li>
+<li>HTTPS：面板与订阅全程 TLS。支持 Let's Encrypt 自动证书（ACME）或手动证书。</li>
+</ol>
+<h2>订阅与 Token</h2>
+<ol start="10">
+<li>订阅 Token 等同于密码；用户离职即删号或轮换 token。</li>
+<li>Access Token（192 位随机）有过期时间，绑定到特定 Listener。</li>
+<li>Token 泄露后立即禁用或删除。</li>
+</ol>
+<h2>已知限制</h2>
+<p>以下限制已通过代码注释文档化，不影响正常使用但操作时需注意：</p>
+<h3>凭据加密密钥不可热轮换</h3>
+<p>更换 <code>security.credential_key</code> 后，已加密存储的代理用户密码无法解密。需在更换前导出用户列表，更换后重新设置密码。安装脚本首次生成的密钥不需要更换。</p>
+<h3>数据库恢复需重启</h3>
+<p>通过面板恢复数据库后，运行中的进程仍持有旧的 SQLite 句柄。<strong>必须执行 <code>systemctl restart 3m-ui</code></strong> 才能让恢复的数据生效。面板会返回 <code>restart_required: true</code> 并在日志中打印 <code>[WARNING]</code>。</p>
+<h3>HTTP-01 挑战 goroutine</h3>
+<p>启用 SSL 但 TLS 绑定失败时，HTTP-01 挑战监听器（<code>:80</code>）会作为 goroutine 继续运行，直到进程退出。这是 ACME 协议的设计需要，不影响功能。</p>
+<h3>全局配置线程安全</h3>
+<p><code>config.GlobalConfig</code> 指针赋值是原子的，但字段修改没有加锁。仅管理员 API 会修改（非热路径），实际不影响。Telegram bot 在下次循环时会重新加载设置。</p>
+<h3>Cron 调度语法</h3>
+<p>Telegram 报告调度器支持：<code>@hourly</code>、<code>@daily</code>、<code>@weekly</code>、<code>@monthly</code>、<code>@every &lt;duration&gt;</code>、5 字段 cron（含 <code>*</code>、逗号列表、<code>*/N</code> 步进、<code>A-B</code> 范围）。不支持 <code>@reboot</code>。</p>
+<h2>报告漏洞</h2>
+<p>请通过 GitHub Security Advisory 或仓库 Issues（勿公开 0-day 细节）联系维护者。</p>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <strong>3m-ui</strong>
+      <p>轻量自托管的 Mihomo 管理面板</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h4>产品</h4>
+        <a href="../index.html#features">功能</a>
+        <a href="../index.html#install">安装</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+      </div>
+      <div>
+        <h4>文档</h4>
+        <a href="../docs/">文档首页</a>
+        <a href="../docs/quick-start.html">快速开始</a>
+        <a href="../docs/troubleshoot.html">排障</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
+</footer>
+</body>
+</html>
