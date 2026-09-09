@@ -257,3 +257,11 @@ section.alt { background: var(--bg-soft); border-top: 1px solid var(--border); b
   font-weight: 500;
   max-width: 9.5rem;
 }
+
+/* Doc article language bodies: only one visible */
+[data-doc-lang] {
+  display: none !important;
+}
+[data-doc-lang].is-visible {
+  display: block !important;
+}

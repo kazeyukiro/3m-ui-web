@@ -46,10 +46,20 @@
       const val = d[k] != null ? d[k] : (T.en && T.en[k] != null ? T.en[k] : null);
       if (val != null) el.textContent = val;
     });
-    // Article bodies: zh* → Chinese, everything else → English
-    const bodyLang = code.startsWith('zh') ? 'zh-CN' : 'en';
+    // Article bodies: any zh* UI locale → Chinese article; else English article
+    const bodyLang = String(code || 'en').toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
     document.querySelectorAll('[data-doc-lang]').forEach((el) => {
-      el.hidden = el.getAttribute('data-doc-lang') !== bodyLang;
+      const lang = el.getAttribute('data-doc-lang');
+      const on = lang === bodyLang;
+      el.classList.toggle('is-visible', on);
+      if (on) {
+        el.removeAttribute('hidden');
+        el.hidden = false;
+        el.style.removeProperty('display');
+      } else {
+        el.setAttribute('hidden', '');
+        el.hidden = true;
+      }
     });
     const sel = document.getElementById('lang-select');
     if (sel) sel.value = code;
@@ -60,6 +70,7 @@
   function initSelect() {
     const sel = document.getElementById('lang-select');
     if (!sel) return;
+    const current = sel.value;
     sel.innerHTML = '';
     LOCALES.forEach((l) => {
       const o = document.createElement('option');
@@ -67,7 +78,10 @@
       o.textContent = l.label;
       sel.appendChild(o);
     });
-    sel.addEventListener('change', () => apply(sel.value));
+    // Avoid duplicate listeners if boot runs twice
+    sel.onchange = function () {
+      apply(sel.value);
+    };
   }
 
   window.ThreeMWebI18n = { apply, detect, LOCALES, T, normalize };
