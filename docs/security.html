@@ -70,7 +70,7 @@
 </ol>
 <h2>管理员密码</h2>
 <ol start="4">
-<li>初始管理员为 <code>admin / admin</code>，首次登录<strong>强制修改密码</strong>（<code>MustChangePassword</code>）。仅 <code>/auth/password</code> 和 <code>/auth/me</code> 接口在未改密前可访问。</li>
+<li>初始管理员为 <code>admin + one-time random password</code>，首次登录<strong>强制修改密码</strong>（<code>MustChangePassword</code>）。仅 <code>/auth/password</code> 和 <code>/auth/me</code> 接口在未改密前可访问。</li>
 <li>改密接口有速率限制（3 次 / 15 分钟 / IP），防止暴力枚举 <code>current_password</code>。</li>
 <li>密码修改后 <code>SessionVersion</code> 递增，所有已签发的 JWT 立即失效。</li>
 </ol>

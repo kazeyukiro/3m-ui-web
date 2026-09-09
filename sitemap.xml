@@ -1,1 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://3m-ui.top/</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/quick-start.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/install.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/dev-channel.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/panel-config.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/nat-port.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/listeners.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/users-traffic.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/subscription.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/core.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/share.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/cluster.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/telegram-bot.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/ssl-cert.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/system-settings.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/backup-restore.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/security.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/verify-release-signature.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/troubleshoot.html</loc><changefreq>weekly</changefreq></url>\n  <url><loc>https://3m-ui.top/docs/api-auth.html</loc><changefreq>weekly</changefreq></url>\n</urlset>\n
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://3m-ui.top/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/quick-start.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/install.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/dev-channel.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/panel-config.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/nat-port.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/listeners.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/users-traffic.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/subscription.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/core.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/share.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/cluster.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/telegram-bot.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/ssl-cert.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/system-settings.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/backup-restore.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/security.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/verify-release-signature.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/troubleshoot.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://3m-ui.top/docs/api-auth.html</loc><changefreq>weekly</changefreq></url>
+</urlset>

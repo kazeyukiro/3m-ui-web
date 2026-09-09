@@ -91,7 +91,7 @@ sudo 3m-ui update --stable</code></pre>
 </code></pre>
 <p>非交互（如 cloud-init）可设置 <code>THREE_M_UI_NONINTERACTIVE=1</code>；安装结果会写入 <code>/etc/3m-ui/install-result.env</code>（默认账号策略不变）。</p>
 <h2>安装后</h2>
-<p>初始管理员：<code>admin / admin</code>，首次登录<strong>强制修改密码</strong>。</p>
+<p>初始管理员用户名一般为 <code>admin</code>，安装时会打印<strong>一次性随机密码</strong>；首次登录强制修改密码。</p>
 <p>管理入口：</p>
 <pre><code class="language-bash">sudo 3m-ui          # 交互菜单
 sudo 3m-ui help     # 子命令列表
@@ -126,7 +126,7 @@ sudo 3m-ui update v1.0.0
 <p>也可在交互菜单中选择「更新 3m-ui」。</p>
 <p>升级前会自动备份（默认保留最近 5 份）；新版本启动失败会尝试回滚。</p>
 <h2>测试通道</h2>
-<p>预发布（标签 <code>pre</code>）安装与通道切换见 <a href="/dev-channel">测试通道（Pre-release）</a>。</p>
+<p>预发布（标签 <code>pre</code>）安装与通道切换见 <a href="dev-channel.html">测试通道（Pre-release）</a>。</p>
 <h2>服务管理</h2>
 <pre><code class="language-bash">sudo 3m-ui status
 sudo 3m-ui start
