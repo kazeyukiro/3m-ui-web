@@ -42,7 +42,9 @@
     document.documentElement.dir = code === 'ar' ? 'rtl' : 'ltr';
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const k = el.getAttribute('data-i18n');
-      if (k && d[k] != null) el.textContent = d[k];
+      if (!k) return;
+      const val = d[k] != null ? d[k] : (T.en && T.en[k] != null ? T.en[k] : null);
+      if (val != null) el.textContent = val;
     });
     // Article bodies: zh* → Chinese, everything else → English
     const bodyLang = code.startsWith('zh') ? 'zh-CN' : 'en';
