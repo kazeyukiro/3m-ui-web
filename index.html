@@ -23,8 +23,11 @@
       <a href="index.html#features">功能</a>
       <a href="docs/" class="">文档</a>
       <a href="index.html#install">安装</a>
-      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn btn-dark" href="index.html#install">开始使用</a>
+      <label class="lang-wrap" title="Language">
+        <select id="lang-select" aria-label="Language"></select>
+      </label>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="btn_github">GitHub</a>
+      <a class="btn btn-dark" href="index.html#install" data-i18n="nav_start">开始使用</a>
     </nav>
   </div>
 </header>
@@ -32,17 +35,17 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow">Mihomo · Self-hosted</div>
-        <h1>轻松管理你的 Mihomo 节点与订阅</h1>
-        <p class="lead">3m-ui 是面向 Linux 服务器的轻量 Web 面板：创建入站、管理用户与流量、下发客户端配置，并支持多机与告警——安装一次，长期好用。</p>
+        <div class="eyebrow" data-i18n="eyebrow">Mihomo · Self-hosted</div>
+        <h1 data-i18n="hero_title">轻松管理你的 Mihomo 节点与订阅</h1>
+        <p class="lead" data-i18n="hero_lead">3m-ui 是面向 Linux 服务器的轻量 Web 面板：创建入站、管理用户与流量、下发客户端配置，并支持多机与告警——安装一次，长期好用。</p>
         <div class="hero-actions">
-          <a class="btn btn-dark" href="#install">一键安装</a>
-          <a class="btn btn-light" href="docs/">阅读文档</a>
+          <a class="btn btn-dark" href="#install" data-i18n="btn_install">一键安装</a>
+          <a class="btn btn-light" href="docs/" data-i18n="btn_docs">阅读文档</a>
           <a class="btn btn-light" href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
       <div class="install-card">
-        <div class="top"><span>Linux 安装</span><button type="button" class="copy" data-copy="install">复制</button></div>
+        <div class="top"><span data-i18n="install_label">Linux 安装</span><button type="button" class="copy" data-copy="install" data-i18n="copy">复制</button></div>
         <pre id="install-cmd">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | sudo sh</pre>
       </div>
     </div>
@@ -50,7 +53,7 @@
 
   <section id="features">
     <div class="wrap">
-      <h2 class="section-h">为运维设计的核心能力</h2>
+      <h2 class="section-h"" data-i18n="feat_h">为运维设计的核心能力</h2>
       <p class="section-p">从 Listener 到客户端订阅，一条链路打通；默认稳定版通道，脚本可安装、可更新、可恢复。</p>
       <div class="cards">
         <article class="card">
@@ -86,7 +89,7 @@
 
   <section class="alt" id="install">
     <div class="wrap">
-      <h2 class="section-h">三步开始</h2>
+      <h2 class="section-h" data-i18n="steps_h">三步开始</h2>
       <p class="section-p">推荐在干净的 Ubuntu / Debian 主机上以 root 执行。默认面板端口 <strong>8080</strong>。</p>
       <div class="steps">
         <div class="step">
@@ -106,7 +109,7 @@
         </div>
       </div>
       <div class="install-card" style="margin-top:1.5rem">
-        <div class="top"><span>更新</span><button type="button" class="copy" data-copy="update">复制</button></div>
+        <div class="top"><span data-i18n="update_label">更新</span><button type="button" class="copy" data-copy="update" data-i18n="copy">复制</button></div>
         <pre id="update-cmd">sudo 3m-ui update --stable</pre>
       </div>
     </div>
@@ -116,12 +119,12 @@
     <div class="wrap">
       <div class="cta-band">
         <div>
-          <h2>需要更细的步骤？</h2>
+          <h2 data-i18n="cta_h">需要更细的步骤？</h2>
           <p>安装、节点、订阅、证书与排障说明已整合到本站文档，无需再访问旧文档站。</p>
         </div>
         <div class="hero-actions">
-          <a class="btn btn-dark" href="docs/">打开文档</a>
-          <a class="btn btn-light" href="docs/quick-start.html">快速开始</a>
+          <a class="btn btn-dark" href="docs/" data-i18n="cta_docs">打开文档</a>
+          <a class="btn btn-light" href="docs/quick-start.html" data-i18n="cta_qs">快速开始</a>
         </div>
       </div>
     </div>
@@ -164,8 +167,9 @@ document.querySelectorAll('[data-copy]').forEach((btn) => {
   btn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(cmds[btn.dataset.copy] || '');
-      btn.textContent = '已复制';
-      setTimeout(() => (btn.textContent = '复制'), 1200);
+      const dict = (window.ThreeMWebI18n && window.ThreeMWebI18n.T[localStorage.getItem('3m-ui-web-locale')||'en']) || {};
+      btn.textContent = dict.copied || 'Copied';
+      setTimeout(() => (btn.textContent = dict.copy || 'Copy'), 1200);
     } catch (_) {
       btn.textContent = '失败';
       setTimeout(() => (btn.textContent = '复制'), 1200);
@@ -173,5 +177,6 @@ document.querySelectorAll('[data-copy]').forEach((btn) => {
   });
 });
 </script>
+  <script src="i18n.js"></script>
 </body>
 </html>

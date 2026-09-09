@@ -246,3 +246,14 @@ section.alt { background: var(--bg-soft); border-top: 1px solid var(--border); b
   background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412;
   border-radius: 10px; padding: .85rem 1rem; font-size: .92rem; margin: 1rem 0 1.5rem;
 }
+
+.lang-wrap select {
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: .35rem .7rem;
+  background: #fff;
+  color: var(--text);
+  font-size: .85rem;
+  font-weight: 500;
+  max-width: 9.5rem;
+}
