@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>3m-ui · 轻量自托管 Mihomo 面板</title>
-  <meta name="description" content="3m-ui：轻量自托管的 Mihomo 管理面板。节点、用户、订阅、流量与多机一站管理。" />
+  <title>3m-ui · Mihomo panel</title>
+  <meta name="description" content="3m-ui: lightweight self-hosted Mihomo management panel." />
   <link rel="canonical" href="https://3m-ui.top/" />
   <link rel="icon" href="logo.png" type="image/png" />
-  <meta property="og:title" content="3m-ui" />
-  <meta property="og:description" content="轻量自托管的 Mihomo 管理面板" />
-  <meta property="og:url" content="https://3m-ui.top/" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -23,11 +20,9 @@
       <a href="index.html#features" data-i18n="nav_features">Features</a>
       <a href="docs/" data-i18n="nav_docs">Docs</a>
       <a href="index.html#install" data-i18n="nav_install">Install</a>
-      <label class="lang-wrap" title="Language">
-        <select id="lang-select" aria-label="Language"></select>
-      </label>
-      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="btn_github">GitHub</a>
-      <a class="btn btn-dark" href="index.html#install" data-i18n="nav_start">开始使用</a>
+      <label class="lang-wrap" title="Language"><select id="lang-select" aria-label="Language"></select></label>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="nav_github">GitHub</a>
+      <a class="btn btn-dark" href="index.html#install" data-i18n="nav_start">Get started</a>
     </nav>
   </div>
 </header>
@@ -36,95 +31,80 @@
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow" data-i18n="eyebrow">Mihomo · Self-hosted</div>
-        <h1 data-i18n="hero_title">轻松管理你的 Mihomo 节点与订阅</h1>
-        <p class="lead" data-i18n="hero_lead">3m-ui 是面向 Linux 服务器的轻量 Web 面板：创建入站、管理用户与流量、下发客户端配置，并支持多机与告警——安装一次，长期好用。</p>
+        <h1 data-i18n="hero_title">Manage Mihomo nodes and subscriptions with ease</h1>
+        <p class="lead" data-i18n="hero_lead">3m-ui is a lightweight web panel for Linux servers: inbound nodes, users and traffic, client configs, multi-node ops and alerts — install once, keep using it.</p>
         <div class="hero-actions">
-          <a class="btn btn-dark" href="#install" data-i18n="btn_install">一键安装</a>
-          <a class="btn btn-light" href="docs/" data-i18n="btn_docs">阅读文档</a>
-          <a class="btn btn-light" href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-dark" href="#install" data-i18n="btn_install">One-click install</a>
+          <a class="btn btn-light" href="docs/" data-i18n="btn_docs">Read the docs</a>
+          <a class="btn btn-light" href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="btn_github">GitHub</a>
         </div>
       </div>
       <div class="install-card">
-        <div class="top"><span data-i18n="install_label">Linux 安装</span><button type="button" class="copy" data-copy="install" data-i18n="copy">复制</button></div>
+        <div class="top"><span data-i18n="install_label">Linux install</span><button type="button" class="copy" data-copy="install" data-i18n="copy">Copy</button></div>
         <pre id="install-cmd">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/install.sh | sudo sh</pre>
       </div>
     </div>
   </section>
-
   <section id="features">
     <div class="wrap">
       <h2 class="section-h" data-i18n="feat_h">Built for operators</h2>
-      <p class="section-p">从 Listener 到客户端订阅，一条链路打通；默认稳定版通道，脚本可安装、可更新、可恢复。</p>
+      <p class="section-p" data-i18n="feat_p">From listeners to client subscriptions in one flow. Stable channel by default; scripts cover install, update and recovery.</p>
       <div class="cards">
         <article class="card">
-          <h3>节点与协议</h3>
-          <p>管理 Mihomo 入站 Listener，覆盖常用协议与 REALITY 目标选择。</p>
+          <h3 data-i18n="feat1_t">Nodes & protocols</h3>
+          <p data-i18n="feat1_p">Manage Mihomo inbound listeners across common protocols and REALITY targets.</p>
           <ul>
-            <li>创建 / 编辑 / 克隆与模板</li>
-            <li>配置校验与安全应用</li>
-            <li>运行状态与连通性诊断</li>
+            <li data-i18n="feat1_l1">Create / edit / clone and templates</li>
+            <li data-i18n="feat1_l2">Validate then apply safely</li>
+            <li data-i18n="feat1_l3">Runtime status and connectivity checks</li>
           </ul>
         </article>
         <article class="card">
-          <h3>用户与订阅</h3>
-          <p>按用户绑定节点，控制流量、到期与设备限制，并下发多种客户端格式。</p>
+          <h3 data-i18n="feat2_t">Users & subscriptions</h3>
+          <p data-i18n="feat2_p">Bind nodes per user, control traffic and expiry, export multiple client formats.</p>
           <ul>
-            <li>Mihomo YAML / URI / sing-box</li>
-            <li>HWID 与订阅信息页</li>
-            <li>跨机合并订阅</li>
+            <li data-i18n="feat2_l1">Mihomo YAML / URI / sing-box</li>
+            <li data-i18n="feat2_l2">HWID and subscription info page</li>
+            <li data-i18n="feat2_l3">Cross-node merged subscriptions</li>
           </ul>
         </article>
         <article class="card">
-          <h3>面板运维</h3>
-          <p>安装、更新、改端口、重置密码；Telegram 告警与备份恢复。</p>
+          <h3 data-i18n="feat3_t">Panel ops</h3>
+          <p data-i18n="feat3_p">Install, update, change port, reset password; Telegram alerts and backups.</p>
           <ul>
-            <li><code>3m-ui</code> 管理菜单</li>
-            <li>稳定版 / 测试通道</li>
-            <li>Docker 与原生安装</li>
+            <li data-i18n="feat3_l1">3m-ui management menu</li>
+            <li data-i18n="feat3_l2">Stable and pre-release channels</li>
+            <li data-i18n="feat3_l3">Docker and native installs</li>
           </ul>
         </article>
       </div>
     </div>
   </section>
-
   <section class="alt" id="install">
     <div class="wrap">
       <h2 class="section-h" data-i18n="steps_h">Three steps</h2>
-      <p class="section-p">推荐在干净的 Ubuntu / Debian 主机上以 root 执行。默认面板端口 <strong>8080</strong>。</p>
+      <p class="section-p" data-i18n="steps_p">Use a clean Ubuntu / Debian host as root. Default panel port 8080.</p>
       <div class="steps">
-        <div class="step">
-          <div class="n">1</div>
-          <h3>运行安装脚本</h3>
-          <p>自动拉取当前稳定版二进制、脚本与校验文件。</p>
-        </div>
-        <div class="step">
-          <div class="n">2</div>
-          <h3>保存初始密码</h3>
-          <p>首次安装会打印一次性管理员密码（用户名一般为 admin），请立即保存并在登录后修改。</p>
-        </div>
-        <div class="step">
-          <div class="n">3</div>
-          <h3>打开面板</h3>
-          <p>访问 <code>http://服务器IP:8080/</code>。之后用 <code>3m-ui</code> 管理服务与更新。</p>
-        </div>
+        <div class="step"><div class="n">1</div><h3 data-i18n="step1_t">Run the installer</h3><p data-i18n="step1_p">Fetches the current stable binary, scripts and checksums.</p></div>
+        <div class="step"><div class="n">2</div><h3 data-i18n="step2_t">Save the initial password</h3><p data-i18n="step2_p">A one-time admin password is printed (user is usually admin). Change it after first login.</p></div>
+        <div class="step"><div class="n">3</div><h3 data-i18n="step3_t">Open the panel</h3><p data-i18n="step3_p">Visit http://SERVER_IP:8080/. Manage the service with the 3m-ui menu afterward.</p></div>
       </div>
       <div class="install-card" style="margin-top:1.5rem">
-        <div class="top"><span data-i18n="update_label">更新</span><button type="button" class="copy" data-copy="update" data-i18n="copy">复制</button></div>
+        <div class="top"><span data-i18n="update_label">Update</span><button type="button" class="copy" data-copy="update" data-i18n="copy">Copy</button></div>
         <pre id="update-cmd">sudo 3m-ui update --stable</pre>
       </div>
     </div>
   </section>
-
   <section>
     <div class="wrap">
       <div class="cta-band">
         <div>
-          <h2 data-i18n="cta_h">需要更细的步骤？</h2>
-          <p>安装、节点、订阅、证书与排障说明已整合到本站文档，无需再访问旧文档站。</p>
+          <h2 data-i18n="cta_h">Need more detail?</h2>
+          <p data-i18n="cta_p">Install, nodes, subscriptions, certificates and troubleshooting are in Docs on this site.</p>
         </div>
         <div class="hero-actions">
-          <a class="btn btn-dark" href="docs/" data-i18n="cta_docs">打开文档</a>
-          <a class="btn btn-light" href="docs/quick-start.html" data-i18n="cta_qs">快速开始</a>
+          <a class="btn btn-dark" href="docs/" data-i18n="cta_docs">Open docs</a>
+          <a class="btn btn-light" href="docs/quick-start.html" data-i18n="cta_qs">Quick start</a>
         </div>
       </div>
     </div>
@@ -134,30 +114,31 @@
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <strong>3m-ui</strong>
-      <p>轻量自托管的 Mihomo 管理面板</p>
+      <p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p>
     </div>
     <div class="footer-cols">
       <div>
-        <h4>产品</h4>
-        <a href="index.html#features">功能</a>
-        <a href="index.html#install">安装</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+        <h4 data-i18n="foot_product">Product</h4>
+        <a href="index.html#features" data-i18n="foot_features">Features</a>
+        <a href="index.html#install" data-i18n="foot_install">Install</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a>
       </div>
       <div>
-        <h4>文档</h4>
-        <a href="docs/">文档首页</a>
-        <a href="docs/quick-start.html">快速开始</a>
-        <a href="docs/troubleshoot.html">排障</a>
+        <h4 data-i18n="foot_docs">Docs</h4>
+        <a href="docs/" data-i18n="foot_docs_home">Docs home</a>
+        <a href="docs/quick-start.html" data-i18n="foot_qs">Quick start</a>
+        <a href="docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a>
       </div>
       <div>
-        <h4>社区</h4>
-        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+        <h4 data-i18n="foot_community">Community</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui" data-i18n="foot_github">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues" data-i18n="foot_issues">Issues</a>
       </div>
     </div>
   </div>
   <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
 </footer>
+<script src="i18n.js"></script>
 <script>
 const cmds = {
   install: document.getElementById('install-cmd')?.textContent?.trim() || '',
@@ -167,16 +148,13 @@ document.querySelectorAll('[data-copy]').forEach((btn) => {
   btn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(cmds[btn.dataset.copy] || '');
-      const dict = (window.ThreeMWebI18n && window.ThreeMWebI18n.T[localStorage.getItem('3m-ui-web-locale')||'en']) || {};
+      const code = localStorage.getItem('3m-ui-web-locale') || 'en';
+      const dict = (window.ThreeMWebI18n && window.ThreeMWebI18n.T[code]) || {};
       btn.textContent = dict.copied || 'Copied';
-      setTimeout(() => (btn.textContent = dict.copy || 'Copy'), 1200);
-    } catch (_) {
-      btn.textContent = '失败';
-      setTimeout(() => (btn.textContent = '复制'), 1200);
-    }
+      setTimeout(() => { btn.textContent = dict.copy || 'Copy'; }, 1200);
+    } catch (_) {}
   });
 });
 </script>
-  <script src="i18n.js"></script>
 </body>
 </html>

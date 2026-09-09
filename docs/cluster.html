@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>多机节点 · 3m-ui 文档</title>
+  <title>Cluster · 3m-ui Docs</title>
   <link rel="icon" href="../logo.png" type="image/png" />
   <link rel="stylesheet" href="../styles.css" />
 </head>
@@ -15,47 +15,49 @@
       <span>3m-ui</span>
     </a>
     <nav class="nav-links">
-      <a href="../index.html#features">功能</a>
-      <a href="../docs/" class="active">文档</a>
-      <a href="../index.html#install">安装</a>
-      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn btn-dark" href="../index.html#install">开始使用</a>
+      <a href="../index.html#features" data-i18n="nav_features">Features</a>
+      <a href="../docs/" class="active" data-i18n="nav_docs">Docs</a>
+      <a href="../index.html#install" data-i18n="nav_install">Install</a>
+      <label class="lang-wrap" title="Language"><select id="lang-select" aria-label="Language"></select></label>
+      <a href="https://github.com/kazeyukiro/3m-ui" target="_blank" rel="noopener" data-i18n="nav_github">GitHub</a>
+      <a class="btn btn-dark" href="../index.html#install" data-i18n="nav_start">Get started</a>
     </nav>
   </div>
 </header>
 <div class="doc-layout">
 <aside class="doc-sidebar"><div class="doc-sidebar-inner">
-<div class="doc-cat"><div class="doc-cat-label">入门</div><ul>
-<li><a href="quick-start.html">快速开始</a></li>
-<li><a href="install.html">安装</a></li>
-<li><a href="dev-channel.html">测试通道</a></li>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_start">Getting started</div><ul>
+<li><a href="quick-start.html" data-i18n="doc_quick-start">Quick start</a></li>
+<li><a href="install.html" data-i18n="doc_install">Install</a></li>
+<li><a href="dev-channel.html" data-i18n="doc_dev-channel">Pre-release channel</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label">面板使用</div><ul>
-<li><a href="panel-config.html">面板配置</a></li>
-<li><a href="nat-port.html">NAT 与端口</a></li>
-<li><a href="listeners.html">节点</a></li>
-<li><a href="users-traffic.html">用户与流量</a></li>
-<li><a href="subscription.html">订阅</a></li>
-<li><a href="core.html">核心</a></li>
-<li><a href="share.html">分享</a></li>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_panel">Panel</div><ul>
+<li><a href="panel-config.html" data-i18n="doc_panel-config">Panel config</a></li>
+<li><a href="nat-port.html" data-i18n="doc_nat-port">NAT & ports</a></li>
+<li><a href="listeners.html" data-i18n="doc_listeners">Listeners</a></li>
+<li><a href="users-traffic.html" data-i18n="doc_users-traffic">Users & traffic</a></li>
+<li><a href="subscription.html" data-i18n="doc_subscription">Subscriptions</a></li>
+<li><a href="core.html" data-i18n="doc_core">Core</a></li>
+<li><a href="share.html" data-i18n="doc_share">Share</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label">运维</div><ul>
-<li><a href="cluster.html" class="active">多机节点</a></li>
-<li><a href="telegram-bot.html">Telegram</a></li>
-<li><a href="ssl-cert.html">SSL 证书</a></li>
-<li><a href="system-settings.html">系统设置</a></li>
-<li><a href="backup-restore.html">备份恢复</a></li>
-<li><a href="security.html">安全</a></li>
-<li><a href="verify-release-signature.html">签名校验</a></li>
-<li><a href="troubleshoot.html">排障</a></li>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_ops">Operations</div><ul>
+<li><a href="cluster.html" class="active" data-i18n="doc_cluster">Cluster</a></li>
+<li><a href="telegram-bot.html" data-i18n="doc_telegram-bot">Telegram</a></li>
+<li><a href="ssl-cert.html" data-i18n="doc_ssl-cert">SSL certificates</a></li>
+<li><a href="system-settings.html" data-i18n="doc_system-settings">System settings</a></li>
+<li><a href="backup-restore.html" data-i18n="doc_backup-restore">Backup & restore</a></li>
+<li><a href="security.html" data-i18n="doc_security">Security</a></li>
+<li><a href="verify-release-signature.html" data-i18n="doc_verify-release-signature">Verify signatures</a></li>
+<li><a href="troubleshoot.html" data-i18n="doc_troubleshoot">Troubleshooting</a></li>
 </ul></div>
-<div class="doc-cat"><div class="doc-cat-label">API</div><ul>
-<li><a href="api-auth.html">API 与鉴权</a></li>
+<div class="doc-cat"><div class="doc-cat-label" data-i18n="doc_cat_api">API</div><ul>
+<li><a href="api-auth.html" data-i18n="doc_api-auth">API & auth</a></li>
 </ul></div>
 </div></aside>
   <main class="doc-main">
     <div class="doc-content">
-      <h1>多机节点</h1>
+      <h1 data-i18n="doc_cluster">Cluster</h1>
+      <p class="notice" data-i18n="docs_note">Article body is currently maintained in Chinese; navigation follows your language.</p>
       <p>用于从本机面板 <strong>登记其它 3M-UI 实例</strong>，做健康检查与受限远程管控。</p>
 <h2>登记远程面板</h2>
 <p>填写：</p>
@@ -128,29 +130,30 @@
   <div class="wrap footer-inner">
     <div class="footer-brand">
       <strong>3m-ui</strong>
-      <p>轻量自托管的 Mihomo 管理面板</p>
+      <p data-i18n="foot_tag">Lightweight self-hosted Mihomo panel</p>
     </div>
     <div class="footer-cols">
       <div>
-        <h4>产品</h4>
-        <a href="../index.html#features">功能</a>
-        <a href="../index.html#install">安装</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/releases">Releases</a>
+        <h4 data-i18n="foot_product">Product</h4>
+        <a href="../index.html#features" data-i18n="foot_features">Features</a>
+        <a href="../index.html#install" data-i18n="foot_install">Install</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/releases" data-i18n="foot_releases">Releases</a>
       </div>
       <div>
-        <h4>文档</h4>
-        <a href="../docs/">文档首页</a>
-        <a href="../docs/quick-start.html">快速开始</a>
-        <a href="../docs/troubleshoot.html">排障</a>
+        <h4 data-i18n="foot_docs">Docs</h4>
+        <a href="../docs/" data-i18n="foot_docs_home">Docs home</a>
+        <a href="../docs/quick-start.html" data-i18n="foot_qs">Quick start</a>
+        <a href="../docs/troubleshoot.html" data-i18n="foot_tr">Troubleshooting</a>
       </div>
       <div>
-        <h4>社区</h4>
-        <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a>
-        <a href="https://github.com/kazeyukiro/3m-ui/issues">Issues</a>
+        <h4 data-i18n="foot_community">Community</h4>
+        <a href="https://github.com/kazeyukiro/3m-ui" data-i18n="foot_github">GitHub</a>
+        <a href="https://github.com/kazeyukiro/3m-ui/issues" data-i18n="foot_issues">Issues</a>
       </div>
     </div>
   </div>
   <div class="wrap footer-bottom">© 3m-ui · <a href="https://github.com/kazeyukiro/3m-ui">GitHub</a></div>
 </footer>
+<script src="../i18n.js"></script>
 </body>
 </html>
