@@ -73,7 +73,7 @@
 <h2>After install</h2>
 <p>Default username is <code>admin</code>. A one-time random password is printed at install — change it on first login.</p>
 <pre><code class="language-bash">sudo 3m-ui
-sudo 3m-ui update --stable</code></pre>
+sudo 3m-ui update</code></pre>
 <p>Panel: <code>http://SERVER_IP:8080/</code> (or your chosen port).</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>环境要求</h2>
@@ -117,7 +117,7 @@ sudo 3m-ui help     # 子命令列表
 <p><strong>推荐</strong>（v1.0.0 起入口脚本已支持）：</p>
 <pre><code class="language-bash">sudo 3m-ui update
 # 指定版本：
-sudo 3m-ui update v1.0.0
+sudo 3m-ui update v1.0.6
 </code></pre>
 <p>若本机仍是旧入口脚本（<code>未知命令: update</code>），可先用：</p>
 <pre><code class="language-bash">curl -fsSL https://raw.githubusercontent.com/kazeyukiro/3m-ui/main/scripts/update.sh | sudo bash
