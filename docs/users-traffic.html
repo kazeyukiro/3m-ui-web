@@ -61,8 +61,10 @@
       <div data-doc-lang="en" class="is-visible">
 <h2>Users and traffic</h2>
 <p>Create proxy users, bind listeners, set traffic quotas, expiry, IP or HWID limits. Batch enable/disable and extend quotas from the users page.</p>
+<p>Creating or updating credentials returns after the panel DB write; injection into Mihomo is scheduled asynchronously (debounced), same pattern as listener saves.</p>
 </div>
-      <div data-doc-lang="zh-CN" hidden><h2>用户字段</h2>
+      <div data-doc-lang="zh-CN" hidden><p>创建或修改用户凭据后，面板会先写库并立即返回；注入到 Mihomo 的配置在后台短延迟后应用（与节点保存同一模式）。</p>
+<h2>用户字段</h2>
 <table>
 <thead>
 <tr>

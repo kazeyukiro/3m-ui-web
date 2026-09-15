@@ -62,6 +62,11 @@
 <h2>API and authentication</h2>
 <p>HTTP API is under <code>/api/v1</code>. Login returns a JWT Bearer token. Protected routes require <code>Authorization: Bearer &lt;token&gt;</code>.</p>
 <p>When <code>must_change_password</code> is set, only password change and limited auth routes are allowed until the password is updated.</p>
+<h3>OpenAPI</h3>
+<p>Machine-readable spec: <code>GET /api/v1/openapi.yaml</code> (JWT required on most installs).</p>
+<h3>Listeners and users — async core apply</h3>
+<p>Creating, updating, or deleting a listener returns after the panel database write. Mihomo <code>ApplyConfig</code> runs in the background (debounced ~400ms). User create/update that changes credentials uses the same pattern. A <code>201</code>/<code>200</code> does not mean the core has finished reloading. For a synchronous reload use the node reload / core restart endpoints documented in OpenAPI.</p>
+<p>One-click listener create: <code>POST /api/v1/nodes/quick</code> with JSON <code>{"name":"...","protocol":"vless"}</code> (alias <code>/listeners/quick</code>).</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>基址</h2>
 <pre><code class="language-text">http(s)://&lt;host&gt;:&lt;port&gt;/api/v1
@@ -117,7 +122,10 @@ Content-Type: application/json
 </tr>
 </tbody>
 </table>
-<p>OpenAPI：<code>GET /api/v1/openapi.yaml</code>（若已启用）。</p>
+<p>OpenAPI：<code>GET /api/v1/openapi.yaml</code>（多数安装需带 JWT）。</p>
+<h3>节点与用户 — 异步应用内核配置</h3>
+<p>创建 / 更新 / 删除节点会在<strong>面板数据库写成功后立即返回</strong>；Mihomo <code>ApplyConfig</code> 在后台约 400ms 防抖执行。用户创建或改凭据后的注入同样异步。<code>201</code>/<code>200</code> 不代表内核已重载完成。需要同步重载时，使用节点 reload 或核心重启类接口（见 OpenAPI）。</p>
+<p>一键创建节点：<code>POST /api/v1/nodes/quick</code>，JSON 示例 <code>{"name":"节点1","protocol":"vless"}</code>（别名 <code>/listeners/quick</code>）。</p>
 <h2>公共订阅</h2>
 <p>订阅接口使用 <strong>sub_token</strong>，不走管理员 JWT。详见 <a href="subscription.html">订阅</a>。</p>
 <h2>多机远程</h2>

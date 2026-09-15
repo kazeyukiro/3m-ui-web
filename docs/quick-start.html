@@ -64,7 +64,8 @@
 <li>Install with the one-click script on a clean Linux host.</li>
 <li>Open the panel and sign in with the printed credentials.</li>
 <li>Change the admin password when prompted.</li>
-<li>Create a listener (node), create a user, bind the node, copy the subscription URL.</li>
+<li>Create a listener (node) — <strong>Quick create</strong> only needs protocol + name; full form for advanced options. Saves return after the DB write; Mihomo reloads in the background shortly after.</li>
+<li>Create a user, bind the node, copy the subscription URL.</li>
 </ol>
 <p>See <a href="install.html">Install</a> and <a href="listeners.html">Listeners</a> for details.</p>
 </div>
@@ -80,14 +81,12 @@
 </ol>
 <p>若启动失败，查看 <strong>运行日志</strong> 与 <code>journalctl -u 3m-ui -f</code>。</p>
 <h2>3. 创建 Listener（节点）</h2>
-<p>进入 <strong>节点管理</strong> → 新建：</p>
+<p>进入 <strong>节点管理</strong>：</p>
 <ul>
-<li>协议：如 VLESS / VMess / Trojan / Hysteria2 等</li>
-<li>端口、绑定地址（IPv4 <code>0.0.0.0</code>、IPv6 <code>::</code> 或双栈相关设置）</li>
-<li>TLS / REALITY 等安全选项按需填写</li>
-<li><strong>Public Host / Public Port</strong>（可选）：生成分享链接与订阅时对外展示的地址</li>
+<li><strong>一键创建</strong>：只需选协议、填名称；端口与凭据自动生成（推荐入门）</li>
+<li>或完整新建：协议（如 VLESS / VMess / Trojan / Hysteria2）、端口、绑定地址、TLS / REALITY、<strong>Public Host / Public Port</strong> 等</li>
 </ul>
-<p>保存后，面板会生成/更新 Mihomo 配置并尝试应用。</p>
+<p>保存成功表示已写入面板数据库；Mihomo 配置会在后台短暂延迟后应用。若列表已有节点但客户端暂时连不上，等 1～2 秒再测，或点重载。</p>
 <h2>4. 创建用户</h2>
 <p>进入 <strong>用户管理</strong> → 新建：</p>
 <ul>

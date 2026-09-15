@@ -65,6 +65,7 @@
 <li>Confirm panel port is listening and not blocked by firewall</li>
 <li>After password change, use the new password; session tokens rotate with session_version</li>
 <li>Mihomo config validation errors appear when applying listeners — fix fields and re-apply</li>
+<li>If create/delete shows a network error but the list already changed: the panel wrote the DB first and applies Mihomo in the background. Refresh the list and wait 1–2 seconds; this is expected, not a failed save.</li>
 </ul>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>面板无法启动</h2>
@@ -137,6 +138,9 @@ journalctl -u 3m-ui -n 50  # 查看系统日志
   -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;&lt;password&gt;&quot;}'
 </code></pre>
 <p>返回的 <code>token</code> 字段即为 JWT，填入集群设置的 <code>api_token</code>。</p>
+<h2>创建/删除节点提示失败，但列表已变化</h2>
+<p>节点与用户变更会<strong>先写面板数据库并立即返回</strong>，Mihomo 配置在后台短延迟后应用。浏览器若在重载期间断连，可能看到「无法连接面板 API」类提示，但刷新列表后节点已存在或已删除。属预期行为：等 1～2 秒再测连通性即可。</p>
+
 <h3>远程健康检查超时</h3>
 <p>多个远程服务器会<strong>并行</strong>健康检查。如果某个服务器网络不稳定，可能需要增加超时时间或检查网络连接。</p></div>
     </div>

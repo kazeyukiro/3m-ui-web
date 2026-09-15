@@ -61,7 +61,11 @@
       <div data-doc-lang="en" class="is-visible">
 <h2>Listeners (nodes)</h2>
 <p>Create inbound listeners from the panel. Supported protocols follow the Mihomo listener model (VLESS, VMess, Trojan, Shadowsocks, Hysteria2, TUIC, and more).</p>
-<p>Apply configuration after changes so Mihomo reloads safely. Use runtime status / connectivity checks to verify sockets.</p>
+<h3>One-click create</h3>
+<p>Use <strong>Quick create</strong> when you only need a protocol and a name. The panel allocates a free port and fills credentials / REALITY–TLS defaults. Full form create is still available for advanced fields.</p>
+<h3>How saves work</h3>
+<p>Create / update / delete write the panel database first and return success immediately. Mihomo config application is <strong>debounced in the background</strong> (about 400ms), same idea as user credential sync. A successful UI response does not mean the core has finished reloading yet — wait a moment, then use runtime status / connectivity checks. Activation failures are logged and do not roll back the panel record; fix the config and reload if needed.</p>
+<p>API: <code>POST /api/v1/nodes</code>, <code>POST /api/v1/nodes/quick</code> (aliases under <code>/listeners</code>). OpenAPI: <code>GET /api/v1/openapi.yaml</code>.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>对应 Mihomo 的 <strong>inbound / listener</strong>，在面板中称为节点。</p>
 <h2>创建与编辑</h2>
@@ -73,8 +77,12 @@
 <li>TLS 证书路径或由上层反代终止 TLS</li>
 <li><strong>Public Host / Public Port</strong>：客户端看到的地址（CDN、多 IP、IPv6 时很有用）</li>
 </ul>
-<p>保存后走配置生成 → 校验 → 应用；失败会尝试回滚，避免写坏核心配置。</p>
-<p>在 <strong>配置引擎</strong> 中可将「生成 / 校验 / 应用」分开操作：生成只预览 YAML，不会写盘；确认后再应用。误操作可用回滚恢复上一份配置。</p>
+<h3>一键创建</h3>
+<p>只需选择<strong>协议</strong>并填写<strong>名称</strong>即可创建。端口自动分配，凭据与 REALITY/TLS 默认值由服务端生成。完整表单仍可用于精细配置。</p>
+<h3>保存如何生效</h3>
+<p>创建 / 更新 / 删除会<strong>先写入面板数据库并立即返回成功</strong>，再在后台约 400ms 防抖后应用 Mihomo 配置（与用户凭据同步同一思路）。界面提示成功不代表内核已重载完成，请稍等片刻，再用运行时状态 / 连通性检查确认。内核应用失败会写日志，<strong>不会回滚</strong>面板中的节点记录；修好配置后可再重载。</p>
+<p>API：<code>POST /api/v1/nodes</code>、<code>POST /api/v1/nodes/quick</code>（亦有 <code>/listeners</code> 别名）。OpenAPI：<code>GET /api/v1/openapi.yaml</code>。</p>
+<p>在 <strong>配置引擎</strong> 中仍可将「生成 / 校验 / 应用」分开操作：生成只预览 YAML，不会写盘；确认后再应用。误操作可用回滚恢复上一份配置。</p>
 <h2>协议</h2>
 <p>常见支持（以当前版本协议表为准）：</p>
 <ul>
