@@ -67,18 +67,12 @@
 <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
 <tbody>
 <tr><td><code>ip_limit</code></td><td><code>0</code> = unlimited concurrent source IPs. When set, the panel polls Mihomo connections about every <strong>5 seconds</strong> and closes excess IPs (not blocked at handshake).</td></tr>
-<tr><td><code>hwid_limit</code></td><td><code>0</code> = no device cap (still records devices when the client sends <code>x-hwid</code>). When <code>&gt;0</code>, subscription fetches without a usable <code>x-hwid</code> are <strong>403</strong>; at most N devices.</td></tr>
 <tr><td><code>sub_pull_limit</code></td><td><code>0</code> = unlimited. Max successful subscription downloads per <strong>rolling 24 hours</strong>; over limit returns <strong>429</strong>.</td></tr>
 </tbody>
 </table>
 <h2>Per-node traffic &amp; multiplier</h2>
 <p>Each node has a <strong>traffic multiplier</strong> (default 1). Raw bytes on that node × multiplier are added to the user’s quota (<code>traffic_used</code>).</p>
 <p>Users page → node-traffic action shows per-node raw and billed usage. API: <code>GET /api/v1/users/{id}/node-traffic</code>.</p>
-<h2>HWID / device list</h2>
-<p>Devices appear only when a client pulls the <strong>user subscription URL</strong> and sends Happ/Remnawave-style headers (<code>x-hwid</code>, optional <code>x-device-os</code> / <code>x-device-model</code>). Stock Clash Meta / v2rayNG usually do <strong>not</strong> send HWID — the list stays empty. Use Happ or v2RayTun (HWID on), then <strong>update subscription</strong>. Check panel logs for <code>hwid: registered</code> / <code>hwid: seen</code>.</p>
-<p>Manage devices from Users → device icon. API: <code>GET/DELETE /api/v1/users/{id}/hwid-devices</code>.</p>
-</div>
-      <div data-doc-lang="zh-CN" hidden><p>创建或修改用户凭据后，面板会先写库并立即返回；注入到 Mihomo 的配置在后台短延迟后应用（与节点保存同一模式）。</p>
 <h2>用户字段</h2>
 <table>
 <thead>
@@ -117,10 +111,6 @@
 <td>并发源 IP 上限，<code>0</code> 不限；约每 <strong>5 秒</strong>根据 Mihomo 连接踢掉超额 IP（非握手硬拦）</td>
 </tr>
 <tr>
-<td>HWID 限制</td>
-<td><code>0</code> 不限设备数（有 <code>x-hwid</code> 仍会登记）；<code>&gt;0</code> 时订阅必须带有效 HWID，否则 403；最多 N 台设备</td>
-</tr>
-<tr>
 <td>订阅拉取次数</td>
 <td><code>0</code> 不限；滚动 <strong>24 小时</strong>内最多成功拉取 N 次，超限 429</td>
 </tr>
@@ -153,8 +143,6 @@
 <p>节点可配置 <strong>流量倍率</strong>（默认 1）。该节点上的<strong>实际</strong>流量 × 倍率后计入用户总配额。</p>
 <p>用户管理中的「节点流量」可查看分节点实际用量与计费用量。API：<code>GET /api/v1/users/{id}/node-traffic</code>。</p>
 <p>重置用户流量会清空其分节点明细；功能启用前的历史流量只有用户合计，无分节点拆分。</p>
-<h2>设备列表为空？</h2>
-<p>仅当客户端拉取<strong>用户订阅链接</strong>并发送 <code>x-hwid</code> 时才会出现在「设备」中。Happ / v2RayTun（开启 HWID）会发送；普通 Clash Meta / v2rayNG 通常不发送。请强制<strong>更新订阅</strong>，并确认反代未剥离自定义请求头。日志中有 <code>hwid: registered</code> 表示服务端已收到。</p>
 </div>
     </div>
   </main>

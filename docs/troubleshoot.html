@@ -68,7 +68,6 @@
 <li>If create/delete shows a network error but the list already changed: the panel wrote the DB first and applies Mihomo in the background. Refresh the list and wait 1–2 seconds; this is expected, not a failed save.</li>
 <li><strong>Disk full / large <code>/var/lib/3m-ui/backups</code></strong>: install snapshots accumulate. Use Settings → Backup → Cleanup (or API <code>POST /system/backups/cleanup</code>). See <a href="backup-restore.html">Backup &amp; restore</a>.</li>
 <li><strong>Update rolls back with <code>uidx_user_hwid already exists</code></strong>: fixed in recent builds — update again after CI ships the fix. The panel drops the legacy HWID index before migrate.</li>
-<li><strong>HWID device list empty</strong>: client must pull the <em>user</em> subscription URL with <code>x-hwid</code> (Happ / v2RayTun). Stock Clash does not. Logs show <code>hwid: registered</code> when OK. See <a href="users-traffic.html">Users &amp; traffic</a>.</li>
 </ul>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>面板无法启动</h2>
@@ -115,8 +114,6 @@ journalctl -u 3m-ui -n 50  # 查看系统日志
 <p>安装与更新快照会堆在 <code>/var/lib/3m-ui/backups</code>。在面板 <strong>设置 → 备份</strong> 使用「清理备份」，或调用 <code>POST /api/v1/system/backups/cleanup</code>。说明见 <a href="backup-restore.html">备份与恢复</a>。</p>
 <h3>更新失败回滚（uidx_user_hwid already exists）</h3>
 <p>旧 HWID 表索引与新表冲突。请使用已修复的版本再次 <code>3m-ui update</code>（启动前会清理遗留索引）。</p>
-<h3>设备列表为空</h3>
-<p>仅当客户端拉取<strong>用户订阅链接</strong>并发送 <code>x-hwid</code> 时才会登记。Happ / v2RayTun（开启 HWID）会发送；普通 Clash Meta 通常不会。日志出现 <code>hwid: registered</code> 表示成功。详见 <a href="users-traffic.html">用户与流量</a>。</p>
 <h3>流量数据不更新</h3>
 <p>检查 Mihomo external-controller 是否正常：</p>
 <pre><code class="language-bash">curl -H &quot;Authorization: Bearer &lt;secret&gt;&quot; http://127.0.0.1:9090/connections

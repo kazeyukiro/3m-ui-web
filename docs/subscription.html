@@ -67,7 +67,7 @@
 <li><code>?target=singbox</code>: sing-box JSON</li>
 <li><code>?html=1</code>: HTML info page with QR</li>
 </ul>
-<p>HWID and <code>sub_pull_limit</code> are enforced on the user subscription path (see <a href="users-traffic.html">Users &amp; traffic</a>). TUIC/Hysteria2 share links include client TLS params.</p>
+<p><code>sub_pull_limit</code> are enforced on the user subscription path (see <a href="users-traffic.html">Users &amp; traffic</a>). TUIC/Hysteria2 share links include client TLS params.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>订阅是一个 URL，客户端定期拉取即可同步节点与流量信息。</p>
 <h2>URL 形式</h2>
@@ -88,9 +88,6 @@
 </code></pre>
 <h2>客户端自动识别</h2>
 <p>未指定 <code>target</code> 时，会根据 <code>User-Agent</code> 猜测（Clash / Sing-box / v2rayNG 等）。</p>
-<h2>HWID 与拉取次数</h2>
-<p>用户订阅路径会执行 HWID 与 <code>sub_pull_limit</code> 策略（见 <a href="users-traffic.html">用户与流量</a>）。TUIC / Hysteria2 分享链会带上客户端 TLS 相关参数（SNI、<code>allow_insecure</code> 等）。</p>
-
 <h2>响应头</h2>
 <table>
 <thead>
