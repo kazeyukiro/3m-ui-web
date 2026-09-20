@@ -59,8 +59,32 @@
       <h1 data-i18n="doc_backup-restore">Backup &amp; restore</h1>
       <p class="notice" data-i18n="docs_note">Switch language in the top bar. Chinese and English article bodies are provided.</p>
       <div data-doc-lang="en" class="is-visible">
-<h2>Backup and restore</h2>
-<p>Install/update scripts keep snapshots under <code>/var/lib/3m-ui/backups</code>. Back up <code>/etc/3m-ui</code> and <code>/var/lib/3m-ui</code> for a full restore.</p>
+<h2>Download backup (panel)</h2>
+<p>Settings → Backup → <strong>Download backup</strong> exports a <code>.zip</code> (SQLite DB + Mihomo config snapshot + meta). Use <strong>Restore</strong> to upload a zip or raw <code>.db</code>, then restart the panel.</p>
+<h2>On-disk install snapshots</h2>
+<p><code>3m-ui update</code> / install scripts write tarballs under:</p>
+<pre><code class="language-text">/var/lib/3m-ui/backups/
+</code></pre>
+<p>These can grow large (several GB). In the panel: <strong>Settings → Backup</strong> lists them with total size. You can:</p>
+<ul>
+<li>Delete one snapshot</li>
+<li><strong>Cleanup</strong>: keep the newest <em>N</em> and/or delete entries older than <em>D</em> days</li>
+</ul>
+<h3>API</h3>
+<pre><code class="language-bash"># List on-disk backups
+curl -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/backups
+
+# Cleanup: keep last 3, also drop anything older than 7 days
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"keep":3,"older_than_days":7}' \
+  https://panel.example.com/api/v1/system/backups/cleanup
+
+# Delete one by name
+curl -X DELETE -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/backups/20260920T152614Z-100903.tar.gz
+</code></pre>
+<p>Also back up <code>/etc/3m-ui</code>, <code>listener-certs/</code>, and <code>mihomo/</code> for a full machine restore. After DB restore: <code>sudo 3m-ui restart</code>.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>下载备份</h2>
 <p>在「系统设置 → 安全与备份」点击「下载备份」。系统生成一个 <code>.zip</code> 文件，通常包含：</p>
@@ -112,15 +136,37 @@
 <p>否则进程可能仍使用旧文件句柄。恢复接口可能返回 <code>restart_required: true</code>。</p>
 <h3>大小限制</h3>
 <p>上传大小上限以当前版本为准（常见为 128 MiB）。</p>
+<h2>磁盘上的安装/更新快照</h2>
+<p><code>3m-ui update</code> 会在下列目录写入 <code>.tar.gz</code> 快照，体积可能达到数 GB：</p>
+<pre><code class="language-text">/var/lib/3m-ui/backups/
+</code></pre>
+<p>在面板 <strong>设置 → 备份</strong> 可查看列表与总大小，支持：</p>
+<ul>
+<li>删除单个快照</li>
+<li><strong>清理备份</strong>：保留最近 N 份，和/或删除早于 D 天的快照</li>
+</ul>
 <h2>API</h2>
-<pre><code class="language-bash"># 下载备份
-curl -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+<pre><code class="language-bash"># 下载备份（面板导出 zip）
+curl -H "Authorization: Bearer &lt;token&gt;" \
   https://panel.example.com/api/v1/system/backup \
   -o 3m-ui-backup.zip
 
+# 列出磁盘快照
+curl -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/backups
+
+# 清理：保留最近 3 份，并删除超过 7 天的
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"keep":3,"older_than_days":7}' \
+  https://panel.example.com/api/v1/system/backups/cleanup
+
+# 删除单个
+curl -X DELETE -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/backups/20260920T152614Z-100903.tar.gz
+
 # 恢复数据库
-curl -X POST -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
-  -F &quot;database=@3m-ui-backup.zip&quot; \
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+  -F "database=@3m-ui-backup.zip" \
   https://panel.example.com/api/v1/system/backup/restore-db
 </code></pre></div>
     </div>
