@@ -71,6 +71,9 @@
 <tr><td><code>sub_pull_limit</code></td><td><code>0</code> = unlimited. Max successful subscription downloads per <strong>rolling 24 hours</strong>; over limit returns <strong>429</strong>.</td></tr>
 </tbody>
 </table>
+<h2>Per-node traffic &amp; multiplier</h2>
+<p>Each node has a <strong>traffic multiplier</strong> (default 1). Raw bytes on that node × multiplier are added to the user’s quota (<code>traffic_used</code>).</p>
+<p>Users page → node-traffic action shows per-node raw and billed usage. API: <code>GET /api/v1/users/{id}/node-traffic</code>.</p>
 <h2>HWID / device list</h2>
 <p>Devices appear only when a client pulls the <strong>user subscription URL</strong> and sends Happ/Remnawave-style headers (<code>x-hwid</code>, optional <code>x-device-os</code> / <code>x-device-model</code>). Stock Clash Meta / v2rayNG usually do <strong>not</strong> send HWID — the list stays empty. Use Happ or v2RayTun (HWID on), then <strong>update subscription</strong>. Check panel logs for <code>hwid: registered</code> / <code>hwid: seen</code>.</p>
 <p>Manage devices from Users → device icon. API: <code>GET/DELETE /api/v1/users/{id}/hwid-devices</code>.</p>
@@ -146,6 +149,10 @@
 <li>单节点 URI 与二维码（若已实现）</li>
 </ul>
 <p>复制链接时注意使用 HTTPS 与正确公网 Host。</p>
+<h2>按节点流量与倍率</h2>
+<p>节点可配置 <strong>流量倍率</strong>（默认 1）。该节点上的<strong>实际</strong>流量 × 倍率后计入用户总配额。</p>
+<p>用户管理中的「节点流量」可查看分节点实际用量与计费用量。API：<code>GET /api/v1/users/{id}/node-traffic</code>。</p>
+<p>重置用户流量会清空其分节点明细；功能启用前的历史流量只有用户合计，无分节点拆分。</p>
 <h2>设备列表为空？</h2>
 <p>仅当客户端拉取<strong>用户订阅链接</strong>并发送 <code>x-hwid</code> 时才会出现在「设备」中。Happ / v2RayTun（开启 HWID）会发送；普通 Clash Meta / v2rayNG 通常不发送。请强制<strong>更新订阅</strong>，并确认反代未剥离自定义请求头。日志中有 <code>hwid: registered</code> 表示服务端已收到。</p>
 </div>
