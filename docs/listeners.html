@@ -66,6 +66,8 @@
 <h3>How saves work</h3>
 <p>Create / update / delete write the panel database first and return success immediately. Mihomo config application is <strong>debounced in the background</strong> (about 400ms), same idea as user credential sync. A successful UI response does not mean the core has finished reloading yet — wait a moment, then use runtime status / connectivity checks. Activation failures are logged and do not roll back the panel record; fix the config and reload if needed.</p>
 <p>API: <code>POST /api/v1/nodes</code>, <code>POST /api/v1/nodes/quick</code> (aliases under <code>/listeners</code>). OpenAPI: <code>GET /api/v1/openapi.yaml</code>.</p>
+<h3>Batch certificate</h3>
+<p>Select multiple nodes and apply one TLS certificate (PEM body, allowlisted file paths such as Let's Encrypt, or reuse panel SSL). API: <code>POST /api/v1/nodes/batch/certificate</code>.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>对应 Mihomo 的 <strong>inbound / listener</strong>，在面板中称为节点。</p>
 <h2>创建与编辑</h2>
@@ -96,6 +98,8 @@
 <p>用户可绑定一个或多个 Listener；订阅与分享链接只包含其有权使用的入站。</p>
 <h2>配置引擎</h2>
 <p><strong>配置</strong> 页面可预览生成的 Mihomo YAML、做可视化或高级编辑。生产环境建议以面板表单为主，减少手工改 YAML 导致的不一致。</p>
+<h2>批量应用证书</h2>
+<p>节点列表可多选后一键写入证书与私钥（PEM、文件路径或复用面板 SSL）。API：<code>POST /api/v1/nodes/batch/certificate</code>，body 含 <code>ids</code> 与 PEM 或 <code>cert_file</code>/<code>key_file</code> 或 <code>from_panel_ssl</code>。</p>
 <h2>TLS 自签证书</h2>
 <p>需要服务端证书且未填写 PEM 时，面板会签发自签证书（标记 Organization=<code>3m-ui</code>），并写入：</p>
 <p><code>/var/lib/3m-ui/listener-certs/{id}.crt</code> / <code>.key</code></p>
