@@ -79,6 +79,7 @@
           <li><strong>WARP</strong> (optional): register Cloudflare WARP into visual-config outbounds and optionally set final <code>MATCH</code>.</li>
           <li>Click <strong>Save</strong>, then <strong>Generate &amp; apply</strong> (or confirm the prompt) so Mihomo reloads.</li>
         </ol>
+                <p><strong>Community templates</strong> also create matching <code>proxy-groups</code> (e.g. 代理 / AI / TG, or Google / Telegram / 漏网之鱼). Leaf members default to existing outbounds or <code>DIRECT</code>; assign real nodes or WARP into those groups after applying.</p>
         <p>GEOSITE/GEOIP templates need MetaCubeX geodata — update under <strong>Settings → Geo</strong>.</p>
 
         <h2>How to use Config engine</h2>
@@ -126,6 +127,7 @@ POST    /api/v1/config/apply</code></pre>
           <li>可选 <strong>WARP</strong>：注册 Cloudflare WARP 写入出站，并可选改最终 <code>MATCH</code>。</li>
           <li>点 <strong>保存</strong>，再在弹窗里 <strong>生成并应用</strong>（或点 Apply），Mihomo 才会加载新规则。</li>
         </ol>
+                <p><strong>社区模板</strong>会一并写入对应的<strong>策略组</strong>（如 代理 / AI / TG，或 Google / Telegram / 漏网之鱼），不是只有规则。叶子成员默认用已有出站或 <code>DIRECT</code>；应用后请把真实节点或 WARP 填进各组。</p>
         <p>带 GEOSITE/GEOIP 的模板需要 MetaCubeX 地理数据：在 <strong>系统设置 → Geo</strong> 更新。</p>
 
         <h2>配置引擎怎么用</h2>
