@@ -65,11 +65,11 @@
         <table>
           <thead><tr><th>Page</th><th>What it controls</th></tr></thead>
           <tbody>
-            <tr><td><strong>Routing</strong></td><td>Mihomo <em>outbound</em> policy: <code>rules</code> + <code>proxy-groups</code> (and optional outbounds such as WARP). Stored in the <code>visual-config</code> fragment.</td></tr>
+            <tr><td><strong>Routing</strong></td><td><strong>Client subscription</strong> layout: <code>rules</code> + <code>proxy-groups</code> exported into Mihomo/Clash YAML for users. Also stored in <code>visual-config</code> (and merged into panel core config on generate/apply).</td></tr>
             <tr><td><strong>Config engine</strong></td><td>Builds the final <code>config.yaml</code> for Mihomo: default template + enabled fragments (including visual-config) + <strong>Listeners</strong> from the database. Then validate / apply / rollback.</td></tr>
           </tbody>
         </table>
-        <p>Default routing is only <code>MATCH,DIRECT</code> — correct for a pure inbound server. Change routing only if this host should divert traffic (e.g. via WARP).</p>
+        <p>Default is <code>MATCH,DIRECT</code> (minimal). After you set templates/groups, <strong>update the subscription in the client</strong> to load the new groups — they are not server-only anymore.</p>
 
         <h2>How to use Routing</h2>
         <ol>
@@ -113,11 +113,11 @@ POST    /api/v1/config/apply</code></pre>
         <table>
           <thead><tr><th>页面</th><th>管什么</th></tr></thead>
           <tbody>
-            <tr><td><strong>路由</strong></td><td>Mihomo <em>出站</em>策略：<code>rules</code> + <code>proxy-groups</code>（以及 WARP 等出站）。数据在 <code>visual-config</code> 片段里。</td></tr>
+            <tr><td><strong>路由</strong></td><td><strong>客户端订阅</strong>布局：<code>rules</code> + <code>proxy-groups</code> 会写入用户的 Mihomo/Clash YAML。数据在 <code>visual-config</code>（生成并应用时也会进入面板核心配置）。</td></tr>
             <tr><td><strong>配置引擎</strong></td><td>生成最终给 Mihomo 的 <code>config.yaml</code>：默认模板 + 启用的配置片段（含 visual-config）+ 数据库里的 <strong>节点 Listener</strong>。再校验 / 应用 / 失败回滚。</td></tr>
           </tbody>
         </table>
-        <p>默认只有 <code>MATCH,DIRECT</code>，适合<strong>纯入站机</strong>。只有当你希望本机转发也走分流（例如走 WARP）时，才需要改路由。</p>
+        <p>默认 <code>MATCH,DIRECT</code>。在路由页配置模板/策略组后，请在<strong>客户端更新订阅</strong>即可看到对应策略组（不再只是服务端分流）。</p>
 
         <h2>路由怎么用</h2>
         <ol>
