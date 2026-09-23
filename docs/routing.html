@@ -156,7 +156,24 @@ POST    /api/v1/config/validate
 POST    /api/v1/config/apply</code></pre>
       </div>
     </div>
-  </main>
+  
+<section class="card">
+  <h2 data-lang-en="Server WARP exit" data-lang-zh="服务端 WARP 出口">服务端 WARP 出口</h2>
+  <p data-lang-zh>用户 → 你的节点 → 面板 Mihomo → Cloudflare WARP → 网站（目标站看到 WARP IP）。</p>
+  <p data-lang-en>User → your node → panel Mihomo → Cloudflare WARP → site (destination sees a WARP IP).</p>
+  <ol data-lang-zh>
+    <li>路由页注入 WARP（可选：全部 MATCH WARP，或国内直连 + MATCH WARP）</li>
+    <li>保存后点「生成并应用」</li>
+    <li>社区分流模板仍只进客户端订阅，不会整包加载到服务端</li>
+  </ol>
+  <ol data-lang-en style="display:none">
+    <li>Routing → Inject WARP (all MATCH WARP, or CN DIRECT + MATCH WARP)</li>
+    <li>Save, then Generate &amp; apply</li>
+    <li>Community templates stay client-subscription only</li>
+  </ol>
+</section>
+
+</main>
 </div>
 <footer class="footer">
   <div class="wrap footer-inner">
