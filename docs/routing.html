@@ -76,10 +76,9 @@
           <li>Open <strong>Routing</strong> in the panel.</li>
           <li><strong>Proxy groups</strong>: add groups (<code>select</code> / <code>url-test</code> / <code>fallback</code> / <code>load-balance</code>) and list members (<code>DIRECT</code>, outbound names, other groups).</li>
           <li><strong>Rules</strong>: add rows (type + match value + target). Reorder with up/down. Use <strong>Templates</strong> for presets (DIRECT only, CN direct, community packs, etc.).</li>
-          <li><strong>WARP</strong> (optional): register Cloudflare WARP into visual-config outbounds and optionally set final <code>MATCH</code>.</li>
           <li>Click <strong>Save</strong>, then <strong>Generate &amp; apply</strong> (or confirm the prompt) so Mihomo reloads.</li>
         </ol>
-                <p><strong>Community templates</strong> also create matching <code>proxy-groups</code> (e.g. 代理 / AI / TG, or Google / Telegram / 漏网之鱼). Leaf members default to existing outbounds or <code>DIRECT</code>; assign real nodes or WARP into those groups after applying.</p>
+                <p><strong>Community templates</strong> also create matching <code>proxy-groups</code> (e.g. 代理 / AI / TG, or Google / Telegram / 漏网之鱼). Leaf members default to existing outbounds or <code>DIRECT</code>; assign real nodes into those groups after applying.</p>
         <p>GEOSITE/GEOIP templates need MetaCubeX geodata — update under <strong>Settings → Geo</strong>.</p>
 
         <h2>How to use Config engine</h2>
@@ -96,13 +95,11 @@
         <ul>
           <li><strong>Inbound only</strong>: leave rules as <code>MATCH,DIRECT</code>; manage nodes under Listeners; use Config only if apply failed.</li>
           <li><strong>CN direct + rest via group</strong>: Routing → template “CN direct” or community YiXuan/echs/MyClash → Save → Apply. Ensure Geo files exist.</li>
-          <li><strong>Exit via WARP</strong>: Routing → WARP inject (MATCH to WARP) → Apply.</li>
         </ul>
 
         <h2>API (summary)</h2>
         <pre><code>GET/PUT /api/v1/config/rules
 GET/PUT /api/v1/config/groups
-POST    /api/v1/config/routing/inject-warp
 POST    /api/v1/config/generate
 POST    /api/v1/config/validate
 POST    /api/v1/config/apply</code></pre>
@@ -124,10 +121,9 @@ POST    /api/v1/config/apply</code></pre>
           <li>打开面板 <strong>路由</strong>。</li>
           <li><strong>策略组</strong>：新建 <code>select</code> / <code>url-test</code> / <code>fallback</code> / <code>load-balance</code>，成员可写 <code>DIRECT</code>、出站名、其它组名。</li>
           <li><strong>规则</strong>：按行编辑（类型 + 匹配值 + 目标），可上移下移。用 <strong>模板</strong> 一键填入（仅直连、国内直连、社区模板等）。</li>
-          <li>可选 <strong>WARP</strong>：注册 Cloudflare WARP 写入出站，并可选改最终 <code>MATCH</code>。</li>
           <li>点 <strong>保存</strong>，再在弹窗里 <strong>生成并应用</strong>（或点 Apply），Mihomo 才会加载新规则。</li>
         </ol>
-                <p><strong>社区模板</strong>会一并写入对应的<strong>策略组</strong>（如 代理 / AI / TG，或 Google / Telegram / 漏网之鱼），不是只有规则。叶子成员默认用已有出站或 <code>DIRECT</code>；应用后请把真实节点或 WARP 填进各组。</p>
+                <p><strong>社区模板</strong>会一并写入对应的<strong>策略组</strong>（如 代理 / AI / TG，或 Google / Telegram / 漏网之鱼），不是只有规则。叶子成员默认用已有出站或 <code>DIRECT</code>；应用后请把真实节点填进各组。</p>
         <p>带 GEOSITE/GEOIP 的模板需要 MetaCubeX 地理数据：在 <strong>系统设置 → Geo</strong> 更新。</p>
 
         <h2>配置引擎怎么用</h2>
@@ -144,34 +140,17 @@ POST    /api/v1/config/apply</code></pre>
         <ul>
           <li><strong>只做入站</strong>：规则保持 <code>MATCH,DIRECT</code>；日常只管节点；配置引擎仅在应用失败时排查。</li>
           <li><strong>国内直连、其余走策略组</strong>：路由 → 模板「国内直连」或社区 YiXuan / echs / MyClash → 保存 → 应用。先更新 Geo。</li>
-          <li><strong>出口走 WARP</strong>：路由 → WARP 注入（MATCH 到 WARP）→ 应用。</li>
         </ul>
 
         <h2>API 摘要</h2>
         <pre><code>GET/PUT /api/v1/config/rules
 GET/PUT /api/v1/config/groups
-POST    /api/v1/config/routing/inject-warp
 POST    /api/v1/config/generate
 POST    /api/v1/config/validate
 POST    /api/v1/config/apply</code></pre>
       </div>
     </div>
-  
-<section class="card">
-  <h2 data-lang-en="Server WARP exit" data-lang-zh="服务端 WARP 出口">服务端 WARP 出口</h2>
-  <p data-lang-zh>用户 → 你的节点 → 面板 Mihomo → Cloudflare WARP → 网站（目标站看到 WARP IP）。</p>
-  <p data-lang-en>User → your node → panel Mihomo → Cloudflare WARP → site (destination sees a WARP IP).</p>
-  <ol data-lang-zh>
-    <li>路由页注入 WARP（可选：全部 MATCH WARP，或国内直连 + MATCH WARP）</li>
-    <li>保存后点「生成并应用」</li>
-    <li>社区分流模板仍只进客户端订阅，不会整包加载到服务端</li>
-  </ol>
-  <ol data-lang-en style="display:none">
-    <li>Routing → Inject WARP (all MATCH WARP, or CN DIRECT + MATCH WARP)</li>
-    <li>Save, then Generate &amp; apply</li>
-    <li>Community templates stay client-subscription only</li>
-  </ol>
-</section>
+
 
 </main>
 </div>
