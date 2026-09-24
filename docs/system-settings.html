@@ -64,6 +64,10 @@
 
 <h2>System settings</h2>
 <p>Theme, subscription page options, Telegram, public URL and related panel options live under Settings (grouped sections).</p>
+
+<h2>Cloudflare WARP</h2>
+<p>One-click registration builds a Mihomo outbound YAML fragment. Choose <strong>WireGuard</strong> or <strong>MASQUE</strong> before registering. YAML is copied when possible and shown in a themed dialog. MASQUE requires a Mihomo build that supports <code>type: masque</code>.</p>
+<p>API: <code>POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both</code>. This is <strong>not</strong> injected into Routing templates; paste YAML into the client or a manual outbound. See also the repo doc <code>docs/warp.md</code>.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>面板 <strong>系统设置</strong> 聚合运营向配置（多数存数据库，不必改 <code>config.yaml</code>）。</p>
 <h2>面板 / NAT（端口与公网 URL）</h2>
@@ -89,6 +93,10 @@
 
 <h2>GeoIP / GeoSite</h2>
 <p>一键下载 MetaCubeX 数据库到 Mihomo 数据目录，供路由规则使用。</p>
+
+<h2>Cloudflare WARP</h2>
+<p>一键注册生成 Mihomo 出站 YAML。注册前可选 <strong>WireGuard</strong> 或 <strong>MASQUE</strong>；成功后尽量复制到剪贴板并弹窗展示。MASQUE 需要内核支持 <code>type: masque</code>。</p>
+<p>接口：<code>POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both</code>。<strong>不会</strong>写入路由页模板；请把 YAML 用在客户端或自行合并出站。详见仓库 <code>docs/warp.md</code>。</p>
 <h2>流量重置</h2>
 <p>可配置每月重置日等策略（若版本已启用对应开关）。</p>
 <h2>模板</h2>
