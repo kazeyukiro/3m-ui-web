@@ -60,6 +60,11 @@
       <h1 data-i18n="doc_users-traffic">Users &amp; traffic</h1>
       <p class="notice" data-i18n="docs_note">Switch language in the top bar. Chinese and English article bodies are provided.</p>
       <div data-doc-lang="en" class="is-visible">
+
+<h2>Quick create</h2>
+<p>Users page → <strong>Quick create</strong>: optional username (auto if empty), generated password and UUID, optional bind-all local nodes. Credentials are shown once in a dialog.</p>
+<p>API: <code>POST /api/v1/users/quick</code> with body <code>{ "username"?: string, "bind_all_listeners"?: boolean, "remark"?: string }</code>. Response: <code>{ user, password, uuid }</code>. Full create remains <code>POST /api/v1/users</code>. OpenAPI: <code>GET /api/v1/openapi.yaml</code>.</p>
+
 <h2>Users and traffic</h2>
 <p>Create proxy users, bind listeners, set traffic quotas, expiry, and device limits. Batch enable/disable and extend quotas from the users page.</p>
 <p>Creating or updating credentials returns after the panel DB write; injection into Mihomo is scheduled asynchronously (debounced), same pattern as listener saves.</p>
