@@ -1,8 +1,12 @@
 # 3m-ui 官网与文档
 
-托管于 GitHub Pages，域名 https://3m-ui.top
+- 站点：https://3m-ui.top  
+- 技术栈：[VitePress](https://vitepress.dev/)（布局与风格对齐常见文档站：顶栏、侧栏、搜索、深色模式）
 
-- 文档：原 `3m-ui-docs` 内容已整合至 `/docs/`
-- 独立文档站已废弃，请使用本站文档
+```bash
+npm install
+npm run dev
+npm run build
+```
 
-源码面板：https://github.com/kazeyukiro/3m-ui
+面板源码：https://github.com/kazeyukiro/3m-ui
