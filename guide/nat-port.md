@@ -5,8 +5,11 @@ description: 3m-ui · NAT 与端口
 
 # NAT 与端口
 
-## NAT and ports
+面板端口（默认 **8080**）以及每个节点（Listener）端口都需要能被客户端访问。
 
-The panel port (default 8080) and each listener port must be reachable from clients. On NAT hosts, forward the panel port and node ports on your router or cloud security group.
+- 云厂商安全组 / 防火墙放行对应 TCP（及协议需要的 UDP）
+- 家宽 / NAT 环境请在路由器做端口转发
+- 启用面板 HTTPS 时，ACME 校验通常还需要 **80** 和/或 **443** 入站
 
-Set `public_url` so subscription links use your public domain or IP.
+节点接入地址可与面板域名完全不同，在 Listener 上单独填写公网 host/端口即可。
+

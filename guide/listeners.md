@@ -5,24 +5,20 @@ description: 3m-ui · 节点（Listeners）
 
 # 节点（Listeners）
 
-## Listeners (nodes)
+在面板中创建入站 Listener，协议模型与 Mihomo 官方 `listeners` 对齐（VLESS、VMess、Trojan、Shadowsocks、Hysteria2、TUIC 等）。
 
-Create inbound listeners from the panel. Supported protocols follow the Mihomo listener model (VLESS, VMess, Trojan, Shadowsocks, Hysteria2, TUIC, and more).
+### 一键创建
 
-### One-click create
+只需 **协议 + 名称**（端口等可自动生成），生成可用的默认字段；需要精细控制时用完整编辑表单。
 
-Use **Quick create** when you only need a protocol and a name. The panel allocates a free port and fills credentials / REALITY–TLS defaults. Full form create is still available for advanced fields.
+### 证书
 
-### How saves work
+- 面板 SSL：域名 ACME 或 IP 短效证书、或手动 PEM
+- 节点：可自签、上传，或 **一键将证书应用到多个节点**
 
-Create / update / delete write the panel database first and return success immediately. Mihomo config application is **debounced in the background** (about 400ms), same idea as user credential sync. A successful UI response does not mean the core has finished reloading yet — wait a moment, then use runtime status / connectivity checks. Activation failures are logged and do not roll back the panel record; fix the config and reload if needed.
+### 流量倍率
 
-API: `POST /api/v1/nodes`, `POST /api/v1/nodes/quick` (aliases under `/listeners`). OpenAPI: `GET /api/v1/openapi.yaml`.
+节点可设置倍率，用户计费流量 = 实际用量 × 倍率（详见用户与流量文档）。
 
-### Traffic multiplier
+保存节点后配置写入数据库；内核重载可能短暂影响 API，刷新列表即可。
 
-Field `traffic_multiplier` (default 1): raw traffic on this node × multiplier counts toward each user’s quota. Configure in the node form.
-
-### Batch certificate
-
-Select multiple nodes and apply one TLS certificate (PEM body, allowlisted file paths such as Let's Encrypt, or reuse panel SSL). API: `POST /api/v1/nodes/batch/certificate`.

@@ -5,36 +5,22 @@ description: 3m-ui · SSL 证书
 
 # SSL 证书
 
-## SSL certificates
+### 面板 HTTPS
 
-Panel TLS can use ACME or uploaded certificates. Listener self-signed certs are stored under the data directory and recovered across binary-only updates.
+- **域名**：Let's Encrypt（HTTP-01 / 常规 ACME 流程）
+- **公网 IP**：短效 IP 证书（需 80/443 可达）
+- **手动**：填写 fullchain / privkey 路径
 
+配错可用 SSH 救援（无需重装）：
 
----
-
-## 补充说明（仓库文档）
-
-# Batch apply TLS certificate to nodes
-
-Apply one certificate + private key to many listeners in a single request (Users → Nodes: select rows → **Apply cert**).
-
-## API
-
-`POST /api/v1/nodes/batch/certificate` (admin JWT)
-
-```json
-{
-  "ids": [1, 2, 3],
-  "certificate": "-----BEGIN CERTIFICATE-----...",
-  "private_key": "-----BEGIN PRIVATE KEY-----...",
-  "cert_file": "/etc/letsencrypt/live/example.com/fullchain.pem",
-  "key_file": "/etc/letsencrypt/live/example.com/privkey.pem",
-  "from_panel_ssl": false
-}
+```bash
+3m-ui reset-config --panel --yes
+systemctl restart 3m-ui
 ```
 
-Provide **either** PEM strings, **or** both file paths (allowlisted directories such as `/etc/letsencrypt/`, `/var/lib/3m-ui/`), **or** `from_panel_ssl: true` (panel SSL manual `cert_file` / `key_file`).
+### 节点证书
 
-Response: `{ "updated": [1, 2], "failed": [{ "id": 3, "name": "...", "error": "..." }] }`.
+自签、上传，或复用已申请证书；支持批量应用到多个 Listener。
 
-Writes `certificate` and `private-key` into each listener’s config JSON and schedules a Mihomo reload. Protocols that reject certificate mode (e.g. pure Reality) appear under `failed`.
+**通配符 `*.example.com`** 需要 DNS-01（certbot/acme.sh 等），面板内置 ACME 不能直接签通配符。
+

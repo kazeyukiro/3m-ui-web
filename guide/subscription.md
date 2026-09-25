@@ -5,42 +5,17 @@ description: 3m-ui · 订阅
 
 # 订阅
 
-## Subscriptions
+每个用户有一条订阅 URL，路径形如：
 
-Each user has a subscription token URL under `/api/v1/client/sub/<token>`.
+`/api/v1/client/sub/<token>`
 
-- Default / Clash Meta: Mihomo client YAML
+常见格式：
 
-- `?target=v2ray` / `base64`: **always** Base64 of share links (required by classic clients)
+- 默认 / Clash Meta：Mihomo 客户端 YAML
+- `?target=v2ray` 或 base64：分享链接的 Base64
+- 其他客户端目标以面板导出选项为准（如 sing-box）
 
-- `?target=singbox`: sing-box JSON
+请将 **面板公网 URL** 设为客户端能访问的地址，否则复制出的链接主机名可能不对。
 
-- `?html=1`: HTML info page with QR
+订阅内容中的分流规则来自 **客户端配置 / 路由模板**，不是服务端强制代用户翻墙；服务端入站侧常见为 `MATCH,DIRECT` 一类落地。
 
-`sub_pull_limit` are enforced on the user subscription path (see [Users & traffic](users-traffic.html)). TUIC/Hysteria2 share links include client TLS params.
-
-
----
-
-## 补充说明（仓库文档）
-
-# Subscription formats
-
-Public token URL (path may use `web_path` / custom sub base):
-
-`/api/v1/client/sub/{token}` or configured subscription base + token.
-
-## `?target=`
-
-| target | Body |
-|--------|------|
-| *(empty / clash / default)* | Mihomo / Clash Meta YAML |
-| `v2ray` / `base64` | **Always** standard Base64 of newline-separated share links (`vless://`, `vmess://`, `tuic://`, …). Independent of HTML page “encrypt URI list”. |
-| `uri` / `raw` | Same links; may be plaintext when encrypt is off |
-| `singbox` / `sing-box` | sing-box JSON outbounds |
-
-UA auto-detection may choose Clash vs v2ray-style when `target` is omitted.
-
-## TUIC / Hysteria2 share links
-
-Exported URIs include client-oriented params (`sni`, `alpn`, `congestion_control`, `allow_insecure` / `allowInsecure`, etc.). Classic v2rayNG may list `tuic://` but not dial QUIC; prefer Clash Meta / NekoBox / Hiddify for those protocols.

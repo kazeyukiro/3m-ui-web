@@ -5,28 +5,15 @@ description: 3m-ui · API 与鉴权
 
 # API 与鉴权
 
-## API and authentication
+HTTP API 前缀：`/api/v1`。
 
-HTTP API is under `/api/v1`. Login returns a JWT Bearer token. Protected routes require `Authorization: Bearer <token>`.
+登录接口返回 JWT，之后请求携带：
 
-When `must_change_password` is set, only password change and limited auth routes are allowed until the password is updated.
+```http
+Authorization: Bearer <token>
+```
 
-### OpenAPI
+若账号被标记必须改密，则在改密完成前仅允许密码相关接口。
 
-Machine-readable spec: `GET /api/v1/openapi.yaml` (JWT required on most installs).
+详细字段以仓库内 OpenAPI / 面板实际路由为准。
 
-### Listeners and users — async core apply
-
-Creating, updating, or deleting a listener returns after the panel database write. Mihomo `ApplyConfig` runs in the background (debounced ~400ms). User create/update that changes credentials uses the same pattern. A `201`/`200` does not mean the core has finished reloading. For a synchronous reload use the node reload / core restart endpoints documented in OpenAPI.
-
-One-click listener create: `POST /api/v1/nodes/quick` with JSON `{"name":"...","protocol":"vless"}` (alias `/listeners/quick`).
-
-### Dashboard process usage
-
-`GET /api/v1/dashboard` includes host metrics plus per-process samples:
-
-- `panel` — 3m-ui process (`pid`, `cpu_percent`, `memory_used` RSS bytes, `memory_percent`)
-
-- `core` — managed Mihomo process (same fields; zeros when the core is stopped)
-
-CPU is a short delta (first sample after a gap may be near 0). Full OpenAPI: `GET /api/v1/openapi.yaml`.

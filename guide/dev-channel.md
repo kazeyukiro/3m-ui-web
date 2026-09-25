@@ -5,13 +5,14 @@ description: 3m-ui · 预发布通道
 
 # 预发布通道
 
-## Pre-release channel
+默认安装与 `3m-ui update` 使用 **正式 Release（stable）**。
 
-Stable installs use formal GitHub Releases by default. To try pre-releases:
+尝试预发布：
 
-```
+```bash
 sudo 3m-ui update --pre
-# or switch channel via the management menu
+# 或在管理菜单 / 面板设置中切换通道
 ```
 
-Prefer stable for production. Pre-releases may change without notice.
+生产环境建议使用稳定版。预发布可能随 `pre` 标签滚动更新，行为以当次构建说明为准。
+

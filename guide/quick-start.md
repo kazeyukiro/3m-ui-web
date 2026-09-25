@@ -5,18 +5,13 @@ description: 3m-ui · 快速开始
 
 # 快速开始
 
-## Quick start
+仪表盘会显示主机资源，以及 **面板 / Mihomo 内核** 进程的 CPU 与内存占用。
 
-The dashboard shows host resources and **panel / Mihomo core** process CPU and memory.
+1. 在干净的 Linux 主机上用一键脚本安装。
+2. 打开面板，使用安装时打印的初始账号登录。
+3. 按提示修改管理员密码。
+4. 创建节点（Listener）：**一键创建** 只需协议 + 名称；高级选项用完整表单。保存后会先写入数据库，Mihomo 稍后在后台重载。
+5. 创建用户、绑定节点，复制订阅链接。
 
-- Install with the one-click script on a clean Linux host.
+更多说明见 [安装](/guide/install) 与 [节点](/guide/listeners)。
 
-- Open the panel and sign in with the printed credentials.
-
-- Change the admin password when prompted.
-
-- Create a listener (node) — **Quick create** only needs protocol + name; full form for advanced options. Saves return after the DB write; Mihomo reloads in the background shortly after.
-
-- Create a user, bind the node, copy the subscription URL.
-
-See [Install](install.html) and [Listeners](listeners.html) for details.
