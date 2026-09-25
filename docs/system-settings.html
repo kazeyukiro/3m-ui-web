@@ -78,24 +78,34 @@
 <p>API: <code>POST /api/v1/system/restart</code></p>
 
 <h3>Panel update</h3>
-<p>The panel automatically checks for the latest 3m-ui release on GitHub when you open the System ops page. It shows:</p>
+<p>The panel automatically checks for the latest 3m-ui release on GitHub when you open the System ops page. It queries <strong>both</strong> the stable channel (<code>/releases/latest</code>) and the pre-release channel (<code>/releases/tags/pre</code>) simultaneously.</p>
+<p>It shows:</p>
 <ul>
-<li><strong>Current version</strong> — your installed version (from <code>buildinfo.Version</code>)</li>
-<li><strong>Latest version</strong> — the latest GitHub release tag</li>
+<li><strong>Current version</strong> — your installed version + channel badge (cyan "Stable" or purple "Pre-release")</li>
+<li><strong>Channel switcher</strong> — a Segmented control to switch between <strong>Stable</strong> and <strong>Pre-release</strong> channels. Each option shows the latest version tag for that channel inline.</li>
+<li><strong>Latest version</strong> — the latest version in the target (selected) channel</li>
 <li><strong>Update available</strong> badge (green) or <strong>Up to date</strong> badge (gray)</li>
-<li>Collapsible release notes from the GitHub release body</li>
+<li>Collapsible release notes from the GitHub release body for the target channel</li>
 </ul>
-<p>Click <strong>Check for updates</strong> to re-check. Click <strong>Update now</strong> (only enabled when an update is available) to trigger <code>update.sh</code> in the background — the panel downloads the latest binary, replaces itself, and restarts automatically. The web page polls health with a 120-second timeout (updates typically take 30-60 seconds).</p>
+<p>Click <strong>Check for updates</strong> to re-check. Click <strong>Update now</strong> (only enabled when an update is available) to trigger <code>update.sh</code> in the background with the selected channel — the panel downloads the release for that channel, replaces itself, and restarts automatically. The web page polls health with a 120-second timeout (updates typically take 30-60 seconds).</p>
+<p><strong>Switching channels:</strong> If you’re on Stable, selecting "Pre-release" and clicking "Update now" will download the latest pre-release build and switch your panel to the pre channel. If you’re on Pre-release, selecting "Stable" will switch back to the latest stable release. The channel is persisted in <code>/usr/local/lib/3m-ui/CHANNEL</code> by <code>update.sh</code>.</p>
 <p>API:</p>
-<pre><code class="language-bash"># Check for updates
+<pre><code class="language-bash"># Check for updates (returns both stable + pre info)
 curl -H "Authorization: Bearer &lt;token&gt;" \
   https://panel.example.com/api/v1/system/update-info
 
-# Run update (triggers update.sh in background)
-curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+# Update to latest stable
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"channel":"stable"}' \
+  https://panel.example.com/api/v1/system/update
+
+# Switch to pre-release channel
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"channel":"pre"}' \
   https://panel.example.com/api/v1/system/update
 </code></pre>
 <p>If GitHub is unreachable (firewall, GFW), the panel shows a fallback hint: <em>"Cannot check for updates (GitHub API unreachable). Update via SSH: 3m-ui update"</em>.</p>
+<p>Pre-release URL: <a href="https://github.com/kazeyukiro/3m-ui/releases/tag/pre">https://github.com/kazeyukiro/3m-ui/releases/tag/pre</a></p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>面板 <strong>系统设置</strong> 聚合运营向配置（多数存数据库，不必改 <code>config.yaml</code>）。</p>
 <h2>面板 / NAT（端口与公网 URL）</h2>
@@ -139,24 +149,33 @@ curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
 <p>接口：<code>POST /api/v1/system/restart</code></p>
 
 <h3>面板更新</h3>
-<p>打开系统操作页面时，面板自动检查 GitHub 上的最新 3m-ui 版本，显示：</p>
+<p>打开系统操作页面时，面板自动检查 GitHub 上的最新 3m-ui 版本，<strong>同时</strong>查询稳定版（<code>/releases/latest</code>）和预发布版（<code>/releases/tags/pre</code>）两个渠道，显示：</p>
 <ul>
-<li><strong>当前版本</strong> — 已安装版本（来自 <code>buildinfo.Version</code>）</li>
-<li><strong>最新版本</strong> — GitHub 最新 release tag</li>
+<li><strong>当前版本</strong> — 已安装版本 + 渠道徽章（青色“稳定版”或紫色“预发布版”）</li>
+<li><strong>渠道切换器</strong> — Segmented 控件，可在<strong>稳定版</strong>和<strong>预发布版</strong>之间切换。每个选项内嵌该渠道的最新版本号。</li>
+<li><strong>最新版本</strong> — 目标（选中）渠道的最新版本</li>
 <li><strong>有新版本</strong> 徽章（绿色）或 <strong>已是最新</strong> 徽章（灰色）</li>
-<li>可折叠的更新日志（来自 GitHub release body）</li>
+<li>可折叠的更新日志（来自目标渠道的 GitHub release body）</li>
 </ul>
-<p>点击 <strong>检查更新</strong> 重新检查。点击 <strong>立即更新</strong>（仅在有新版本时可点）在后台触发 <code>update.sh</code> — 面板自动下载最新二进制、替换自身并重启。Web 页面轮询 health，超时 120 秒（更新通常需 30-60 秒）。</p>
+<p>点击 <strong>检查更新</strong> 重新检查。点击 <strong>立即更新</strong>（仅在有新版本时可点）在后台触发 <code>update.sh</code>，使用选中的渠道 — 面板自动下载该渠道的版本、替换自身并重启。Web 页面轮询 health，超时 120 秒（更新通常需 30-60 秒）。</p>
+<p><strong>渠道切换：</strong>如果你当前在稳定版，选择“预发布版”并点“立即更新”会下载最新预发布版本并切换到 pre 渠道。如果你在预发布版，选择“稳定版”会切换回最新稳定版。渠道信息保存在 <code>/usr/local/lib/3m-ui/CHANNEL</code>（由 <code>update.sh</code> 写入）。</p>
 <p>接口：</p>
-<pre><code class="language-bash"># 检查更新
+<pre><code class="language-bash"># 检查更新（同时返回稳定版 + 预发布版信息）
 curl -H "Authorization: Bearer &lt;token&gt;" \
   https://panel.example.com/api/v1/system/update-info
 
-# 执行更新（后台触发 update.sh）
-curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+# 更新到最新稳定版
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"channel":"stable"}' \
+  https://panel.example.com/api/v1/system/update
+
+# 切换到预发布渠道
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
+  -d '{"channel":"pre"}' \
   https://panel.example.com/api/v1/system/update
 </code></pre>
 <p>如果 GitHub 不可达（防火墙、GFW），面板显示提示：<em>"无法检查更新（GitHub API 不可达）。通过 SSH 更新：3m-ui update"</em>。</p>
+<p>预发布版地址：<a href="https://github.com/kazeyukiro/3m-ui/releases/tag/pre">https://github.com/kazeyukiro/3m-ui/releases/tag/pre</a></p>
 </div>
     </div>
   </main>
