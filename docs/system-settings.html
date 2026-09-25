@@ -68,6 +68,34 @@
 <h2>Cloudflare WARP</h2>
 <p>One-click registration builds a Mihomo outbound YAML fragment. Choose <strong>WireGuard</strong> or <strong>MASQUE</strong> before registering. YAML is copied when possible and shown in a themed dialog. MASQUE requires a Mihomo build that supports <code>type: masque</code>.</p>
 <p>API: <code>POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both</code>. This is <strong>not</strong> injected into Routing templates; paste YAML into the client or a manual outbound. See also the repo doc <code>docs/warp.md</code>.</p>
+
+<h2>System ops (restart & update)</h2>
+<p>The <strong>System ops</strong> section (Settings → System ops) provides one-click panel management from the web UI — no SSH required.</p>
+
+<h3>Restart panel</h3>
+<p>Click <strong>Restart now</strong> to gracefully restart the 3m-ui panel process. The panel calls <code>os.Exit(0)</code> and systemd's <code>Restart=always</code> brings it back automatically. The web page polls <code>/api/v1/health</code> and auto-reloads when the panel is back (typically 2-3 seconds).</p>
+<p>Use this after config changes that require a restart, or if the panel is behaving unexpectedly.</p>
+<p>API: <code>POST /api/v1/system/restart</code></p>
+
+<h3>Panel update</h3>
+<p>The panel automatically checks for the latest 3m-ui release on GitHub when you open the System ops page. It shows:</p>
+<ul>
+<li><strong>Current version</strong> — your installed version (from <code>buildinfo.Version</code>)</li>
+<li><strong>Latest version</strong> — the latest GitHub release tag</li>
+<li><strong>Update available</strong> badge (green) or <strong>Up to date</strong> badge (gray)</li>
+<li>Collapsible release notes from the GitHub release body</li>
+</ul>
+<p>Click <strong>Check for updates</strong> to re-check. Click <strong>Update now</strong> (only enabled when an update is available) to trigger <code>update.sh</code> in the background — the panel downloads the latest binary, replaces itself, and restarts automatically. The web page polls health with a 120-second timeout (updates typically take 30-60 seconds).</p>
+<p>API:</p>
+<pre><code class="language-bash"># Check for updates
+curl -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/update-info
+
+# Run update (triggers update.sh in background)
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/update
+</code></pre>
+<p>If GitHub is unreachable (firewall, GFW), the panel shows a fallback hint: <em>"Cannot check for updates (GitHub API unreachable). Update via SSH: 3m-ui update"</em>.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><p>面板 <strong>系统设置</strong> 聚合运营向配置（多数存数据库，不必改 <code>config.yaml</code>）。</p>
 <h2>面板 / NAT（端口与公网 URL）</h2>
@@ -100,7 +128,36 @@
 <h2>流量重置</h2>
 <p>可配置每月重置日等策略（若版本已启用对应开关）。</p>
 <h2>模板</h2>
-<p>TLS / 反代配置片段生成，便于复制到 Nginx、Caddy 等。</p></div>
+<p>TLS / 反代配置片段生成，便于复制到 Nginx、Caddy 等。</p>
+
+<h2>系统操作（重启与更新）</h2>
+<p><strong>系统操作</strong>页签（系统设置 → 系统操作）提供从 Web UI 一键管理面板的功能 — 无需 SSH。</p>
+
+<h3>重启面板</h3>
+<p>点击 <strong>立即重启</strong> 即可优雅重启 3m-ui 面板进程。面板调用 <code>os.Exit(0)</code>，systemd 的 <code>Restart=always</code> 自动拉起。Web 页面轮询 <code>/api/v1/health</code>，面板上线后自动刷新页面（通常 2-3 秒）。</p>
+<p>适用于配置变更后需要重启的场景，或面板异常时。</p>
+<p>接口：<code>POST /api/v1/system/restart</code></p>
+
+<h3>面板更新</h3>
+<p>打开系统操作页面时，面板自动检查 GitHub 上的最新 3m-ui 版本，显示：</p>
+<ul>
+<li><strong>当前版本</strong> — 已安装版本（来自 <code>buildinfo.Version</code>）</li>
+<li><strong>最新版本</strong> — GitHub 最新 release tag</li>
+<li><strong>有新版本</strong> 徽章（绿色）或 <strong>已是最新</strong> 徽章（灰色）</li>
+<li>可折叠的更新日志（来自 GitHub release body）</li>
+</ul>
+<p>点击 <strong>检查更新</strong> 重新检查。点击 <strong>立即更新</strong>（仅在有新版本时可点）在后台触发 <code>update.sh</code> — 面板自动下载最新二进制、替换自身并重启。Web 页面轮询 health，超时 120 秒（更新通常需 30-60 秒）。</p>
+<p>接口：</p>
+<pre><code class="language-bash"># 检查更新
+curl -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/update-info
+
+# 执行更新（后台触发 update.sh）
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/update
+</code></pre>
+<p>如果 GitHub 不可达（防火墙、GFW），面板显示提示：<em>"无法检查更新（GitHub API 不可达）。通过 SSH 更新：3m-ui update"</em>。</p>
+</div>
     </div>
   </main>
 </div>

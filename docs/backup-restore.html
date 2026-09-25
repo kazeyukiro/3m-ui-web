@@ -61,7 +61,9 @@
       <p class="notice" data-i18n="docs_note">Switch language in the top bar. Chinese and English article bodies are provided.</p>
       <div data-doc-lang="en" class="is-visible">
 <h2>Download backup (panel)</h2>
-<p>Settings → Backup → <strong>Download backup</strong> exports a <code>.zip</code> (SQLite DB + Mihomo config snapshot + meta). Use <strong>Restore</strong> to upload a zip or raw <code>.db</code>, then restart the panel.</p>
+<p>Settings → Backup → <strong>Download backup</strong> exports a <code>.zip</code> (SQLite DB + Mihomo config snapshot + meta). Use <strong>Restore</strong> to upload a zip or raw <code>.db</code>.</p>
+<p><strong>Restore behavior (updated):</strong> After a successful upload, the panel automatically exits (<code>os.Exit(0)</code>) so systemd's <code>Restart=always</code> brings it back with the new DB. The web page polls <code>/api/v1/health</code> and auto-reloads — <strong>no manual SSH restart needed</strong>.</p>
+<p>The handler validates the SQLite magic header (<code>"SQLite format 3\0"</code>) before replacing the DB file, so corrupt or non-DB uploads are rejected with HTTP 400 (not 500). Stale <code>-journal</code> / <code>-wal</code> / <code>-shm</code> files are removed automatically to prevent rollback.</p>
 <h2>On-disk install snapshots</h2>
 <p><code>3m-ui update</code> / install scripts write tarballs under:</p>
 <pre><code class="language-text">/var/lib/3m-ui/backups/
@@ -71,12 +73,14 @@
 <li>Delete one snapshot</li>
 <li><strong>Cleanup</strong>: keep the newest <em>N</em> and/or delete entries older than <em>D</em> days</li>
 </ul>
+<p><strong>Cleanup semantics (fixed):</strong> When both <code>keep</code> and <code>older_than_days</code> are set, the newest <code>keep</code> entries are <strong>always</strong> preserved even if they're older than the age threshold. Age-based deletion only applies to entries <em>beyond</em> the keep window. This prevents accidentally losing all backups when they're all older than the age threshold.</p>
 <h3>API</h3>
 <pre><code class="language-bash"># List on-disk backups
 curl -H "Authorization: Bearer &lt;token&gt;" \
   https://panel.example.com/api/v1/system/backups
 
 # Cleanup: keep last 3, also drop anything older than 7 days
+# (AND semantics — newest 3 always survive even if older than 7 days)
 curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: application/json" \
   -d '{"keep":3,"older_than_days":7}' \
   https://panel.example.com/api/v1/system/backups/cleanup
@@ -84,8 +88,12 @@ curl -X POST -H "Authorization: Bearer &lt;token&gt;" -H "Content-Type: applicat
 # Delete one by name
 curl -X DELETE -H "Authorization: Bearer &lt;token&gt;" \
   https://panel.example.com/api/v1/system/backups/20260920T152614Z-100903.tar.gz
+
+# Restart panel after config changes (no SSH needed)
+curl -X POST -H "Authorization: Bearer &lt;token&gt;" \
+  https://panel.example.com/api/v1/system/restart
 </code></pre>
-<p>Also back up <code>/etc/3m-ui</code>, <code>listener-certs/</code>, and <code>mihomo/</code> for a full machine restore. After DB restore: <code>sudo 3m-ui restart</code>.</p>
+<p>Also back up <code>/etc/3m-ui</code>, <code>listener-certs/</code>, and <code>mihomo/</code> for a full machine restore.</p>
 </div>
       <div data-doc-lang="zh-CN" hidden><h2>下载备份</h2>
 <p>在「系统设置 → 安全与备份」点击「下载备份」。系统生成一个 <code>.zip</code> 文件，通常包含：</p>
@@ -130,13 +138,16 @@ curl -X DELETE -H "Authorization: Bearer &lt;token&gt;" \
 <li><strong>ZIP</strong>（面板下载的备份）— 解压提取 <code>3m-ui.db</code></li>
 <li><strong>裸 SQLite <code>.db</code></strong> — 直接使用</li>
 </ul>
-<h3>恢复后必须重启</h3>
-<pre><code class="language-bash">sudo 3m-ui restart
-# 或: systemctl restart 3m-ui
-</code></pre>
-<p>否则进程可能仍使用旧文件句柄。恢复接口可能返回 <code>restart_required: true</code>。</p>
+<h3>恢复后自动重启（已更新）</h3>
+<p><strong>不再需要手动 SSH 重启！</strong> 恢复成功后，面板自动调用 <code>os.Exit(0)</code> 退出，systemd 的 <code>Restart=always</code> 自动拉起面板并加载新数据库。Web 页面轮询 <code>/api/v1/health</code>，面板上线后自动刷新页面。</p>
+<p>恢复处理还做了以下增强：</p>
+<ul>
+<li><strong>SQLite magic 校验</strong> — 上传文件必须以 <code>"SQLite format 3\0"</code> 开头，否则返回 400（非法文件被拒绝，不再破坏面板启动）</li>
+<li><strong>清理 WAL/SHM/journal</strong> — 恢复后自动删除 <code>-journal</code> / <code>-wal</code> / <code>-shm</code> 伴随文件，防止 SQLite 用旧事务回滚刚恢复的数据库</li>
+<li><strong>mihomo-config.yaml 恢复</strong> — 如果 zip 内包含 Mihomo 配置，会一并恢复；如果面板没配 <code>mihomo.config</code> 路径，返回 <code>mihomo_config: "skipped"</code> 提示</li>
+</ul>
 <h3>大小限制</h3>
-<p>上传大小上限以当前版本为准（常见为 128 MiB）。</p>
+<p>上传大小上限 128 MiB（<code>maxRestoreDatabaseBytes</code>）。gin MultipartMemory 也已提升到 128 MiB，避免大文件 spill 到 <code>/tmp</code> 失败。</p>
 <h2>磁盘上的安装/更新快照</h2>
 <p><code>3m-ui update</code> 会在下列目录写入 <code>.tar.gz</code> 快照，体积可能达到数 GB：</p>
 <pre><code class="language-text">/var/lib/3m-ui/backups/
