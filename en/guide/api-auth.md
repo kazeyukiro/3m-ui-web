@@ -31,3 +31,7 @@ One-click listener create: `POST /api/v1/nodes/quick` with JSON `{"name":"...","
 
 CPU is a short delta (first sample after a gap may be near 0). Full OpenAPI: `GET /api/v1/openapi.yaml`.
 
+
+## GitHub OAuth
+
+When enabled, `GET /api/v1/auth/oauth/github/start` redirects to GitHub; the callback issues the same JWT as password login (browser redirected to `/login?oauth_token=...`). Admin settings: `GET/PUT /api/v1/auth/oauth/github/settings`.

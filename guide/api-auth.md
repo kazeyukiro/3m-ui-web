@@ -17,3 +17,7 @@ Authorization: Bearer <token>
 
 详细字段以仓库内 OpenAPI / 面板实际路由为准。
 
+
+## GitHub OAuth
+
+启用后 `GET /api/v1/auth/oauth/github/start` 跳转 GitHub；回调签发与密码登录相同的 JWT（浏览器回到 `/login?oauth_token=...`）。管理员配置：`GET/PUT /api/v1/auth/oauth/github/settings`。
