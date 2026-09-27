@@ -11,7 +11,7 @@ description: 3m-ui · 系统设置
 
 - 外观 / 订阅页
 - 公网 URL、Telegram
-- 面板 SSL
+- 面板 SSL（HTTP-01 / DNS-01 通配符 / IP 证 / 手动路径）
 - 备份与恢复
 - 更新通道（稳定 / 预发）与重启面板
 

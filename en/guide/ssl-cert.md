@@ -1,41 +1,42 @@
 ---
 title: SSL certificates
-description: 3m-ui · SSL certificates
+description: 3m-ui · panel and node certificates
 ---
 
-# SSL 证书
+# SSL certificates
 
-## SSL certificates
+## Panel HTTPS
 
-Panel TLS can use ACME or uploaded certificates. Listener self-signed certs are stored under the data directory and recovered across binary-only updates.
+Configure under **Settings → Certificates / SSL**, then **restart the panel**.
 
+| Mode | Use when | Notes |
+|------|----------|--------|
+| **HTTP-01** (default) | Single hostname, public **port 80** | Standard Let's Encrypt |
+| **DNS-01** | **Wildcard** `*.example.com`, or no port 80 | **Cloudflare** API token |
+| **IP certificate** | Domain field is a public IP | Short-lived; HTTP-01 / TLS-ALPN-01 |
+| **Manual** | `cert_file` + `key_file` paths | e.g. `/etc/letsencrypt/live/...` |
 
----
+### Wildcard `*.example.com`
 
-## 补充说明（仓库文档）
+1. Set domain to `*.example.com` (or a hostname with challenge **DNS-01**)
+2. ACME challenge: **DNS-01**
+3. Provider: Cloudflare; token needs **Zone → DNS → Edit**
+4. Optional zone name `example.com` if auto-detect fails
+5. Save and restart; the cert includes `*.example.com` and apex `example.com`
 
-# Batch apply TLS certificate to nodes
+Leave the token blank on later saves to keep the stored secret. `GET` never returns the token.
 
-Apply one certificate + private key to many listeners in a single request (Users → Nodes: select rows → **Apply cert**).
+Details: [panel-ssl.md](https://github.com/kazeyukiro/3m-ui/blob/main/docs/panel-ssl.md)
 
-## API
+### Recovery without reinstall
 
-`POST /api/v1/nodes/batch/certificate` (admin JWT)
-
-```json
-{
-  "ids": [1, 2, 3],
-  "certificate": "-----BEGIN CERTIFICATE-----...",
-  "private_key": "-----BEGIN PRIVATE KEY-----...",
-  "cert_file": "/etc/letsencrypt/live/example.com/fullchain.pem",
-  "key_file": "/etc/letsencrypt/live/example.com/privkey.pem",
-  "from_panel_ssl": false
-}
+```bash
+3m-ui reset-config --panel --yes
+systemctl restart 3m-ui
 ```
 
-Provide **either** PEM strings, **or** both file paths (allowlisted directories such as `/etc/letsencrypt/`, `/var/lib/3m-ui/`), **or** `from_panel_ssl: true` (panel SSL manual `cert_file` / `key_file`).
+## Node certificates
 
-Response: `{ "updated": [1, 2], "failed": [{ "id": 3, "name": "...", "error": "..." }] }`.
+Self-signed, uploaded PEM/paths, or batch apply to listeners. Optional `from_panel_ssl` when the panel uses manual file paths.
 
-Writes `certificate` and `private-key` into each listener’s config JSON and schedules a Mihomo reload. Protocols that reject certificate mode (e.g. pure Reality) appear under `failed`.
-
+See: [batch-certificate.md](https://github.com/kazeyukiro/3m-ui/blob/main/docs/batch-certificate.md)
