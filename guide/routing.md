@@ -32,7 +32,7 @@ description: 3m-ui · 客户端订阅与服务端出站
 - 可添加 Mihomo 规则，以及可选的 `proxies` / `proxy-groups`（例如把设置里注册的 WARP 出站写进来）。
 - **保存 → 生成并应用**，让核心重载。
 - 接口：`GET/PUT /api/v1/config/server-routing`  
-  示例 body：`{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [] }`
+  示例 body：`{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [], "ruleProviders": [] }`
 - 若规则列表没有 `MATCH,...`，面板会自动补上 `MATCH,DIRECT`。
 
 服务端使用 GEOIP/GEOSITE 时同样需要本机 Geo 数据。
@@ -42,3 +42,15 @@ description: 3m-ui · 客户端订阅与服务端出站
 **生成并应用** 会重建 Listener，并应用 **服务端出站** 规则。客户端社区模板仍只影响订阅。
 
 WARP 一键注册在 **设置**，见 [WARP](./warp.md)。
+
+
+## 规则集 (rule-providers)
+
+服务端出站可配置 Mihomo **`rule-providers`**（[官方文档](https://wiki.metacubex.one/config/rule-providers/)）。
+
+1. **路由 → 服务端出站 → 规则集 → 添加**（`http` / `file` / `inline`，behavior / format 按官方）  
+2. **保存 → 生成并应用**，将 `rule-providers:` 写入服务配置（默认 path：`./rule-providers/{name}.{format}`）  
+3. 规则行：`RULE-SET,<名称>,<出站>`  
+4. **热更新**：调用核心 `PUT /providers/rules/{name}`，刷新该 rule-set  
+
+接口：`ruleProviders` 字段在 `server-routing`；`PUT /api/v1/config/rule-providers/{name}/update`；`GET /api/v1/config/rule-providers/status`

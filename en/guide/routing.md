@@ -32,7 +32,7 @@ Controls how traffic **leaves the VPS** after a user connects to a node.
 - You can add Mihomo rules and optional `proxies` / `proxy-groups` (e.g. a WARP outbound from Settings).
 - **Save → Generate & apply** so the core reloads.
 - API: `GET/PUT /api/v1/config/server-routing`  
-  body example: `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [] }`
+  body example: `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [], "ruleProviders": [] }`
 - If no `MATCH,...` line is present, the panel appends `MATCH,DIRECT`.
 
 ## Config engine
@@ -40,3 +40,15 @@ Controls how traffic **leaves the VPS** after a user connects to a node.
 **Generate & apply** rebuilds listeners and applies **server egress** into the serving config. Client community rules stay subscription-only.
 
 Cloudflare WARP registration is under **Settings**. See [WARP](./warp.md).
+
+
+## Rule providers (rule-set)
+
+Server egress can declare Mihomo **`rule-providers`** ([docs](https://wiki.metacubex.one/config/rule-providers/)).
+
+1. **Routing → Server egress → Rule providers → Add**  
+2. **Save → Generate & apply** so `rule-providers:` is written (default path `./rule-providers/{name}.{format}` under Mihomo `-d`)  
+3. Rule line: `RULE-SET,<name>,<TARGET>`  
+4. **Hot update**: Mihomo `PUT /providers/rules/{name}`  
+
+API: `ruleProviders` on `server-routing`; `PUT /api/v1/config/rule-providers/{name}/update`; `GET /api/v1/config/rule-providers/status`
