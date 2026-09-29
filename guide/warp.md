@@ -1,45 +1,32 @@
 ---
 title: WARP
-description: 3m-ui · Cloudflare WARP
+description: 3m-ui · Cloudflare WARP 账户与服务端出站
 ---
 
 # Cloudflare WARP
 
-3m-ui 可 **一键注册 Cloudflare WARP**，并生成 Mihomo 出站 YAML（WireGuard 或 MASQUE）。
+可**注册并持久化** Cloudflare WARP 账户，向面板 Mihomo 注入名为 **`WARP`** 的出站，并在**服务端出站**里按域名分流（接近 m-ui）。
 
-## 入口
+## 设置
 
-**设置 → 网络（含 Geo 的那一栏）→ Cloudflare WARP**
+**设置 → 网络 → Cloudflare WARP**
 
-1. 选择 **WireGuard** 或 **MASQUE**
-2. 点击 **注册 WARP**
-3. 查看（并可复制）YAML
+1. 选择 WireGuard（服务端推荐）或 MASQUE  
+2. **注册 / 保存 WARP** — 在 Cloudflare 创建设备、写入面板、生成出站 `WARP`  
+3. 可查看 YAML；**删除 WARP 账户** 清除已存设备  
 
-接口：
+接口：`GET/POST/DELETE /api/v1/system/warp`
 
-- `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`
-- `POST /api/v1/system/templates/warp` — 使用自备密钥生成 YAML（高级）
+## 服务端出站
 
-## 能做什么 / 不能做什么
+**路由规则 → 服务端出站**
 
-| 可以 | 不可以 |
-|------|--------|
-| 一键注册 + YAML 片段 | 自动保证 Netflix / ChatGPT 等解锁 |
-| 用于 **客户端** 或 **服务端出站** | 无确认地自动改写全局出口 |
-| 面板需能访问 Cloudflare | 自动检测流媒体/AI 并静默搭好 WARP 路由 |
+1. **WARP 域名**：每行一个（如 `openai.com`）或 `GEOSITE:openai`  
+2. 可再编辑其它规则（默认 `MATCH,DIRECT`）  
+3. **保存 → 生成并应用**  
 
-## 接到服务端出站
+若配置了 WARP 域名但未注册账户，应用会失败。
 
-1. 注册 WARP，复制 `proxies:` 条目（名称常为 `WARP` / `WARP-Masque`）。
-2. 打开 **路由规则 → 服务端出站**。
-3. 加入该出站，并写规则，例如：
+## 说明
 
-```text
-DOMAIN-SUFFIX,openai.com,WARP
-DOMAIN-SUFFIX,chatgpt.com,WARP
-MATCH,DIRECT
-```
-
-4. **保存 → 生成并应用**。
-
-流媒体/AI 是否可用取决于 WARP 出口质量，**不保证**。详见主仓库 [warp.md](https://github.com/kazeyukiro/3m-ui/blob/main/docs/warp.md)。
+不保证流媒体 / AI 解锁；域名列表由管理员自行维护（对应 m-ui 的 WarpDomains）。

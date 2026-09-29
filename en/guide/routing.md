@@ -22,6 +22,10 @@ GEOSITE/GEOIP templates need MetaCubeX geodata — update under **Settings → G
 
 ## Server egress
 
+No community templates on this tab. Use **WARP domains** (after registering WARP in Settings) plus custom rules. Default remains `MATCH,DIRECT`.
+
+## Server egress detail
+
 Controls how traffic **leaves the VPS** after a user connects to a node.
 
 - Default: `MATCH,DIRECT` (historical behaviour — all egress direct from the host).
