@@ -22,7 +22,7 @@ features:
   - title: Users & subscriptions
     details: Quick-create users, traffic and expiry, per-node multipliers; export Mihomo YAML, URI, sing-box and more.
   - title: Routing & client config
-    details: Visual rules and proxy-group templates (including CN GEOSITE/GEOIP direct); client-side routing in subscriptions.
+    details: Client subscription rules/groups; server egress for panel Mihomo (3x-ui-style); WARP one-click register.
   - title: Panel operations
     details: Install, update, restart, stable/pre channels, backup/restore, panel SSL (domain and IP certs), Telegram alerts.
   - title: Multi-node cluster
