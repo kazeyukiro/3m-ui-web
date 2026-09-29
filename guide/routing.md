@@ -32,7 +32,7 @@ description: 3m-ui · 客户端订阅与服务端出站
 - 可添加 Mihomo 规则，以及可选的 `proxies` / `proxy-groups`（例如把设置里注册的 WARP 出站写进来）。
 - **保存 → 生成并应用**，让核心重载。
 - 接口：`GET/PUT /api/v1/config/server-routing`  
-  示例 body：`{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"] }`
+  示例 body：`{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [] }`
 - 若规则列表没有 `MATCH,...`，面板会自动补上 `MATCH,DIRECT`。
 
 服务端使用 GEOIP/GEOSITE 时同样需要本机 Geo 数据。

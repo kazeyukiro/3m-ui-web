@@ -32,7 +32,7 @@ Controls how traffic **leaves the VPS** after a user connects to a node.
 - You can add Mihomo rules and optional `proxies` / `proxy-groups` (e.g. a WARP outbound from Settings).
 - **Save → Generate & apply** so the core reloads.
 - API: `GET/PUT /api/v1/config/server-routing`  
-  body example: `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"] }`
+  body example: `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [] }`
 - If no `MATCH,...` line is present, the panel appends `MATCH,DIRECT`.
 
 ## Config engine
