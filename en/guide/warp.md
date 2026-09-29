@@ -3,7 +3,7 @@ title: WARP
 description: 3m-ui · Cloudflare WARP account and server egress
 ---
 
-# Cloudflare WARP (m-ui style)
+# Cloudflare WARP 
 
 3m-ui can **register and persist** a Cloudflare WARP account, inject a Mihomo outbound named **`WARP`**, and route selected domains through it on the **server**.
 

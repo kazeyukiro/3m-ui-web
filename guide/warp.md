@@ -5,7 +5,7 @@ description: 3m-ui · Cloudflare WARP 账户与服务端出站
 
 # Cloudflare WARP
 
-可**注册并持久化** Cloudflare WARP 账户，向面板 Mihomo 注入名为 **`WARP`** 的出站，并在**服务端出站**里按域名分流（接近 m-ui）。
+可**注册并持久化** Cloudflare WARP 账户，向面板 Mihomo 注入名为 **`WARP`** 的出站，并在**服务端出站**里按域名分流（）。
 
 ## 设置
 
@@ -29,4 +29,4 @@ description: 3m-ui · Cloudflare WARP 账户与服务端出站
 
 ## 说明
 
-不保证流媒体 / AI 解锁；域名列表由管理员自行维护（对应 m-ui 的 WarpDomains）。
+不保证流媒体 / AI 解锁；域名列表由管理员自行维护（对应 面板 WARP 域名列表）。

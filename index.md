@@ -22,7 +22,7 @@ features:
   - title: 用户与订阅
     details: 一键创建用户、流量与到期、节点倍率计量；导出 Mihomo YAML、URI、sing-box 等多种客户端格式。
   - title: 路由与客户端配置
-    details: 客户端订阅规则/策略组模板；服务端出站（面板 Mihomo 出口，类似 3x-ui）；WARP 一键注册。
+    details: 客户端订阅规则/策略组模板；服务端出站（面板 Mihomo 出口，）；WARP 一键注册。
   - title: 面板运维
     details: 安装 / 更新 / 重启、稳定与预发通道、备份恢复、面板 SSL（域名与 IP 证书）、Telegram 通知。
   - title: 多机与集群

@@ -10,7 +10,7 @@ The **Routing** page has two scopes:
 | Tab | Stored as | Affects |
 |-----|-----------|---------|
 | **Client subscription** | `visual-config` | Mihomo/Clash **subscription** YAML (`proxy-groups` / `rules`) only |
-| **Server egress** | `server-routing` | **Panel Mihomo process** after traffic hits listeners (like 3x-ui Xray outbounds + routing) |
+| **Server egress** | `server-routing` | **Panel Mihomo process** after traffic hits listeners (for panel Mihomo egress) |
 
 ## Client subscription
 

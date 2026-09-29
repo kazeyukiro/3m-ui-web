@@ -10,7 +10,7 @@ description: 3m-ui · 客户端订阅与服务端出站
 | 标签 | 存储 | 作用 |
 |------|------|------|
 | **客户端订阅** | `visual-config` | 只进入用户的 Mihomo/Clash **订阅** YAML（`proxy-groups` / `rules`） |
-| **服务端出站** | `server-routing` | 写入**面板 Mihomo 进程**（用户流量进节点之后的出口，类似 3x-ui 的 Xray 路由） |
+| **服务端出站** | `server-routing` | 写入**面板 Mihomo 进程**（用户流量进节点之后的出口，用户流量到达节点后的出口） |
 
 ## 客户端订阅
 
