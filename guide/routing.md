@@ -1,56 +1,64 @@
 ---
 title: 路由规则
-description: 3m-ui · 客户端订阅与服务端出站
 ---
 
 # 路由规则
 
-面板「路由」页有两个范围：
+The **Routing** page has two scopes:
 
-| 标签 | 存储 | 作用 |
-|------|------|------|
-| **客户端订阅** | `visual-config` | 只进入用户的 Mihomo/Clash **订阅** YAML（`proxy-groups` / `rules`） |
-| **服务端出站** | `server-routing` | 写入**面板 Mihomo 进程**（用户流量进节点之后的出口，用户流量到达节点后的出口） |
+| Tab | Stored as | Affects |
+|-----|-----------|---------|
+| **Client subscription** | `visual-config` | Mihomo/Clash **subscription** YAML (`proxy-groups` / `rules`) only |
+| **Server egress** | `server-routing` | **Panel Mihomo process** after traffic hits listeners (for panel Mihomo egress) |
 
-## 客户端订阅
+## Client subscription
 
-- 社区模板（YiXuan / echs / AIsouler 等）会 **覆盖** 规则与策略组（不是只追加）。
-- 保存后请在 **客户端更新订阅**。
-- 这些规则 **不会** 合并进服务器上的 `config.yaml`。
+- Community templates (YiXuanZX / echs-top / AIsouler) fill groups + rules for the **client** YAML. Switching a template **replaces** rules and groups (does not only append).
+- After save, **update the subscription in the client** (Mihomo/Clash YAML target).
+- These rules are **not** merged into the serving `config.yaml` (by design).
 
-使用 GEOSITE/GEOIP 前请在 **设置** 中更新 Geo 数据。
+## Server egress
 
-## 服务端出站
+decide how traffic **leaves the VPS** after a user connects to a node.
 
-此页**没有**客户端社区模板。在设置中注册 WARP 后，用 **WARP 域名** 列表 + 自定义规则。默认仍是 `MATCH,DIRECT`。
+- Default: `MATCH,DIRECT` (historical behaviour — all egress direct from the host).
+- You can add Mihomo rules (e.g. `GEOIP,private,DIRECT`, domain rules) and optional `proxies` / `proxy-groups` (e.g. WARP outbound pasted from Settings).
+- **Save → Generate & apply** so the core reloads with the new rules.
+- API: `GET/PUT /api/v1/config/server-routing` body `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [] }`.
+- Last rule should include a `MATCH,...` line (panel appends `MATCH,DIRECT` if missing).
 
-## 服务端出站说明
+GEOIP/GEOSITE rules need Geo data on the host (Settings → update Geo files).
 
-决定流量到达本机 Listener 之后 **如何离开 VPS**。
+## Config engine
 
-- 默认：`MATCH,DIRECT`（与历史行为一致，全部本机直连出网）。
-- 可添加 Mihomo 规则，以及可选的 `proxies` / `proxy-groups`（例如把设置里注册的 WARP 出站写进来）。
-- **保存 → 生成并应用**，让核心重载。
-- 接口：`GET/PUT /api/v1/config/server-routing`  
-  示例 body：`{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [], "ruleProviders": [] }`
-- 若规则列表没有 `MATCH,...`，面板会自动补上 `MATCH,DIRECT`。
+**Generate & apply** rebuilds listeners + **server egress** into the serving config. Client community rules stay subscription-only.
 
-服务端使用 GEOIP/GEOSITE 时同样需要本机 Geo 数据。
+Cloudflare WARP registration is under **Settings**. See [WARP](warp.md) for registering an outbound and using it under **Server egress**.
 
-## 配置引擎
+## 中文
 
-**生成并应用** 会重建 Listener，并应用 **服务端出站** 规则。客户端社区模板仍只影响订阅。
+| 标签 | 作用 |
+|------|------|
+| **客户端订阅** | 只进 Clash/Mihomo 订阅，改完请在客户端更新订阅 |
+| **服务端出站** | 写入面板 Mihomo（用户流量进节点之后的出口），服务端出站；默认 `MATCH,DIRECT`；保存后请「生成并应用」 |
 
-WARP 一键注册在 **设置**，见 [WARP](./warp.md)。
+WARP 在 **设置** 里一键注册，把 YAML 作为出站合并进服务端规则即可（不会自动注入）。
 
 
-## 规则集 (rule-providers)
+See embedded OpenAPI (`GET /api/v1/openapi.yaml`) for `/config/server-routing` and `/system/warp`.
 
-服务端出站可配置 Mihomo **`rule-providers`**（[官方文档](https://wiki.metacubex.one/config/rule-providers/)）。
 
-1. **路由 → 服务端出站 → 规则集 → 添加**（`http` / `file` / `inline`，behavior / format 按官方）  
-2. **保存 → 生成并应用**，将 `rule-providers:` 写入服务配置（默认 path：`./rule-providers/{name}.{format}`）  
-3. 规则行：`RULE-SET,<名称>,<出站>`  
-4. **热更新**：调用核心 `PUT /providers/rules/{name}`，刷新该 rule-set  
+## Rule providers (rule-set)
 
-接口：`ruleProviders` 字段在 `server-routing`；`PUT /api/v1/config/rule-providers/{name}/update`；`GET /api/v1/config/rule-providers/status`
+Server egress can declare Mihomo **`rule-providers`** ([official docs](https://wiki.metacubex.one/config/rule-providers/)).
+
+1. **Routing → Server egress → Rule providers → Add** (`http` / `file` / `inline`, behavior `domain` | `ipcidr` | `classical`, format `yaml` | `text` | `mrs`)
+2. **Save → Generate & apply** so `rule-providers:` is written into the serving config (path under Mihomo `-d` home, default `./rule-providers/{name}.{format}`)
+3. Add a rule: `RULE-SET,<name>,<TARGET>` (e.g. `RULE-SET,gfw,WARP`)
+4. **Hot update**: button calls Mihomo `PUT /providers/rules/{name}` (Clash API) to refresh that set without a full process restart for that provider payload
+
+API:
+
+- Stored in `GET/PUT /api/v1/config/server-routing` field `ruleProviders`
+- `PUT /api/v1/config/rule-providers/{name}/update` — hot reload
+- `GET /api/v1/config/rule-providers/status` — live status from core

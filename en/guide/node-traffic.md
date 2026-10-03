@@ -1,38 +1,24 @@
 ---
-title: Node traffic
-description: 3m-ui · Node traffic
+title: Per-node traffic & multiplier
 ---
 
 # Per-node traffic & multiplier
 
-## Concepts
+Each listener can set a **traffic multiplier**. Billing toward a user's quota is:
 
-| Term | Meaning |
-|------|---------|
-| **Raw** | Real upload/download on that listener for the user |
-| **Multiplier** | Listener field `traffic_multiplier` (default **1**, range about 0.01–100) |
-| **Billed** | `raw × multiplier` — this is what is added to the user’s `traffic_used` quota |
-
-Example: multiplier `1.5`, 100 MiB raw → **150 MiB** counted against the user limit.
-
-## Where to configure
-
-- **Nodes (Listeners)** → edit node → **Traffic multiplier**
-- **Users** → node-traffic action (chart icon) → per-node table (raw + billed)
-
-## API
-
-```http
-GET /api/v1/users/{id}/node-traffic
+```text
+billed = actual_bytes × node_multiplier
 ```
 
-Response items include `upload_bytes`, `download_bytes`, `traffic_used` (raw), `multiplier`, `billed_upload`, `billed_download`, `billed_used`.
+Example: multiplier `1.5` means 1 GiB transferred counts as 1.5 GiB against `traffic_limit`.
 
-Listener create/update accepts `traffic_multiplier` (omit or `≤0` → treated as `1`).
+## Behaviour
 
-## Notes
+- Multiplier defaults to `1`.
+- Per-node stats in the panel show raw and billed usage where available.
+- Changing the multiplier affects **future** accounting; historical rows follow the rules of your panel version.
 
-- Attribution uses Mihomo connection `inboundName` ↔ listener **name**.
-- Resetting user traffic (single, batch, monthly, or cycle reset) clears per-node rows for that scope.
-- Historical traffic from before this feature only exists as the user total; new usage is split by node going forward.
+## Tips
 
+- Use higher multipliers on expensive transit nodes; `1` on local/free capacity.
+- Combine with user traffic limits and expiry for package-style plans.

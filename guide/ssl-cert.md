@@ -1,44 +1,65 @@
 ---
-title: SSL 证书
-description: 3m-ui · 面板与节点证书
+title: 面板 SSL / ACME
 ---
 
-# SSL 证书
+# 面板 SSL / ACME
 
-## 面板 HTTPS
+Panel TLS is configured under **Settings → Certificates / SSL** (API: `GET/PUT /api/v1/system/ssl`). Changes apply after **restarting the panel** (`systemctl restart 3m-ui` or the in-panel restart action).
 
-在 **系统设置 → 证书 / SSL** 配置，保存后需 **重启面板** 生效。
+## Modes
 
-| 模式 | 适用 | 说明 |
-|------|------|------|
-| **HTTP-01**（默认） | 单个域名，公网 **80** 可达 | 常规 Let's Encrypt |
-| **DNS-01** | **通配符** `*.example.com`，或没有 80 端口 | 目前支持 **Cloudflare** API Token |
-| **IP 证书** | 域名栏填公网 IP | 短效证书，HTTP-01 / TLS-ALPN-01 |
-| **手动** | 填写 fullchain / privkey 路径 | 如 `/etc/letsencrypt/live/...` |
+| Mode | When | Notes |
+|------|------|--------|
+| **HTTP-01** (default) | Single hostname, port **80** reachable from the internet | `golang.org/x/crypto/acme/autocert` |
+| **DNS-01** | Wildcard `*.example.com`, or no usable port 80 | Cloudflare API token; via `acmez` |
+| **IP certificate** | Domain field is a public IP | Short-lived Let’s Encrypt profile; HTTP-01 / TLS-ALPN-01 |
+| **Manual** | `cert_file` + `key_file` set | Paths must be under allowlisted dirs (e.g. `/etc/letsencrypt/`, `/var/lib/3m-ui/`) |
 
-### 通配符 `*.example.com`
+## Wildcard (`*.example.com`)
 
-1. 域名填 `*.example.com`（或普通域名并选择 DNS-01）
-2. ACME 验证选 **DNS-01**
-3. DNS 服务商选 Cloudflare，填入具有 **Zone → DNS → Edit** 权限的 API Token
-4. Zone 可选填 `example.com`（自动识别失败时）
-5. 保存并重启面板；证书会包含 `*.example.com` 与 apex `example.com`
+1. Set **Domain** to `*.example.com` (or a normal hostname with **Challenge = DNS-01**).
+2. Set **ACME challenge** to **DNS-01**.
+3. **DNS provider**: Cloudflare (currently the only built-in provider).
+4. **DNS API token**: Cloudflare token with **Zone → DNS → Edit** on that zone. Leave the field blank on later saves to keep the stored token.
+5. **DNS zone** (optional): e.g. `example.com` if auto-detect fails.
+6. Save and **restart** the panel. Issuance runs at startup (may take tens of seconds).
 
-Token 留空再保存表示不修改已存储的 Token；接口不会回显 Token。
+The certificate includes both `*.example.com` and the apex `example.com`.
 
-仓库详细说明：[panel-ssl.md](https://github.com/kazeyukiro/3m-ui/blob/main/docs/panel-ssl.md)
+**Not supported as automatic ACME without DNS-01:** filling only `*.example.com` with HTTP-01.
 
-### 配错恢复（无需重装）
+### Cloudflare token
+
+- Permission: `Zone` → `DNS` → **Edit**
+- Resource: the zone that hosts the domain
+
+## API fields (`PUT /system/ssl`)
+
+| Field | Description |
+|-------|-------------|
+| `enabled` | Enable panel HTTPS |
+| `domain` | Hostname, `*.example.com`, or public IP |
+| `email` | ACME account contact |
+| `challenge` | empty / `http-01` (default) or `dns-01` |
+| `dns_provider` | `cloudflare` |
+| `dns_token` | Provider API token (not returned on `GET`; empty on PUT keeps previous) |
+| `dns_zone` | Optional zone name |
+| `cache_dir` | ACME cache (default under data dir, e.g. `/var/lib/3m-ui/acme`) |
+| `cert_file` / `key_file` | Manual PEM paths |
+| `listen_http` / `listen_tls` | e.g. `:80` / `:443` |
+
+`GET /system/ssl/status` includes `mode` (`letsencrypt`, `letsencrypt-dns01`, `letsencrypt-ip`, `manual`, …), `is_wildcard`, `has_dns_token`, etc.
+
+## Misconfiguration / recovery
 
 ```bash
-3m-ui reset-config --panel --yes
+3m-ui reset-config --panel --yes   # or use the SSH menu reset option
 systemctl restart 3m-ui
 ```
 
-或在 SSH `3m-ui` 菜单中使用重置相关选项。
+You do **not** need a full reinstall to undo a bad SSL setting.
 
-## 节点证书
+## Related
 
-自签、上传路径/PEM，或批量应用到多个 Listener。也可尝试复用面板手动证书路径（`from_panel_ssl`）。
-
-详见：[批量应用节点证书](https://github.com/kazeyukiro/3m-ui/blob/main/docs/batch-certificate.md)
+- [Batch apply certificate to nodes](./batch-certificate.md)
+- Nodes can reuse panel manual cert paths via **Apply cert** → `from_panel_ssl` when panel SSL uses file paths (ACME cache formats differ; prefer manual PEMs or Let’s Encrypt live paths for listeners).
