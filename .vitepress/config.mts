@@ -1,13 +1,13 @@
 import { defineConfig } from 'vitepress'
 
 const zhNav = [
-  { text: '文档', link: '/guide/quick-start' },
+  { text: '文档', link: '/docs/' },
   { text: '安装', link: '/guide/install' },
   { text: 'GitHub', link: 'https://github.com/kazeyukiro/3m-ui' },
 ]
 
 const enNav = [
-  { text: 'Docs', link: '/en/guide/quick-start' },
+  { text: 'Docs', link: '/en/docs/' },
   { text: 'Install', link: '/en/guide/install' },
   { text: 'GitHub', link: 'https://github.com/kazeyukiro/3m-ui' },
 ]
@@ -145,8 +145,8 @@ export default defineConfig({
           text: '在 GitHub 上编辑此页',
         },
         footer: {
-          message: 'Mihomo · 自托管面板',
-          copyright: 'MIT · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
+          message: '3m-ui · Mihomo 服务端管理面板',
+          copyright: 'EPL-2.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
         },
       },
     },
@@ -172,8 +172,8 @@ export default defineConfig({
           text: 'Edit this page on GitHub',
         },
         footer: {
-          message: 'Mihomo · Self-hosted panel',
-          copyright: 'MIT · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
+          message: '3m-ui · Mihomo server management panel',
+          copyright: 'EPL-2.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
         },
       },
     },
