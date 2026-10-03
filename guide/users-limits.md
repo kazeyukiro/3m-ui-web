@@ -4,43 +4,35 @@ title: 用户限制：IP · 订阅拉取
 
 # 用户限制：IP · 订阅拉取
 
-Panel fields on each **ProxyUser** (Users page / API).
+每个代理用户（用户页 / API）上的字段说明。
 
-## IP limit (`ip_limit`)
+## IP 限制（`ip_limit`）
 
-| Value | Meaning |
-|-------|---------|
-| `0` | Unlimited concurrent source IPs |
-| `N ≥ 1` | At most **N** distinct client source IPs online at once |
+限制从内核连接统计中观察到的**同时在线 IP 数量**。超过后，新连接可能被拒绝，直到有名额释放或统计窗口滚动（具体行为随核心与面板统计实现）。
 
-**How it works:** the traffic collector polls Mihomo connections about every **5 seconds**. Connections that cannot be attributed to a user are ignored. When a user exceeds `N` source IPs, excess IPs’ connections are closed (not blocked at handshake time).
+- `0` 或空：不限制  
+- 正整数：最多允许该数量的不同客户端 IP
 
-## Subscription pull limit (`sub_pull_limit`)
+## 订阅拉取限制（`sub_pull_limit`）
 
-| Value | Meaning |
-|-------|---------|
-| `0` | Unlimited successful subscription fetches |
-| `N ≥ 1` | At most **N** successful pulls per **rolling 24 hours** |
+限制该用户订阅 Token 被拉取的频率，降低 Token 泄露后被疯狂刷新、或客户端异常重试带来的压力。
 
-Exceeded → **HTTP 429** with `Retry-After` and JSON `error: subscription pull limit reached (per 24h)`.
+HTML 订阅页与客户端下载订阅都会计数。
 
-HTML subscription pages and client downloads both count.
+## 相关能力
 
-## Related APIs
+- 流量配额、到期、首次使用起算、周期重置：见 [用户与流量](./users-traffic)  
+- 按节点倍率计费：见 [按节点流量与倍率](./node-traffic)
 
-- User CRUD: `ip_limit`, `sub_pull_limit` on create/update
-- Subscription: public `/api/v1/client/sub/{token}` (and aliases)
+## 一键创建
 
-## Related
+用户页 **一键创建**（或 `POST /api/v1/users/quick`）：
 
-- [Per-node traffic & multiplier](node-traffic.md)
+- 用户名可空（空则自动生成）  
+- 密码与 UUID 自动生成，仅在响应 / 弹窗中展示一次  
+- 可选 **绑定全部本机节点**
 
-## Quick create (one-click)
+## 相关 API
 
-Panel **Users → Quick create** (or `POST /api/v1/users/quick`):
-
-- Username optional (`u` + random if empty)
-- Password and UUID auto-generated; returned **once** in the response / UI dialog
-- Optional **bind all local nodes**
-
-Full form create remains `POST /api/v1/users`. OpenAPI: `GET /api/v1/openapi.yaml`.
+- 用户 CRUD：创建/更新时的 `ip_limit`、`sub_pull_limit`  
+- 订阅：公开 `/api/v1/client/sub/{token}`（及别名）

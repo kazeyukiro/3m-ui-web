@@ -4,63 +4,38 @@ title: Cloudflare WARP
 
 # Cloudflare WARP
 
-3m-ui can **register and persist** a Cloudflare WARP account, inject a Mihomo outbound named **`WARP`**, and route selected domains through it on the **server**.
+可**注册并持久化** Cloudflare WARP 账户，向面板 Mihomo 注入名为 **`WARP`** 的出站，并在**服务端出站**里按域名分流。
 
-## Settings
+## 设置
 
-**Settings → Network → Cloudflare WARP**
+**设置 → 网络 → Cloudflare WARP**
 
-1. Choose WireGuard (recommended for server egress) or MASQUE  
-2. **Register / save WARP** — creates a device at Cloudflare, stores the account, builds outbound `WARP`  
-3. Optional YAML preview; **Delete WARP account** **hard-deletes** the row (avoids SQLite `UNIQUE(panel_settings.key)` errors after soft-delete)
+1. 选择 WireGuard（服务端推荐）或 MASQUE  
+2. **注册 / 保存 WARP** — 在 Cloudflare 创建设备、写入面板、生成出站 `WARP`  
+3. 可查看 YAML；**删除 WARP 账户** 会从数据库**硬删除**该配置（避免 `panel_settings.key` 唯一约束冲突）
 
-API:
+接口：
 
-- `GET /api/v1/system/warp` — status (no secrets)  
-- `POST /api/v1/system/warp` — register + save  
-- `DELETE /api/v1/system/warp` — delete account  
-- `POST /api/v1/system/templates/warp/register` — legacy; also saves unless `?nosave=1`
+- `GET /api/v1/system/warp` — 账户状态（不含密钥）  
+- `POST /api/v1/system/warp` — 注册并保存  
+- `DELETE /api/v1/system/warp` — 删除账户  
+- `POST /api/v1/system/templates/warp/register` — 兼容旧接口（默认也会保存，除非 `?nosave=1`）
 
-## Server egress
+## 服务端出站
 
-**Routing → Server egress**
+**路由 → 服务端出站**
 
-1. **WARP domains**: one domain per line (or `GEOSITE:name`)  
-2. Extra rules if needed (default `MATCH,DIRECT`)  
-3. **Save → Generate & apply** (required for domains to appear in serving `config.yaml`)
+1. **WARP 域名**：每行一个（如 `openai.com`）或 `GEOSITE:openai`  
+2. 可再编辑其它规则（默认 `MATCH,DIRECT`）  
+3. **保存 → 生成并应用**（必须应用，域名才会写入 `config.yaml`）
 
-The generator injects WireGuard outbound `WARP` (Cloudflare peer public key + `allowed-ips`) and prepends `DOMAIN-SUFFIX,…,WARP` rules.
+生成结果会包含：
 
-If WARP domains are set but no account is saved, apply fails with a clear error.
+- `proxies` 中的 WireGuard 出站 `WARP`（含 Cloudflare 公钥、`allowed-ips`）  
+- `DOMAIN-SUFFIX,<域名>,WARP` 等规则  
 
-## Limits
+若配置了 WARP 域名但未注册账户，应用会失败并提示。
 
-WARP does **not** guarantee streaming / AI unlock. Domain list is operator-controlled.
+## 说明
 
-## Troubleshooting
-
-| Symptom | Likely cause |
-|---------|----------------|
-| `UNIQUE constraint failed: panel_settings.key` | Soft-deleted row still held the unique key (fixed: Unscoped upsert + hard delete) |
-| Domains set but traffic still direct | Did not **Generate & apply** after save; or no WARP account |
-| Account shows configured, Apply fails | ProxyMap / core validation — check logs; ensure private key present |
-| MASQUE selected but config is WireGuard | **By design**: server egress always injects WireGuard `WARP`; MASQUE is preview YAML only |
-| After delete, still seeing WARP in core | Re-apply config so generator omits the outbound |
-
-Flow: **Settings → Register WARP** → **Routing → Server egress → WARP domains** → **Save → Generate & apply**.
-
-## Domain list syntax
-
-Each line in **WARP domains**:
-
-| Input | Rule |
-|-------|------|
-| `openai.com` | `DOMAIN-SUFFIX,openai.com,WARP` |
-| `domain:openai.com` | same as above |
-| `full:api.openai.com` | `DOMAIN,api.openai.com,WARP` |
-| `keyword:openai` | `DOMAIN-KEYWORD,openai,WARP` |
-| `geosite:openai` | `GEOSITE,openai,WARP` |
-
-## Global WARP
-
-Enable **Send all traffic via WARP** (`warpGlobal: true`). The catch-all becomes `MATCH,WARP`. Cloudflare client endpoints stay `DIRECT` so the WireGuard tunnel can still dial. Domain list can be empty when global is on.
+不保证流媒体 / AI 解锁；域名列表由管理员自行维护。

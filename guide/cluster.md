@@ -4,45 +4,22 @@ title: 多机节点
 
 # 多机节点
 
-Register other **3m-ui** panels and operate them from one place.
+登记远端 3m-ui 面板、健康检查，并把远端节点**镜像合并**进本机用户的订阅；也可按名称将本机节点**推送**到远端（默认关闭，可改名/改端口）。
 
-## Remote panel entry
+## 概念
 
-| Field | Meaning |
-|-------|---------|
-| Name | Display label |
-| Panel URL | Base URL of the remote panel (e.g. `https://panel.example.com`, no API path) |
-| API token / Login | JWT used for remote admin API; use **Login** on the row if operations return 401 |
-| Enabled | Whether the entry is active |
+- **远端面板**：基址 URL + API 凭证  
+- **节点镜像**：远端 Listener 出现在本机订阅输出中  
+- **推送**：把选中的本机节点同步到远端（需在设置中启用相关能力）
 
-Health check can work with limited access; most operations need a valid token.
+## 订阅合并
 
-## Sync nodes
+已绑定用户可在同一份 Clash / v2ray 订阅里同时拿到本机节点与远端镜像节点。
 
-**Sync** pulls remote listeners into local **mirrored node** records (share URI / client YAML) so this panel can merge them into user subscriptions.
+## 注意
 
-## Push local node
+- 远端建议 HTTPS，并使用权限受限的 API Token  
+- 健康检查会跳过不可达远端，避免一台挂掉导致整份订阅为空  
+- 推送前确认端口与名称冲突策略，避免覆盖远端已有节点  
 
-**Push** clones a **local** listener onto the remote panel.
-
-1. Open **Cluster** → **Push** on a remote row.
-2. Pick a local node **by name** (protocol and port are shown). You do **not** type a database ID.
-3. Optionally set remote name / port (defaults: `<name>-remote` and the local port).
-4. Review the dry-run payload, then confirm.
-
-The remote copy is always created **disabled** so it will not bind the port until you enable it on the remote panel.
-
-API:
-
-```http
-POST /api/v1/cluster/:remoteId/push-node
-{ "local_node_id": 12, "dry_run": false, "new_name": "optional", "new_port": "optional" }
-```
-
-The UI resolves `local_node_id` from the selected local listener.
-
-## Security notes
-
-- Remote `base_url` is validated to reduce SSRF (private/link-local targets are restricted).
-- Prefer HTTPS for remote panel URLs.
-- Tokens are full admin credentials on the remote — treat them like passwords.
+具体按钮与字段以当前面板「多机 / 集群」页面为准。
