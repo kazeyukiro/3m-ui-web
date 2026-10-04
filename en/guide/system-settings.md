@@ -72,3 +72,10 @@ If GitHub is unreachable (firewall, GFW), the panel shows a fallback hint: *"Can
 
 Pre-release URL: [https://github.com/kazeyukiro/3m-ui/releases/tag/pre](https://github.com/kazeyukiro/3m-ui/releases/tag/pre)
 
+## Logs API
+
+- Core: `GET /api/v1/mihomo/logs`
+- Panel: `GET /api/v1/system/panel-logs`
+
+The UI **Logs** page exposes each stream on its own tab. See `backend/docs/openapi.yaml` in the main repo.
+

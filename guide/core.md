@@ -12,3 +12,14 @@ description: 3m-ui · 内核
 
 内核重载期间，面板 API 可能短暂不可达，节点/用户往往已写入数据库，稍候刷新即可。
 
+## 运行日志
+
+面板「日志」页分为两个 Tab，对应不同 API：
+
+| Tab | API | 内容 |
+|-----|-----|------|
+| **Mihomo 核心** | `GET /api/v1/mihomo/logs` | 核心进程 stdout/stderr（内存环形缓冲） |
+| **面板进程** | `GET /api/v1/system/panel-logs` | 面板 `log` 输出（ACME、启动、错误等，带 `[panel]`） |
+
+均需管理员 JWT。二者**不会**混在同一接口里。
+

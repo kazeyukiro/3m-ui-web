@@ -7,6 +7,17 @@ description: 3m-ui · Core
 
 3m-ui manages a pinned Mihomo binary. Start, stop, restart and update from the panel Core page or via `3m-ui` service commands.
 
+## Runtime logs
+
+The **Logs** page has two tabs:
+
+| Tab | API | Content |
+|-----|-----|---------|
+| **Mihomo** | `GET /api/v1/mihomo/logs` | Core process stdout/stderr (in-memory ring) |
+| **Panel** | `GET /api/v1/system/panel-logs` | Panel `log` output (ACME, startup, errors; `[panel]` prefix) |
+
+Admin JWT required. The two streams are **not** merged in one endpoint.
+
 
 ---
 

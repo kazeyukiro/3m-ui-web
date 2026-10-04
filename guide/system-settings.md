@@ -17,3 +17,10 @@ description: 3m-ui · 系统设置
 
 保存 SSL、监听相关项后通常需要 **重启面板进程** 才完全生效。
 
+## 日志 API
+
+- 核心：`GET /api/v1/mihomo/logs`
+- 面板：`GET /api/v1/system/panel-logs`
+
+面板 UI「日志」页两个 Tab 分别对应上述接口。OpenAPI：仓库 `backend/docs/openapi.yaml`。
+
