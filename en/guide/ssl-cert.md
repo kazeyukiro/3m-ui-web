@@ -6,9 +6,30 @@ title: Panel SSL / ACME
 
 Configure HTTPS for the 3m-ui panel process.
 
+## Modes
+
+| Mode | When to use |
+|------|-------------|
+| **HTTP-01** | Single domain; public port **80** reachable |
+| **DNS-01** | Wildcard or no port 80 (Cloudflare API token) |
+| **IP certificate** | Public IP in the domain field (short-lived) |
+| **Manual PEM** | Paths to fullchain / privkey |
+
+## Auto-renewal
+
+Runs inside the panel process (about every **12 hours**). No crontab required.
+
+| Certificate | Renews when |
+|-------------|-------------|
+| Domain **HTTP-01** / **DNS-01** | Fewer than **15 days** remain until expiry |
+| **IP certificate** | Fewer than **48 hours** remain (~6-day short-lived certs) |
+| **Manual PEM** | Not auto-renewed |
+
+Engine: **acmez**. HTTP-01 still needs port **80**; DNS-01 needs a valid API token.
+
 ## HTTP-01
 
-Requires the chosen domain to point at this host and port **80** open for the challenge. Issue or renew from **System / SSL** in the UI.
+Requires the chosen domain to point at this host and port **80** open for the challenge. Configure under **System → SSL**, then restart the panel if prompted.
 
 ## DNS-01
 
