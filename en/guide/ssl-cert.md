@@ -17,7 +17,7 @@ Configure HTTPS for the 3m-ui panel process.
 
 ## Auto-renewal
 
-Runs inside the panel process (about every **12 hours**). No crontab required.
+Runs inside the panel process (about every **6 hours**). No crontab required.
 
 | Certificate | Renews when |
 |-------------|-------------|
