@@ -15,7 +15,7 @@ description: 3m-ui · Troubleshooting
 
 - If create/delete shows a network error but the list already changed: the panel wrote the DB first and applies Mihomo in the background. Refresh the list and wait 1–2 seconds; this is expected, not a failed save.
 
-- **Disk full / large `/var/lib/3m-ui/backups`**: install snapshots accumulate. Use Settings → Backup → Cleanup (or API `POST /system/backups/cleanup`). See [Backup & restore](backup-restore.html).
+- **Disk full / large `/var/lib/3m-ui/backups`**: install snapshots accumulate. Use Settings → Backup → Cleanup (or API `POST /system/backups/cleanup`). See [Backup & restore](./backup-restore).
 
 - **Update rolls back with `uidx_user_hwid already exists`**: fixed in recent builds — update again after CI ships the fix. The panel drops the legacy HWID index before migrate.
 

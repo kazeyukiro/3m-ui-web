@@ -84,4 +84,4 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 
 ## 安全说明
 
-提示词只引导使用本仓库 `scripts/install.sh` 的官方一键脚本，所有下载均校验 `SHA256SUMS`。请勿让 AI 助手改写下载地址、追加不明参数或替换为第三方镜像源——这会绕过校验。完整安装、升级与恢复说明见 [安装文档](installation.md)。
+提示词只引导使用本仓库 `scripts/install.sh` 的官方一键脚本，所有下载均校验 `SHA256SUMS`。请勿让 AI 助手改写下载地址、追加不明参数或替换为第三方镜像源——这会绕过校验。完整安装、升级与恢复说明见 [安装文档](./install)。

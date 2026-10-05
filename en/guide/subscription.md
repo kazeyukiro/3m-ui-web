@@ -15,14 +15,12 @@ Each user has a subscription token URL under `/api/v1/client/sub/<token>`.
 
 - `?html=1`: HTML info page with QR
 
-`sub_pull_limit` are enforced on the user subscription path (see [Users & traffic](users-traffic.html)). TUIC/Hysteria2 share links include client TLS params.
+`sub_pull_limit` are enforced on the user subscription path (see [Users & traffic](./users-traffic)). TUIC/Hysteria2 share links include client TLS params.
 
 
 ---
 
-## 补充说明（仓库文档）
-
-# Subscription formats
+## Subscription formats
 
 Public token URL (path may use `web_path` / custom sub base):
 
