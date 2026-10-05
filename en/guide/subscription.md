@@ -3,7 +3,7 @@ title: Subscriptions
 description: 3m-ui · Subscriptions
 ---
 
-## Subscriptions
+# Subscriptions
 
 Each user has a subscription token URL under `/api/v1/client/sub/<token>`.
 
