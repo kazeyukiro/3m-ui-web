@@ -23,7 +23,7 @@ Runs inside the panel process (about every **6 hours**). No crontab required.
 | **IP certificate** | Fewer than **48 hours** remain (~6-day short-lived certs) |
 | **Manual PEM** | Not auto-renewed |
 
-Engine: **certmagic** (domains and IP; ACME protocol underneath). HTTP-01 still needs port **80**; DNS-01 needs a valid API token.
+Engine: **acmez**. HTTP-01 still needs port **80**; DNS-01 needs a valid API token.
 
 ## Wildcard `*.example.com`
 

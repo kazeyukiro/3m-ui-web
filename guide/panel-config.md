@@ -22,10 +22,10 @@ systemctl restart 3m-ui
 
 | 位置 | Mihomo 字段 | 作用 |
 |------|-------------|------|
-| **常规设置** | `inbound-tfo` / `inbound-mptcp` | 全局，作用于**服务端**所有 inbound 监听 |
-| **代理条目** | `tfo` / `mptcp` | 单条出站/节点；会进入**客户端订阅** |
+| **常规设置** | `inbound-tfo` / `inbound-mptcp` | 全局，仅**服务端** Mihomo 监听；**不会**写入客户端订阅 |
+| **代理条目** | `tfo` / `mptcp` | 客户端出站字段（见 [Mihomo 文档](https://wiki.metacubex.one/config/proxies/#tfo)），布尔值；勿与 inbound-* 混淆 |
 
-仅对 **TCP** 有意义。接口：`GET/POST /api/v1/config/visual`。
+常规设置中的 **运行模式（mode）** 不在此编辑。仅对 **TCP** 有意义。接口：`GET/POST /api/v1/config/visual`。
 
 ## 同端口 TCP 与 UDP
 

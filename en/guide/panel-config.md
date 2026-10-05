@@ -17,10 +17,10 @@ On the **Config** page:
 
 | Where | Mihomo keys | Scope |
 |-------|-------------|--------|
-| **General** | `inbound-tfo` / `inbound-mptcp` | Global; **server** inbound listeners only |
-| **Proxy entry** | `tfo` / `mptcp` | Per outbound/node; included in **client subscriptions** |
+| **General** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; **not** written into client subscriptions |
+| **Proxy entry** | `tfo` / `mptcp` | Client outbound flags ([Mihomo docs](https://wiki.metacubex.one/config/proxies/#tfo)); booleans — not `inbound-*` |
 
-TCP only. API: `GET/POST /api/v1/config/visual`.
+**Mode** is not edited in General settings. TCP only. API: `GET/POST /api/v1/config/visual`.
 
 ## Same port for TCP and UDP
 
