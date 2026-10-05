@@ -2,6 +2,7 @@
 title: Core
 description: 3m-ui · Core
 ---
+
 # Core
 
 3m-ui manages a pinned Mihomo binary. Start, stop, restart and update from the panel Core page or via `3m-ui` service commands.

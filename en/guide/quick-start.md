@@ -3,7 +3,7 @@ title: Quick start
 description: 3m-ui · Quick start
 ---
 
-## Quick start
+# Quick start
 
 The dashboard shows host resources and **panel / Mihomo core** process CPU and memory.
 

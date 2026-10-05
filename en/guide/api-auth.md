@@ -3,7 +3,9 @@ title: API & auth
 description: 3m-ui · API & auth
 ---
 
-# API & authentication
+# API & auth
+
+## API & authentication
 
 HTTP API is under `/api/v1`. Login returns a JWT Bearer token. Protected routes require `Authorization: Bearer <token>`.
 

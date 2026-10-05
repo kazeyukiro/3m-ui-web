@@ -3,7 +3,7 @@ title: Troubleshooting
 description: 3m-ui · Troubleshooting
 ---
 
-## Troubleshooting
+# Troubleshooting
 
 - `systemctl status 3m-ui` / `journalctl -u 3m-ui -n 100`
 

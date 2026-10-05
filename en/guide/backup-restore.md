@@ -3,6 +3,8 @@ title: Backup & restore
 description: 3m-ui · Backup & restore
 ---
 
+# Backup & restore
+
 ## Download backup (panel)
 
 Settings → Backup → **Download backup** exports a `.zip` (SQLite DB + Mihomo config snapshot + meta). Use **Restore** to upload a zip or raw `.db`.
