@@ -15,7 +15,7 @@ Theme, subscription page options, Telegram, public URL and related panel options
 
 One-click registration builds a Mihomo outbound YAML fragment. Choose **WireGuard** or **MASQUE** before registering. YAML is copied when possible and shown in a themed dialog. MASQUE requires a Mihomo build that supports `type: masque`.
 
-API: `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`. This is **not** injected into Routing templates; paste YAML into the client or a manual outbound. See also the repo doc `docs/warp.md`.
+API: `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`. This is **not** injected into Routing templates; paste YAML into the client or a manual outbound. See also [Cloudflare WARP](./warp).
 
 ## System ops (restart & update)
 
@@ -77,5 +77,5 @@ Pre-release URL: [https://github.com/kazeyukiro/3m-ui/releases/tag/pre](https://
 - Core: `GET /api/v1/mihomo/logs`
 - Panel: `GET /api/v1/system/panel-logs`
 
-The UI **Logs** page exposes each stream on its own tab. See `backend/docs/openapi.yaml` in the main repo.
+The UI **Logs** page exposes each stream on its own tab. OpenAPI: panel `GET /api/v1/openapi.yaml` (auth required); source file `backend/docs/openapi.yaml` in the main repo.
 

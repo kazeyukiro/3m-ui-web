@@ -19,4 +19,4 @@ description: 3m-ui · 安全
 2. 填写 Client ID / Secret，以及允许绑定的 GitHub 用户名
 3. 启用后登录页出现「使用 GitHub 登录」
 
-密码登录仍然可用。详见主仓库 `docs/github-oauth.md`。
+密码登录仍然可用。完整步骤见 [GitHub OAuth](./github-oauth)。

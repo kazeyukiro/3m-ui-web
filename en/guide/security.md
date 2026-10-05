@@ -16,4 +16,4 @@ Optional panel login via GitHub. Configure under **Settings → Security → Git
 2. Set Client ID / Secret and allowed GitHub usernames (for first-time bind)
 3. Enable; the login page shows **Continue with GitHub**
 
-Password login remains available. See the main repo `docs/github-oauth.md`.
+Password login remains available. Full steps: [GitHub OAuth](./github-oauth).

@@ -22,5 +22,5 @@ description: 3m-ui · 系统设置
 - 核心：`GET /api/v1/mihomo/logs`
 - 面板：`GET /api/v1/system/panel-logs`
 
-面板 UI「日志」页两个 Tab 分别对应上述接口。OpenAPI：仓库 `backend/docs/openapi.yaml`。
+面板 UI「日志」页两个 Tab 分别对应上述接口。OpenAPI：面板 `GET /api/v1/openapi.yaml`（需登录），源文件见主仓库 `backend/docs/openapi.yaml`。
 
