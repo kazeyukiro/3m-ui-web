@@ -27,3 +27,6 @@ Field `traffic_multiplier` (default 1): raw traffic on this node × multiplier c
 
 Select multiple nodes and apply one TLS certificate (PEM body, allowlisted file paths such as Let's Encrypt, or reuse panel SSL). API: `POST /api/v1/nodes/batch/certificate`.
 
+## Same-port TCP/UDP
+
+TCP and UDP listeners may share the same port; config generation allows coexistence.

@@ -16,3 +16,18 @@ systemctl restart 3m-ui
 
 **公网 URL（public_url）** 用于拼订阅链接、部分回调场景，在面板 **系统设置** 中填写（例如 `https://panel.example.com`）。
 
+## 配置引擎中的 TFO / MPTCP
+
+面板 **配置** 页：
+
+| 位置 | Mihomo 字段 | 作用 |
+|------|-------------|------|
+| **常规设置** | `inbound-tfo` / `inbound-mptcp` | 全局，作用于**服务端**所有 inbound 监听 |
+| **代理条目** | `tfo` / `mptcp` | 单条出站/节点；会进入**客户端订阅** |
+
+仅对 **TCP** 有意义。接口：`GET/POST /api/v1/config/visual`。
+
+## 同端口 TCP 与 UDP
+
+节点（Listener）允许 **同一端口** 上同时存在 TCP 与 UDP 监听（生成配置时亦允许共存），以匹配真实协议需求。
+
