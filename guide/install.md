@@ -211,29 +211,20 @@ docker compose exec 3m-ui /usr/local/bin/3m-ui reset-admin
 发布验证应涵盖两种架构、首次初始化、真实核心运行、登录改密、创建节点、实际代理连接、更新保留数据和快照恢复。仅编译成功不能证明一台全新服务器可以安装。
 
 
-## Subscription path and port
+## 订阅路径与端口
 
-Optional `server.sub_path` (e.g. `/sub`) and `server.sub_port` in `/etc/3m-ui/config.yaml`, or env `THREE_M_UI_SUB_PATH` / `THREE_M_UI_SUB_PORT`. Legacy `/api/v1/client/sub/:token` remains. Set `public_url` to the client-facing base URL.
+可在 `/etc/3m-ui/config.yaml` 中设置可选的 `server.sub_path`（例如 `/sub`）与 `server.sub_port`，或通过环境变量 `THREE_M_UI_SUB_PATH` / `THREE_M_UI_SUB_PORT`。原有 `/api/v1/client/sub/:token` 仍然可用。请将 `public_url` 设为客户端可访问的公网基址。
 
-## Independent core updates
+## 独立的核心更新
 
-The Core page supports manual updates and rollback of official stable and Pre Mihomo
-versions on Linux amd64/arm64. Selected versions persist in the existing data
-volume across panel upgrades. See [core updates](core-updates.md) for validation,
-recovery, and deployment integration details.
+「内核」页支持在 Linux amd64 / arm64 上手动更新与回滚官方 **稳定版** 与 **Pre** 版 Mihomo。选定版本会保留在现有数据目录中，面板升级后仍可用。校验、恢复与部署集成见 [核心更新](./core-updates)。
 
-## Frontend compression and caching
+## 前端压缩与缓存
 
-The panel precompresses embedded text assets with gzip once at startup and serves
-compressed responses when the client accepts them. Hashed JavaScript and CSS
-assets use `Cache-Control: public, max-age=31536000, immutable`; HTML and assets
-without content hashes use `no-cache` with ETags so new deployments are detected.
-Identity and gzip responses have separate validators and use `Vary: Accept-Encoding`.
-No reverse-proxy compression setting or writable asset directory is required.
-Missing `/assets/` files return an uncached 404 rather than the SPA HTML fallback.
+面板启动时会将嵌入的文本资源 **gzip 预压缩** 一次；在客户端支持时返回压缩响应。带内容哈希的 JS/CSS 使用 `Cache-Control: public, max-age=31536000, immutable`；HTML 与无哈希资源使用 `no-cache` 与 ETag，以便发现新部署。明文与 gzip 响应使用独立校验器，并设置 `Vary: Accept-Encoding`。无需在反代上单独开启压缩，也不需要可写的静态资源目录。缺失的 `/assets/` 文件返回不缓存的 **404**，而不会回落到 SPA 的 HTML。
 
-## Frontend stack (panel UI)
+## 前端技术栈（面板 UI）
 
-The embedded web UI is **React + Ant Design**, with icons from **Lucide** (`lucide-react`, adapted in `frontend/src/icons.tsx`). Building the panel binary runs `npm ci` / `npm install` and `npm run build` under `frontend/`.
+内嵌 Web UI 为 **React + Ant Design**，图标来自 **Lucide**（`lucide-react`，封装于 `frontend/src/icons.tsx`）。构建面板二进制时会在 `frontend/` 下执行 `npm ci` / `npm install` 与 `npm run build`。
 
-The Overview (dashboard) uses a layout-gray canvas with floating cards (resource metrics, traffic, connections), 2-second polling, and TCP/UDP connection breakdown. Feature search is available from the sidebar (desktop), the mobile header, and the **Ctrl/Cmd+K** shortcut. Bundled Mihomo version is pinned in `distribution/mihomo.env` (currently **v1.19.32**).
+概览（仪表盘）为灰底画布与浮动卡片（资源、流量、连接），约 **2 秒** 轮询，连接按 TCP/UDP 拆分。功能搜索可在侧边栏（桌面）、移动端顶栏使用，快捷键为 **Ctrl/Cmd+K**。配套 Mihomo 版本固定在 `distribution/mihomo.env`（当前为 **v1.19.32**）。
