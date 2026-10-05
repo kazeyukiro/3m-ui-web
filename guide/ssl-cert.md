@@ -38,8 +38,6 @@ title: 面板 SSL / ACME
 
 Token 留空再保存表示不修改已存储的 Token；接口不会回显 Token。
 
-仓库详细说明：[panel-ssl.md](https://github.com/kazeyukiro/3m-ui/blob/main/docs/panel-ssl.md)
-
 ### 配错恢复（无需重装）
 
 ```bash
@@ -53,4 +51,4 @@ systemctl restart 3m-ui
 
 自签、上传路径/PEM，或批量应用到多个 Listener。也可尝试复用面板手动证书路径（`from_panel_ssl`）。
 
-详见：[批量应用节点证书](https://github.com/kazeyukiro/3m-ui/blob/main/docs/batch-certificate.md)
+详见：[批量应用节点证书](./batch-certificate)

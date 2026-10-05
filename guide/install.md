@@ -61,7 +61,7 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 首次登录改密后，在「系统设置」配置面板 HTTPS：可以申请域名证书，也可以使用已有证书。
 
 - **单域名**：默认 HTTP-01（公网 **80** 可达）。
-- **通配符 `*.example.com`**：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [panel-ssl.md](./panel-ssl.md)。
+- **通配符 `*.example.com`**：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [面板 SSL / ACME](./ssl-cert)。
 - **公网 IP**：Let’s Encrypt 短效证书（约 6 天、面板自动续期，需 80/443 可达）。
 - **手动路径**：fullchain + privkey（如 certbot 签好的文件）。
 
