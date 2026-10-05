@@ -21,9 +21,7 @@ Admin JWT required. The two streams are **not** merged in one endpoint.
 
 ---
 
-## 补充说明（仓库文档）
-
-# Updating the Mihomo core
+## Updating the Mihomo core
 
 Administrators can use **Core → Check for updates** to select an official stable
 or Pre Mihomo release, or **Restore previous version** to return to the saved binary.

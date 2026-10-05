@@ -33,23 +33,76 @@ When migrating from an older install script, run the latest install once so snap
 
 See [AI install prompt](./ai-install-prompt).
 
-## Docker
+### HTTPS and public access
 
-Use official images from the project releases/GHCR as documented on the release page. `latest` tracks stable. Persist the data directory (database + `listener-certs` + config).
+For panel HTTPS (Let's Encrypt domain HTTP-01 / DNS-01 / IP certs, or manual PEM), see [Panel SSL / ACME](./ssl-cert). Domain HTTP-01 needs public port **80**; DNS-01 needs a Cloudflare API token for wildcards. After saving SSL settings, **restart the panel** so ListenTLS takes effect.
 
-## Upgrade
+Set `public_url` to the client-facing base URL (subscriptions, OAuth callbacks, links).
+
+### Versions and channels
+
+- **Stable** is the default for install, `3m-ui update`, and Docker `latest`.
+- **Pre** (prerelease) is a separate channel; opt in explicitly and keep it until you switch back.
+- Pin a version: `sudo 3m-ui update v1.x.y`.
+
+### Custom core and advanced layout
+
+The full package pins Mihomo in `distribution/mihomo.env`. Advanced installs that ship only the panel binary must provide a compatible core and verify themselves. Optional env: `THREE_M_UI_MIHOMO_BINARY=/absolute/path/to/mihomo`.
+
+### Management and backup
+
+Useful CLI (see also [Backup & restore](./backup-restore)):
 
 ```bash
-sudo 3m-ui update
-# pin version: sudo 3m-ui update v1.0.6
+sudo 3m-ui update          # update panel (+ pinned core per package rules)
+sudo 3m-ui backup          # full snapshot under the data/backups directory
+sudo 3m-ui reset-admin     # new admin password
+sudo 3m-ui reset-config --panel --yes   # rescue broken SSL / listen bind
 ```
 
-Prefer stable tags. Pre-releases need an explicit channel/version choice.
+`backup` briefly pauses the service, writes a full snapshot, then restores the previous run state. Snapshots can be large; clean up from **Settings → Backup** or `POST /api/v1/system/backups/cleanup`. A snapshot includes panel binaries, bundled core, scripts, unit files, config, keys, database (+ WAL siblings), Mihomo data and certs; nested historical backups are not re-included.
 
-## Backup & restore
+## Docker
 
-Use panel backup export and `3m-ui` CLI restore flows. Always back up **database + certstore directory** together; losing certs breaks existing clients even if the DB remains.
+Use official images from project releases / GHCR. Tag `latest` tracks **stable**. Persist the data directory (database, `listener-certs`, config).
 
-## Uninstall
+Example pattern:
 
-Follow the install script / package uninstall path for your OS. Export a backup before removing data directories.
+```bash
+docker compose up -d
+docker compose exec 3m-ui /usr/local/bin/3m-ui reset-admin
+```
+
+### Network and versions
+
+Publish panel and node ports as needed. Prefer stable tags; prereleases need an explicit tag/channel.
+
+### Docker upgrade, backup, and restore
+
+Pull a newer image, recreate the container with the **same volume**. Export panel backups before major moves. Losing the volume loses DB and certs even if you still have an image.
+
+## Maintaining the release set
+
+Pinned Mihomo version, asset names, and SHA-256 live in `distribution/mihomo.env`. Changing it means a new bundled core and requires reinstall/compatibility checks. Native packages and Docker builds share this manifest.
+
+Release workflows build by tag and refuse to overwrite published versions. Rolling `pre` is a separate channel. Images publish to `ghcr.io/<owner>/<repo>`; maintainers must set package visibility for public pulls on first release.
+
+Validation should cover both architectures, first boot, real core traffic, login/password change, node create, live proxy, update keeping data, and snapshot restore. A green compile alone does not prove a clean server install.
+
+## Subscription path and port
+
+Optional `server.sub_path` (e.g. `/sub`) and `server.sub_port` in `/etc/3m-ui/config.yaml`, or env `THREE_M_UI_SUB_PATH` / `THREE_M_UI_SUB_PORT`. Legacy `/api/v1/client/sub/:token` remains. Set `public_url` to the client-facing base URL.
+
+## Independent core updates
+
+The Core page supports manual updates and rollback of official stable and Pre Mihomo on Linux amd64/arm64. Selected versions persist in the data volume across panel upgrades. See [Core updates](./core-updates) for validation, recovery, and deployment integration.
+
+## Frontend compression and caching
+
+At startup the panel gzip-precompresses embedded text assets and serves compressed responses when the client accepts them. Hashed JS/CSS use `Cache-Control: public, max-age=31536000, immutable`; HTML and non-hashed assets use `no-cache` with ETags. Identity and gzip responses have separate validators and `Vary: Accept-Encoding`. No reverse-proxy compression setting or writable asset directory is required. Missing `/assets/` paths return an uncached **404** (not SPA HTML fallback).
+
+## Frontend stack (panel UI)
+
+Embedded UI: **React + Ant Design**, icons from **Lucide** (`lucide-react`, wrapped in `frontend/src/icons.tsx`). Building the panel runs `npm ci` / `npm install` and `npm run build` under `frontend/`.
+
+Overview (dashboard): gray canvas, floating cards (resources, traffic, connections), ~**2s** polling, TCP/UDP split. Feature search: sidebar (desktop), mobile header, **Ctrl/Cmd+K**. Bundled Mihomo is pinned in `distribution/mihomo.env` (currently **v1.19.32**).
