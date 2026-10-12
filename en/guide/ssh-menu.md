@@ -65,6 +65,31 @@ For the panel's own HTTPS, keep using the built-in ACME under
 Settings → SSL. This integration is mainly for issuing certificates for nodes
 or a reverse proxy.
 
+### Install source
+
+The first install asks where to fetch acme.sh from:
+
+| Option | Notes |
+|--------|-------|
+| Official `get.acme.sh` | Default when the network is fine |
+| Gitee mirror | **Recommended for mainland-China servers** — the GitHub archive frequently times out (acme.sh itself prints its Install-in-China hint) |
+
+If acme.sh is already installed, the menu just upgrades it without asking.
+
+### Automatic renewal
+
+acme.sh relies on crontab to renew certificates. When `crontab` is missing the
+install is refused; the menu then offers to continue with `--force` — **but the
+certificates will not renew automatically**, and you must add your own cron job
+running `acme.sh --cron` daily. Installing cron first is recommended:
+
+```bash
+# Debian / Ubuntu
+apt install -y cron
+# RHEL / CentOS
+yum install -y cronie
+```
+
 ## Language switch
 
 The menu ships two **fully separate** string tables (Chinese and English)
