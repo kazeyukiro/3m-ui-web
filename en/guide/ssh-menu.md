@@ -30,8 +30,8 @@ legacy `a` (uninstall) and `0` (exit) keys keep working.
 | 8 | Enable / Disable autostart | 22 | Backup |
 | 9 | Logs | 23 | Update 3m-ui (incl. scripts) |
 | 10 | Version | 24 | **Language** |
-| 11 | Access info | 25 / `a` | Uninstall |
-| 12 | Change port | 26 / `0` | Exit |
+| 11 | Access info | `a` | Uninstall |
+| 12 | Change port | `0` | Exit |
 | 13 | Set public_url | | |
 | 14 | Paths / subscription port | | |
 
