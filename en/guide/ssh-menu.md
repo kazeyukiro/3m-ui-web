@@ -47,9 +47,10 @@ to issue, deploy and renew certificates:
 | 3 | Issue certificate (DNS API, no port 80) |
 | 4 | Install certificate into 3m-ui and reload the panel |
 | 5 | List certificates |
-| 6 | Renew certificate |
-| 7 | Print commands (run manually) |
-| 0 | Back |
+| 6 | **Show certificate details** |
+| 7 | Renew certificate |
+| 8 | Print commands (run manually) |
+| 9 | Back |
 
 Certificates land in `/etc/3m-ui/certs/` (`<domain>.key` and `<domain>.crt`).
 
@@ -64,6 +65,26 @@ free to upgrade on its own.
 For the panel's own HTTPS, keep using the built-in ACME under
 Settings → SSL. This integration is mainly for issuing certificates for nodes
 or a reverse proxy.
+
+### Choosing a certificate authority (CA)
+
+Issuing a certificate (menu 2 or 3) asks for the CA first:
+
+| Option | Notes |
+|--------|-------|
+| Let's Encrypt | The most widely used; works without an email |
+| ZeroSSL | **acme.sh v3 default** — needs an email to register an account |
+| Buypass | Norwegian CA, 180-day certificates |
+| SSL.com | Commercial CA |
+| Google Trust Services | Google's CA |
+
+Choosing "Back" keeps whatever CA acme.sh currently defaults to (ZeroSSL since v3).
+
+### Showing certificate details
+
+Menu 6 prints the subject, issuer and validity window, and warns when the
+certificate expires within 30 days (it reads the file with `openssl x509`; if
+openssl is missing you get told so).
 
 ### Install source
 
