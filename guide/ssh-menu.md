@@ -58,6 +58,30 @@ acme.sh 是 **GPL-3.0**，3m-ui 是 **EPL-2.0**，两者不兼容。因此 3m-ui
 
 面板自身的 HTTPS 仍推荐使用面板内「系统设置 → SSL」的内置 ACME；这里的集成主要用于给节点或反向代理签发证书。
 
+### 安装源
+
+首次安装时会让你选择来源：
+
+| 选项 | 说明 |
+|------|------|
+| 官方 `get.acme.sh` | 网络通畅时的默认选择 |
+| Gitee 镜像 | **中国大陆服务器推荐**；GitHub 归档经常超时（acme.sh 自身也会提示 Install-in-China） |
+
+已经安装过时直接执行升级，不再询问来源。
+
+### 自动续期
+
+acme.sh 依赖 crontab 自动续期证书。若系统没有 `crontab`，安装会被拒绝；
+此时菜单会询问是否用 `--force` 继续 —— **但证书将不会自动续期**，
+你需要自行添加定时任务每天执行 `acme.sh --cron`。建议先安装 cron：
+
+```bash
+# Debian / Ubuntu
+apt install -y cron
+# RHEL / CentOS
+yum install -y cronie
+```
+
 ## 语言切换
 
 菜单支持中文与英文两套**完全独立**的文案（不再是中英混排在同一行）。
