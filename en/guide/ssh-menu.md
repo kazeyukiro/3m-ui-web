@@ -84,7 +84,16 @@ Choosing "Back" keeps whatever CA acme.sh currently defaults to (ZeroSSL since v
 
 Menu 6 prints the subject, issuer and validity window, and warns when the
 certificate expires within 30 days (it reads the file with `openssl x509`; if
-openssl is missing you get told so).
+openssl is missing you get told so). It then offers to show the actual material:
+
+| Option | Notes |
+|--------|-------|
+| Certificate PEM | Prints the full certificate PEM |
+| Public key PEM | Extracts the public key with `openssl x509 -pubkey` |
+| Private key PEM | Prints the private key — **warns and asks first** (default no) |
+
+A private key is printed in full and may linger in the terminal scrollback or in
+logs, so it is never shown without confirmation.
 
 ### Install source
 
