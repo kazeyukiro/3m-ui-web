@@ -163,6 +163,38 @@ sequences — your logs and cron output stay clean.
 | `0`–`9` | Jump to an entry; digits accumulate, so `2` then `0` reaches entry 20 |
 | `q` / `Esc` | Back / exit |
 
+### Reducing exposure when you only use the TUI (optional)
+
+The panel bind address comes from `server.listen` in `/etc/3m-ui/config.yaml`:
+empty, `0.0.0.0`, `::` or `*` listens on every interface, while a concrete IP
+binds only that address.
+
+If you manage everything from the SSH menu, you can keep the admin side on
+loopback while client subscriptions stay reachable:
+
+```yaml
+server:
+  port: 8080
+  listen: 127.0.0.1      # admin UI and API on loopback only
+  sub_port: 8081         # >0 and different from port -> separate subscription server
+  sub_listen: 0.0.0.0    # subscriptions stay open to clients
+```
+
+When you do need the web UI, reach it through an SSH tunnel:
+`ssh -L 8080:127.0.0.1:8080 user@server`, then open `http://127.0.0.1:8080`.
+Or skip the browser entirely and stay in the SSH menu.
+
+Notes:
+
+- Run `3m-ui restart` for the change to take effect.
+- Menu 16 (`reset-config --panel`) **clears `listen`**, so the panel listens on
+  every interface again — that is deliberate rescue behaviour, so re-apply the
+  setting afterwards.
+- Binding to loopback is not a replacement for a firewall; still restrict
+  sources with your security group / firewall.
+- SSH then becomes the only door, so keep key-only auth and disable password
+  login.
+
 ## Language switch
 
 The menu ships two **fully separate** string tables (Chinese and English)
