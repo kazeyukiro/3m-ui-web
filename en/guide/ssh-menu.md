@@ -1,6 +1,6 @@
 ---
 title: SSH management menu
-description: 3m-ui · SSH management menu (acme.sh / language switch / command reference)
+description: 3m-ui · SSH management menu (TUI panel / acme.sh / language switch / command reference)
 ---
 
 # SSH management menu
@@ -13,8 +13,10 @@ entry point when the web panel is unreachable.
 3m-ui help       # command-line usage
 ```
 
-It is a classic **numbered text menu**: type a number and press Enter. The
-legacy `a` (uninstall) and `0` (exit) keys keep working.
+It offers **two interfaces**: a full-screen TUI panel (arrow-key selection) by
+default on a real terminal, plus the classic numbered text menu as a
+compatibility mode. The `a` (uninstall) and `0` (exit) keys mean the same in
+both — see "UI mode" below.
 
 ## Menu items
 
@@ -30,9 +32,9 @@ legacy `a` (uninstall) and `0` (exit) keys keep working.
 | 8 | Enable / Disable autostart | 22 | Backup |
 | 9 | Logs | 23 | Update 3m-ui (incl. scripts) |
 | 10 | Version | 24 | **Language** |
-| 11 | Access info | `a` | Uninstall |
-| 12 | Change port | `0` | Exit |
-| 13 | Set public_url | | |
+| 11 | Access info | 25 | **UI mode** |
+| 12 | Change port | `a` | Uninstall |
+| 13 | Set public_url | `0` | Exit |
 | 14 | Paths / subscription port | | |
 
 ## SSL certificate helper (acme.sh)
@@ -119,6 +121,47 @@ apt install -y cron
 # RHEL / CentOS
 yum install -y cronie
 ```
+
+## UI mode (TUI / classic)
+
+| Mode | Notes |
+|------|-------|
+| **TUI** | Full-screen panel with arrow-key selection. The header line shows the installed release and the service state (running / stopped). It is safe for CJK wide characters — the highlight is a reverse-video bar rather than a bordered box, so double-width glyphs can never knock the layout out of alignment |
+| **Classic** | The original numbered text menu: type a number and press Enter |
+
+A real terminal defaults to the TUI. To switch manually:
+
+```bash
+3m-ui tui           # show the current mode and the active backend
+3m-ui tui on        # force the TUI
+3m-ui tui off       # force the classic menu
+3m-ui tui auto      # back to auto-detection (default)
+```
+
+You can also pick **25. UI mode** in the menu, or override a single run:
+
+```bash
+THREE_M_UI_TUI=classic 3m-ui     # classic menu for this run only
+```
+
+Precedence: **environment variable > saved setting > auto-detection**. Two cases
+fall back to the classic menu **unconditionally**:
+
+- no usable terminal (pipes, cron, CI, or `ssh host "3m-ui menu"` style calls)
+- a dumb terminal such as `TERM=dumb`
+
+In other words, even with `ui=tui` saved, piped invocations never emit escape
+sequences — your logs and cron output stay clean.
+
+### Keys
+
+| Key | Action |
+|-----|--------|
+| `↑` / `k` | Move up (wraps to the last entry from the first) |
+| `↓` / `j` | Move down (wraps to the first entry from the last) |
+| `Enter` / `Space` | Confirm the highlighted entry |
+| `0`–`9` | Jump to an entry; digits accumulate, so `2` then `0` reaches entry 20 |
+| `q` / `Esc` | Back / exit |
 
 ## Language switch
 
