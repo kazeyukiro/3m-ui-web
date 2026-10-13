@@ -1,6 +1,6 @@
 ---
 title: SSH management menu
-description: 3m-ui · SSH management menu (TUI panel / acme.sh / language switch / command reference)
+description: 3m-ui · SSH management menu (acme.sh / language switch / command reference)
 ---
 
 # SSH management menu
@@ -13,10 +13,8 @@ entry point when the web panel is unreachable.
 3m-ui help       # command-line usage
 ```
 
-It offers **two interfaces**: a full-screen TUI panel (arrow-key selection) by
-default on a real terminal, plus the classic numbered text menu as a
-compatibility mode. The `a` (uninstall) and `0` (exit) keys mean the same in
-both — see "UI mode" below.
+It is a classic **numbered text menu**: type a number and press Enter. The
+legacy `a` (uninstall) and `0` (exit) keys keep working.
 
 ## Menu items
 
@@ -32,9 +30,9 @@ both — see "UI mode" below.
 | 8 | Enable / Disable autostart | 22 | Backup |
 | 9 | Logs | 23 | Update 3m-ui (incl. scripts) |
 | 10 | Version | 24 | **Language** |
-| 11 | Access info | 25 | **UI mode** |
-| 12 | Change port | `a` | Uninstall |
-| 13 | Set public_url | `0` | Exit |
+| 11 | Access info | `a` | Uninstall |
+| 12 | Change port | `0` | Exit |
+| 13 | Set public_url | | |
 | 14 | Paths / subscription port | | |
 
 ## SSL certificate helper (acme.sh)
@@ -122,79 +120,6 @@ apt install -y cron
 yum install -y cronie
 ```
 
-## UI mode (TUI / classic)
-
-| Mode | Notes |
-|------|-------|
-| **TUI** | Full-screen panel with arrow-key selection. The header line shows the installed release and the service state (running / stopped). It is safe for CJK wide characters — the highlight is a reverse-video bar rather than a bordered box, so double-width glyphs can never knock the layout out of alignment |
-| **Classic** | The original numbered text menu: type a number and press Enter |
-
-A real terminal defaults to the TUI. To switch manually:
-
-```bash
-3m-ui tui           # show the current mode and the active backend
-3m-ui tui on        # force the TUI
-3m-ui tui off       # force the classic menu
-3m-ui tui auto      # back to auto-detection (default)
-```
-
-You can also pick **25. UI mode** in the menu, or override a single run:
-
-```bash
-THREE_M_UI_TUI=classic 3m-ui     # classic menu for this run only
-```
-
-Precedence: **environment variable > saved setting > auto-detection**. Two cases
-fall back to the classic menu **unconditionally**:
-
-- no usable terminal (pipes, cron, CI, or `ssh host "3m-ui menu"` style calls)
-- a dumb terminal such as `TERM=dumb`
-
-In other words, even with `ui=tui` saved, piped invocations never emit escape
-sequences — your logs and cron output stay clean.
-
-### Keys
-
-| Key | Action |
-|-----|--------|
-| `↑` / `k` | Move up (wraps to the last entry from the first) |
-| `↓` / `j` | Move down (wraps to the first entry from the last) |
-| `Enter` / `Space` | Confirm the highlighted entry |
-| `0`–`9` | Jump to an entry; digits accumulate, so `2` then `0` reaches entry 20 |
-| `q` / `Esc` | Back / exit |
-
-### Reducing exposure when you only use the TUI (optional)
-
-The panel bind address comes from `server.listen` in `/etc/3m-ui/config.yaml`:
-empty, `0.0.0.0`, `::` or `*` listens on every interface, while a concrete IP
-binds only that address.
-
-If you manage everything from the SSH menu, you can keep the admin side on
-loopback while client subscriptions stay reachable:
-
-```yaml
-server:
-  port: 8080
-  listen: 127.0.0.1      # admin UI and API on loopback only
-  sub_port: 8081         # >0 and different from port -> separate subscription server
-  sub_listen: 0.0.0.0    # subscriptions stay open to clients
-```
-
-When you do need the web UI, reach it through an SSH tunnel:
-`ssh -L 8080:127.0.0.1:8080 user@server`, then open `http://127.0.0.1:8080`.
-Or skip the browser entirely and stay in the SSH menu.
-
-Notes:
-
-- Run `3m-ui restart` for the change to take effect.
-- Menu 16 (`reset-config --panel`) **clears `listen`**, so the panel listens on
-  every interface again — that is deliberate rescue behaviour, so re-apply the
-  setting afterwards.
-- Binding to loopback is not a replacement for a firewall; still restrict
-  sources with your security group / firewall.
-- SSH then becomes the only door, so keep key-only auth and disable password
-  login.
-
 ## Language switch
 
 The menu ships two **fully separate** string tables (Chinese and English)
@@ -216,6 +141,77 @@ THREE_M_UI_LANG=en 3m-ui
 Precedence: **environment variable > saved setting > locale auto-detection**.
 The setting lives in `/etc/3m-ui/menu.conf` and is **never written to
 `config.yaml`**, which belongs to the panel binary.
+
+## Terminal control center (TUI)
+
+The panel binary ships a terminal console: a multi-pane interface (header +
+navigation sidebar + content pane + modal dialogs) driven entirely by the
+keyboard.
+
+```bash
+/usr/local/lib/3m-ui/3m-ui-bin tui
+```
+
+Four sections:
+
+| Section | Contents |
+|---------|----------|
+| Overview | Version, service state, panel port, listen address, public URL, autostart, certificate count |
+| Service | Start / stop / restart / autostart (modal choice) / view logs |
+| Certificates | Reads `/etc/3m-ui/certs/`, showing expiry and days left (amber within 30 days, red once expired) |
+| System | Version, git commit, build time, config file and database path |
+
+### Keys
+
+| Key | Action |
+|-----|--------|
+| `←` `→` | Switch focus between the sidebar and the content pane |
+| `↑` `↓` (or `k` `j`) | Move the selection |
+| `Enter` | Enter a section / run the selected item |
+| `0`–`9` | Jump straight to an entry |
+| `r` | Refresh |
+| `Esc` | Close a dialog / go back to the sidebar |
+| `q` | Back / quit |
+
+Stop and restart ask for confirmation first, and the dialog defaults to Cancel.
+
+### Requirements
+
+The console needs a **real terminal**. When it is piped, or when `TERM=dumb`,
+it exits with an error instead of writing escape sequences into your logs or
+cron output. The language follows `THREE_M_UI_LANG` (`zh` / `en`) or the system
+locale.
+
+## Reducing exposure when you do not need the web panel
+
+The panel bind address comes from `server.listen` in `/etc/3m-ui/config.yaml`:
+empty, `0.0.0.0`, `::` or `*` listens on every interface, while a concrete IP
+binds only that address.
+
+If you do everything over SSH and the console, you can keep the admin side on
+loopback while client subscriptions stay reachable:
+
+```yaml
+server:
+  port: 8080
+  listen: 127.0.0.1      # admin UI and API on loopback only
+  sub_port: 8081         # >0 and different from port -> separate subscription server
+  sub_listen: 0.0.0.0    # subscriptions stay open to clients
+```
+
+When you do need the web UI, reach it through an SSH tunnel:
+`ssh -L 8080:127.0.0.1:8080 user@server`, then open `http://127.0.0.1:8080`.
+
+Notes:
+
+- Run `3m-ui restart` for the change to take effect.
+- Menu 16 (`reset-config --panel`) **clears `listen`**, so the panel listens on
+  every interface again — that is deliberate rescue behaviour, so re-apply the
+  setting afterwards.
+- Binding to loopback is not a replacement for a firewall; still restrict
+  sources with your security group / firewall.
+- SSH then becomes the only door, so keep key-only auth and disable password
+  login.
 
 ## Non-interactive commands
 
