@@ -155,14 +155,37 @@ keyboard.
 (Equivalent to running the panel binary `/usr/local/lib/3m-ui/3m-ui-bin tui`
 directly; `3m-ui` is the unified management entry point.)
 
-Four sections:
+The sidebar mirrors the web UI's navigation, with **14 sections**:
 
 | Section | Contents |
 |---------|----------|
-| Overview | Version, service state, panel port, listen address, public URL, autostart, certificate count |
-| Service | Start / stop / restart / autostart (modal choice) / view logs |
-| Certificates | Reads `/etc/3m-ui/certs/`, showing expiry and days left (amber within 30 days, red once expired) |
+| Dashboard | Version, panel state, panel API, core state, port, listen address, public URL, user/listener counts, cycle traffic, certificate count |
+| Users | Username, state, used/limit traffic, upload/download, expiry, online, IP limit, subscription token, remark; actions: **enable/disable, reset traffic, rotate sub token, delete** |
+| Listeners | Name, protocol, port, bind address, runtime state, TLS/UDP, traffic multiplier, public host/port; actions: **enable/disable** |
+| Share | Each user's subscription token plus five link flavours: Mihomo/Clash, v2ray (Base64), sing-box, URI list, info page |
+| Traffic | Live rates and connection count (from the panel), plus a per-user ranking by used traffic with upload/download/total |
+| Cluster | Remote panels (base URL, last status, last check) and their mirrored nodes |
+| Routing | Client routing (mode, DNS, rule and group counts) and server routing (rules, groups, rule providers, WARP) |
+| Core | Core version, PID, uptime, plus **start/stop/restart core** and core logs |
+| Logs | Service log (`journalctl`), panel log, core log |
+| Config | Config file, panel port, listen address, public URL, subscription port/listen/path, web path, database, core binary |
+| Settings | Telegram bot and chats, global access profile (public host/port/SNI), traffic reset day, subscription page settings |
+| Service | Start / stop / restart / autostart (modal choice) / view logs for the panel itself |
+| Certs | Reads `/etc/3m-ui/certs/`, showing expiry and days left (amber within 30 days, red once expired) |
 | System | Version, git commit, build time, config file and database path |
+
+### Where the data comes from
+
+- **Panel database**: the console opens the same SQLite file **read-only**
+  (with a busy timeout), so browsing is safe while the panel is running. A
+  writable connection is opened only for the moment an action is confirmed.
+- **State inside the panel process**: core PID, live rates, connection counts,
+  log ring buffers and listener runtime state only exist in the panel's memory,
+  so the console reads them over loopback through the panel's own API - the
+  same endpoints the web UI uses, authenticated with a short-lived admin token
+  minted from the panel's JWT secret (no second login).
+- After a write, the console asks the panel to reload the core config. If the
+  panel is stopped, only the database is updated and the footer says so.
 
 ### Keys
 
@@ -170,13 +193,15 @@ Four sections:
 |-----|--------|
 | `←` `→` | Switch focus between the sidebar and the content pane |
 | `↑` `↓` (or `k` `j`) | Move the selection |
-| `Enter` | Enter a section / run the selected item |
+| `Enter` | Open a sub-page (a user's details, for example) / run the selected item |
 | `0`–`9` | Jump straight to an entry |
 | `r` | Refresh |
-| `Esc` | Close a dialog / go back to the sidebar |
-| `q` | Back / quit |
+| `Esc` | Close a dialog / go back one level (sub-page, then sidebar, then quit) |
+| `q` | Same as `Esc`, unwinding one level at a time |
 
-Stop and restart ask for confirmation first, and the dialog defaults to Cancel.
+Stopping the service, disabling or deleting a user, rotating a sub token and
+starting/stopping the core ask for confirmation first, and the dialog defaults
+to Cancel. Safe directions (enabling a user) run straight away.
 
 ### Requirements
 
