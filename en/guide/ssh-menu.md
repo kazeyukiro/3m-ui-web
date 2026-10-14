@@ -149,8 +149,11 @@ navigation sidebar + content pane + modal dialogs) driven entirely by the
 keyboard.
 
 ```bash
-/usr/local/lib/3m-ui/3m-ui-bin tui
+3m-ui tui
 ```
+
+(Equivalent to running the panel binary `/usr/local/lib/3m-ui/3m-ui-bin tui`
+directly; `3m-ui` is the unified management entry point.)
 
 Four sections:
 

@@ -136,8 +136,10 @@ THREE_M_UI_LANG=en 3m-ui
 面板二进制内置了一个终端控制台：多栏界面（顶栏 + 左侧导航 + 内容区 + 模态弹窗），纯键盘操作。
 
 ```bash
-/usr/local/lib/3m-ui/3m-ui-bin tui
+3m-ui tui
 ```
+
+（等价于直接运行面板二进制 `/usr/local/lib/3m-ui/3m-ui-bin tui`；`3m-ui` 是统一管理入口。）
 
 四个栏目：
 
