@@ -144,9 +144,9 @@ The setting lives in `/etc/3m-ui/menu.conf` and is **never written to
 
 ## Terminal control center (TUI)
 
-The panel binary ships a terminal console: a multi-pane interface (header +
-navigation sidebar + content pane + modal dialogs) driven entirely by the
-keyboard.
+The panel binary ships a terminal console: a full-screen framed interface
+covering every section of the web panel, driven by the keyboard or by
+mouse / touch.
 
 ```bash
 3m-ui tui
@@ -155,7 +155,12 @@ keyboard.
 (Equivalent to running the panel binary `/usr/local/lib/3m-ui/3m-ui-bin tui`
 directly; `3m-ui` is the unified management entry point.)
 
-The sidebar mirrors the web UI's navigation, with **14 sections**:
+The screen is one complete frame: the **title sits in the top border** (the
+app name and service state on the main menu, a breadcrumb such as
+`3m-ui / Users / alice` inside a section), the body is a **numbered list**
+with the selected row in **white on red**, and the bottom carries
+`< Enter >` `< Back >` `< Quit >`-style buttons. The main menu has **15
+rows**: 14 sections plus an exit row.
 
 | Section | Contents |
 |---------|----------|
@@ -174,16 +179,19 @@ The sidebar mirrors the web UI's navigation, with **14 sections**:
 | Certs | Reads `/etc/3m-ui/certs/`, showing expiry and days left (amber within 30 days, red once expired) |
 | System | Version, git commit, build time, config file and database path |
 
+A long value (a subscription URL, say) is never truncated at the label: it
+wraps onto indented lines underneath it.
+
 ### Where the data comes from
 
-- **Panel database**: the console opens the same SQLite file **read-only**
-  (with a busy timeout), so browsing is safe while the panel is running. A
-  writable connection is opened only for the moment an action is confirmed.
-- **State inside the panel process**: core PID, live rates, connection counts,
-  log ring buffers and listener runtime state only exist in the panel's memory,
-  so the console reads them over loopback through the panel's own API - the
-  same endpoints the web UI uses, authenticated with a short-lived admin token
-  minted from the panel's JWT secret (no second login).
+- **Panel HTTP API (preferred)**: the console calls the panel's own API -
+  the very endpoints the web UI uses - authenticated with a short-lived
+  admin token minted from the panel's JWT secret, so no second login is
+  needed and both interfaces can never disagree about a user's state.
+- **Panel database (fallback)**: when the panel is stopped and the API does
+  not answer, the console opens the same SQLite file **read-only** (with a
+  busy timeout) so browsing stays safe, and switches back to the API as
+  soon as the panel answers again.
 - After a write, the console asks the panel to reload the core config. If the
   panel is stopped, only the database is updated and the footer says so.
 
@@ -191,24 +199,36 @@ The sidebar mirrors the web UI's navigation, with **14 sections**:
 
 | Key | Action |
 |-----|--------|
-| `←` `→` | Switch focus between the sidebar and the content pane |
-| `↑` `↓` (or `k` `j`) | Move the selection |
-| `Enter` | Open a sub-page (a user's details, for example) / run the selected item |
-| `0`–`9` | Jump straight to an entry |
+| `↑` `↓` (or `k` `j`) | Move the selection (the red bar) |
+| `Enter` (or `l` `→`) | Enter the highlighted section / open a row's detail / run the selected item |
+| `Esc` (or `h` `←`; `q` the same) | Close a dialog, then unwind one level at a time: row detail, then section, and quit from the main menu |
+| `0`–`9` | Jump straight to a row by its number |
+| `PgUp` `PgDn` | Scroll a whole screen |
 | `r` | Refresh |
-| `Esc` | Close a dialog / go back one level (sub-page, then sidebar, then quit) |
-| `q` | Same as `Esc`, unwinding one level at a time |
 
 Stopping the service, disabling or deleting a user, rotating a sub token and
 starting/stopping the core ask for confirmation first, and the dialog defaults
 to Cancel. Safe directions (enabling a user) run straight away.
 
+### Mouse and touch
+
+Once the console starts it enables mouse tracking (the xterm SGR protocol,
+which is how touchscreens report taps too). Three gestures:
+
+- **Click a row**: the first click only moves the red bar - a mis-tap costs
+  nothing - and a **second click on the same row** enters / runs it, so a
+  stray tap cannot fire a destructive action;
+- **Click a bottom button**: fires immediately, exactly like the keyboard;
+- **Wheel**: moves the selection in a list, scrolls line by line in the log
+  viewer.
+
 ### Requirements
 
 The console needs a **real terminal**. When it is piped, or when `TERM=dumb`,
 it exits with an error instead of writing escape sequences into your logs or
-cron output. The language follows `THREE_M_UI_LANG` (`zh` / `en`) or the system
-locale.
+cron output. The language follows the setting saved by `3m-ui lang`
+(`/etc/3m-ui/menu.conf`, `zh` / `en`), and `THREE_M_UI_LANG=zh|en` overrides
+it for one run.
 
 ## Reducing exposure when you do not need the web panel
 
