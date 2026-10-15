@@ -98,6 +98,17 @@ acme.sh 是 **GPL-3.0**，3m-ui 是 **EPL-2.0**，两者不兼容。因此 3m-ui
 DNS API 名称（如 `dns_cf`、`dns_ali`、`dns_dp`、`dns_aws`、`dns_gd`、`dns_ovh`）见
 [acme.sh dnsapi 列表](https://github.com/acmesh-official/acme.sh/wiki/dnsapi)。
 
+### IP 证书
+
+acme.sh 支持给 IP 地址签发证书，做法就是把 IP 直接填进「域名或 IP 地址」输入框
+（对应 `-d 1.2.3.4`，见 [wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)）。
+
+**限制（RFC 8738）**：IP 标识符**不能用 DNS 方式验证**，只能通过 http-01 或 tls-alpn-01。
+所以可用的是 standalone / webroot / nginx / apache / TLS-ALPN；当输入是 IP 而你选了
+DNS API 时，菜单会直接拒绝并提示，而不是让你填完 API 凭据才在 CA 端失败。
+
+另外并非所有 CA 都签发 IP 证书；若某个 CA 拒绝，换一个 CA 再试即可。
+
 ### 高级选项
 
 申请时还会逐项询问以下可选项，**全部可直接回车跳过**：

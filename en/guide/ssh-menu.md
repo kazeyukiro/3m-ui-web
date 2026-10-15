@@ -106,6 +106,19 @@ Menu 2 asks how the challenge should be solved, matching acme.sh's `--issue` fla
 DNS API names (`dns_cf`, `dns_ali`, `dns_dp`, `dns_aws`, `dns_gd`, `dns_ovh`, ...) are
 listed in the [acme.sh dnsapi wiki](https://github.com/acmesh-official/acme.sh/wiki/dnsapi).
 
+### IP certificates
+
+acme.sh can issue a certificate for an IP address — just type the address into
+the "Domain or IP address" prompt (it becomes `-d 1.2.3.4`, see
+[wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)).
+
+**Restriction (RFC 8738)**: an IP identifier **cannot be validated over DNS**,
+only via http-01 or tls-alpn-01. So standalone / webroot / nginx / apache /
+TLS-ALPN are available; if you enter an IP and then pick DNS API, the menu
+refuses right away instead of collecting API credentials and failing at the CA.
+
+Not every CA issues IP certificates either — if one refuses, try another.
+
 ### Advanced options
 
 While issuing, the menu asks for these optional extras — **press Enter to skip any of them**:
