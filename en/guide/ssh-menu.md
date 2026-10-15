@@ -43,14 +43,18 @@ to issue, deploy and renew certificates:
 | # | Action |
 |---|--------|
 | 1 | Install / update acme.sh |
-| 2 | Issue certificate (standalone, port 80 must be free) |
-| 3 | Issue certificate (DNS API, no port 80) |
-| 4 | Install certificate into 3m-ui and reload the panel |
-| 5 | List certificates |
-| 6 | **Show certificate details** |
-| 7 | Renew certificate |
-| 8 | Print commands (run manually) |
-| 9 | Back |
+| 2 | **Issue a certificate** (pick a validation method first, see below) |
+| 3 | Install certificate into 3m-ui and reload the panel |
+| 4 | List certificates |
+| 5 | **Show certificate details** |
+| 6 | Renew one domain |
+| 7 | Renew all certificates |
+| 8 | Revoke a certificate |
+| 9 | Export PFX (Windows / IIS) |
+| 10 | Remove a cert from acme.sh |
+| 11 | Set the default CA |
+| 12 | Print commands (run manually) |
+| 13 | Back |
 
 Certificates land in `/etc/3m-ui/certs/` (`<domain>.key` and `<domain>.crt`).
 
@@ -68,21 +72,75 @@ or a reverse proxy.
 
 ### Choosing a certificate authority (CA)
 
-Issuing a certificate (menu 2 or 3) asks for the CA first:
+Issuing a certificate (menu 2) asks for the CA first:
 
-| Option | Notes |
-|--------|-------|
-| Let's Encrypt | The most widely used; works without an email |
-| ZeroSSL | **acme.sh v3 default** — needs an email to register an account |
-| Buypass | Norwegian CA, 180-day certificates |
-| SSL.com | Commercial CA |
-| Google Trust Services | Google's CA |
+| Option | `--server` short name | Notes |
+|--------|----------------------|-------|
+| Let's Encrypt | `letsencrypt` | The most widely used |
+| Let's Encrypt (staging) | `letsencrypt_test` | Test endpoint, does not count against rate limits |
+| ZeroSSL | `zerossl` | **acme.sh default** |
+| SSL.com | `sslcom` | Commercial CA |
+| Google Trust Services | `google` | Google's CA |
+| Google (staging) | `googletest` | Test endpoint |
+| Actalis | `actalis` | Italian CA |
 
 Choosing "Back" keeps whatever CA acme.sh currently defaults to (ZeroSSL since v3).
 
+> Buypass terminated its certificate service on 2025-10-31 and its ACME endpoint
+> no longer works, so the option has been removed from the menu. If you still
+> have a Buypass certificate, reissue it from one of the CAs above.
+
+### Validation methods
+
+Menu 2 asks how the challenge should be solved, matching acme.sh's `--issue` flags:
+
+| Method | Flag | When to use |
+|--------|------|-------------|
+| standalone | `--standalone` | Port 80 is free; `--httpport` changes the port behind a reverse proxy |
+| DNS API | `--dns dns_cf` | Wildcard certificates, or when port 80 is unavailable; export the provider's API credentials first |
+| webroot | `--webroot /var/www/html` | An existing site directory; no port needed |
+| nginx | `--nginx` | Lets acme.sh edit the nginx config to solve the challenge |
+| apache | `--apache` | Same, for apache |
+| TLS-ALPN | `--alpn` | Port 80 busy but 443 free; `--tlsport` changes the port |
+
+DNS API names (`dns_cf`, `dns_ali`, `dns_dp`, `dns_aws`, `dns_gd`, `dns_ovh`, ...) are
+listed in the [acme.sh dnsapi wiki](https://github.com/acmesh-official/acme.sh/wiki/dnsapi).
+
+### Advanced options
+
+While issuing, the menu asks for these optional extras — **press Enter to skip any of them**:
+
+| Option | Flag | Notes |
+|--------|------|-------|
+| Staging server | `--staging` | Uses the CA's test endpoint; does not count against rate limits |
+| Key length | `-k` | `2048` / `3072` / `4096` / `8192`, or `ec-256` / `ec-384` / `ec-521` |
+| DNS propagation wait | `--dnssleep` | Extra seconds to wait (acme.sh already polls via DoH by default) |
+| Renew-before days | `--days` | Default 30 |
+| Debug level | `--debug 0-3` | Turn on when troubleshooting |
+| OCSP Must-Staple | `--ocsp-must-staple` | Requires server-side stapling support |
+| Preferred chain | `--preferred-chain` | e.g. `ISRG Root X1` |
+| EAB credentials | `--eab-kid` / `--eab-hmac-key` | Required by some CAs; **both must be given** |
+
+Invalid values (`-k 1024`, `--debug 9`, a half-filled EAB pair) are rejected on the
+spot instead of being handed to acme.sh.
+
+acme.sh stores ECC certificates under `<domain>_ecc`. The menu adds `--ecc`
+automatically when renewing, deploying, revoking or exporting, so you never have
+to tell them apart.
+
+### Certificate management
+
+| Action | Actual command | Notes |
+|--------|----------------|-------|
+| Renew all | `--renew-all` | Optionally stop on first error (`-se`) |
+| Revoke | `--revoke` | Optional reason 0-10; **revocation is irreversible** and takes effect immediately |
+| Export PFX | `--to-pkcs12` | Optional `--password`; for Windows / IIS |
+| Remove | `--remove` | Only drops it from acme.sh's list — no revocation, no file deletion |
+| Set default CA | `--set-default-ca --server <CA>` | Saved in config, so later commands need no `--server` |
+
 ### Showing certificate details
 
-Menu 6 prints the subject, issuer and validity window, and warns when the
+Menu 5 prints the subject, issuer and validity window, and warns when the
 certificate expires within 30 days (it reads the file with `openssl x509`; if
 openssl is missing you get told so). It then offers to show the actual material:
 
@@ -141,37 +199,6 @@ THREE_M_UI_LANG=en 3m-ui
 Precedence: **environment variable > saved setting > locale auto-detection**.
 The setting lives in `/etc/3m-ui/menu.conf` and is **never written to
 `config.yaml`**, which belongs to the panel binary.
-
-## Reducing exposure when you do not need the web panel
-
-The panel bind address comes from `server.listen` in `/etc/3m-ui/config.yaml`:
-empty, `0.0.0.0`, `::` or `*` listens on every interface, while a concrete IP
-binds only that address.
-
-If you do everything over SSH and the console, you can keep the admin side on
-loopback while client subscriptions stay reachable:
-
-```yaml
-server:
-  port: 8080
-  listen: 127.0.0.1      # admin UI and API on loopback only
-  sub_port: 8081         # >0 and different from port -> separate subscription server
-  sub_listen: 0.0.0.0    # subscriptions stay open to clients
-```
-
-When you do need the web UI, reach it through an SSH tunnel:
-`ssh -L 8080:127.0.0.1:8080 user@server`, then open `http://127.0.0.1:8080`.
-
-Notes:
-
-- Run `3m-ui restart` for the change to take effect.
-- Menu 16 (`reset-config --panel`) **clears `listen`**, so the panel listens on
-  every interface again — that is deliberate rescue behaviour, so re-apply the
-  setting afterwards.
-- Binding to loopback is not a replacement for a firewall; still restrict
-  sources with your security group / firewall.
-- SSH then becomes the only door, so keep key-only auth and disable password
-  login.
 
 ## Non-interactive commands
 

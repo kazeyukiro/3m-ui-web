@@ -40,14 +40,18 @@ description: 3m-ui · SSH 管理菜单（acme.sh 证书 / 语言切换 / 命令�
 | # | 功能 |
 |---|------|
 | 1 | 安装 / 更新 acme.sh |
-| 2 | 申请证书（standalone，需 80 端口空闲） |
-| 3 | 申请证书（DNS API，不占 80 端口） |
-| 4 | 安装证书到 3m-ui 并重载面板 |
-| 5 | 证书列表 |
-| 6 | **查看证书详情** |
-| 7 | 续期证书 |
-| 8 | 打印命令（供手动执行） |
-| 9 | 返回 |
+| 2 | **申请证书**（先选验证方式，见下） |
+| 3 | 安装证书到 3m-ui 并重载面板 |
+| 4 | 证书列表 |
+| 5 | **查看证书详情** |
+| 6 | 续期指定域名 |
+| 7 | 续期全部证书 |
+| 8 | 吊销证书 |
+| 9 | 导出 PFX（Windows / IIS） |
+| 10 | 从 acme.sh 移除证书 |
+| 11 | 设置默认 CA |
+| 12 | 打印命令（供手动执行） |
+| 13 | 返回 |
 
 证书安装目录为 `/etc/3m-ui/certs/`（`域名.key` 与 `域名.crt`）。
 
@@ -61,21 +65,72 @@ acme.sh 是 **GPL-3.0**，3m-ui 是 **EPL-2.0**，两者不兼容。因此 3m-ui
 
 ### 选择证书颁发机构（CA）
 
-申请证书（菜单 2 或 3）时会先让你选 CA：
+申请证书（菜单 2）时会先让你选 CA：
 
-| 选项 | 说明 |
-|------|------|
-| Let's Encrypt | 使用最广；不带邮箱也可申请 |
-| ZeroSSL | **acme.sh v3 的默认 CA**，需要用邮箱注册账户 |
-| Buypass | 挪威 CA，证书有效期 180 天 |
-| SSL.com | 商业 CA |
-| Google Trust Services | Google 的 CA |
+| 选项 | `--server` 短名 | 说明 |
+|------|----------------|------|
+| Let's Encrypt | `letsencrypt` | 使用最广 |
+| Let's Encrypt (staging) | `letsencrypt_test` | 测试端点，不占正式签发额度 |
+| ZeroSSL | `zerossl` | **acme.sh 的默认 CA** |
+| SSL.com | `sslcom` | 商业 CA |
+| Google Trust Services | `google` | Google 的 CA |
+| Google (staging) | `googletest` | 测试端点 |
+| Actalis | `actalis` | 意大利 CA |
 
 选「返回」则沿用 acme.sh 当前的默认 CA（v3 起为 ZeroSSL）。
 
+> Buypass 已于 2025-10-31 终止证书服务、ACME 端点不再可用，因此菜单已移除该选项；
+> 仍在使用旧证书的用户请改用上表中的 CA 重新签发。
+
+### 验证方式
+
+菜单 2 会先让你选择验证方式，对应 acme.sh 的 `--issue` 参数：
+
+| 方式 | 参数 | 适用 |
+|------|------|------|
+| standalone | `--standalone` | 80 端口空闲；若前置反代可用 `--httpport` 改监听端口 |
+| DNS API | `--dns dns_cf` | 需要通配符证书，或 80 不可用时；需先导出对应服务商的 API 凭据 |
+| webroot | `--webroot /var/www/html` | 已有站点目录，不占端口 |
+| nginx | `--nginx` | 由 acme.sh 自动改 nginx 配置完成验证 |
+| apache | `--apache` | 同上，用于 apache |
+| TLS-ALPN | `--alpn` | 80 被占用但 443 可用；可用 `--tlsport` 改端口 |
+
+DNS API 名称（如 `dns_cf`、`dns_ali`、`dns_dp`、`dns_aws`、`dns_gd`、`dns_ovh`）见
+[acme.sh dnsapi 列表](https://github.com/acmesh-official/acme.sh/wiki/dnsapi)。
+
+### 高级选项
+
+申请时还会逐项询问以下可选项，**全部可直接回车跳过**：
+
+| 选项 | 参数 | 说明 |
+|------|------|------|
+| staging 测试环境 | `--staging` | 走 CA 测试端点，不占正式额度，适合先跑通流程 |
+| 密钥长度 | `-k` | `2048` / `3072` / `4096` / `8192` 或 `ec-256` / `ec-384` / `ec-521` |
+| DNS 传播等待 | `--dnssleep` | 额外等待秒数（acme.sh 默认已用 DoH 自动轮询） |
+| 提前续期天数 | `--days` | 默认 30 天 |
+| 调试级别 | `--debug 0-3` | 排错时开启 |
+| OCSP Must-Staple | `--ocsp-must-staple` | 需要服务端支持 stapling |
+| 首选证书链 | `--preferred-chain` | 如 `ISRG Root X1` |
+| EAB 凭据 | `--eab-kid` / `--eab-hmac-key` | 部分 CA 要求；**必须成对填写** |
+
+取值不合法（例如 `-k 1024`、`--debug 9`、只填一半的 EAB）会当场拒绝，不会传给 acme.sh。
+
+ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、部署、吊销、导出时会自动补上 `--ecc`，
+无需手动区分。
+
+### 证书管理
+
+| 操作 | 实际命令 | 说明 |
+|------|---------|------|
+| 续期全部 | `--renew-all` | 可选「出错即停」（`-se`） |
+| 吊销 | `--revoke` | 可选原因 0-10；**吊销不可撤销**，证书立即失效 |
+| 导出 PFX | `--to-pkcs12` | 可加 `--password`，供 Windows / IIS 使用 |
+| 移除 | `--remove` | 只从 acme.sh 列表移除，不吊销、不删文件 |
+| 设置默认 CA | `--set-default-ca --server <CA>` | 写入配置后，后续命令无需再带 `--server` |
+
 ### 查看证书详情
 
-菜单 6 会显示证书的主题、颁发者、有效期起止，并提示是否在 30 天内到期
+菜单 5 会显示证书的主题、颁发者、有效期起止，并提示是否在 30 天内到期
 （用 `openssl x509` 读取；若系统没有 openssl 会给出提示）。随后可以选择查看实际内容：
 
 | 选项 | 说明 |
@@ -130,29 +185,6 @@ THREE_M_UI_LANG=en 3m-ui
 
 优先级：**环境变量 > 已保存的设置 > 系统 locale 自动检测**。
 设置保存在 `/etc/3m-ui/menu.conf`，**不会写入 `config.yaml`**（后者属于面板程序）。
-
-## 不暴露 Web 面板时收敛攻击面
-
-面板监听地址由 `/etc/3m-ui/config.yaml` 里的 `server.listen` 决定：为空或 `0.0.0.0` / `::` / `*` 时监听全部网卡，填具体 IP 则只绑该地址。
-
-若日常操作都在 SSH / 控制台里完成，可以把管理端只绑到本地，同时让客户端订阅继续公网可达：
-
-```yaml
-server:
-  port: 8080
-  listen: 127.0.0.1      # 管理界面与 API 只监听本地
-  sub_port: 8081         # 大于 0 且与 port 不同时，订阅走独立端口
-  sub_listen: 0.0.0.0    # 订阅继续对客户端开放
-```
-
-需要 Web 时用 SSH 隧道：`ssh -L 8080:127.0.0.1:8080 user@server`，然后打开 `http://127.0.0.1:8080`。
-
-注意：
-
-- 改完需要 `3m-ui restart` 生效。
-- 菜单 16 的 `reset-config --panel` 会**清掉 `listen`**，面板会重新监听全部网卡 —— 这是救援流程的刻意行为，救援后记得重新设置。
-- 只绑本地不等于不用防火墙，安全组 / 防火墙仍建议限制来源 IP。
-- 这样 SSH 就成了唯一入口，务必只使用密钥登录并禁用密码登录。
 
 ## 非交互命令
 
