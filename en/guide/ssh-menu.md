@@ -166,6 +166,12 @@ openssl is missing you get told so). It then offers to show the actual material:
 A private key is printed in full and may linger in the terminal scrollback or in
 logs, so it is never shown without confirmation.
 
+The private key is looked up the way acme.sh actually stores it: the copy
+deployed into the panel first, then `<domain>/` (RSA) and `<domain>_ecc/`
+(ECC, acme.sh's default type). Wildcards, IP addresses and IDN names are kept
+verbatim in the directory name, so every certificate type resolves — enter the
+domain exactly as it was issued (case-sensitive).
+
 ### Install source
 
 The first install asks where to fetch acme.sh from:
