@@ -148,7 +148,7 @@ export default defineConfig({
         },
         footer: {
           message: '3m-ui · Mihomo 服务端管理面板',
-          copyright: 'EPL-2.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
+          copyright: 'GPL-3.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
         },
       },
     },
@@ -175,7 +175,7 @@ export default defineConfig({
         },
         footer: {
           message: '3m-ui · Mihomo server management panel',
-          copyright: 'EPL-2.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
+          copyright: 'GPL-3.0 · <a href="https://github.com/kazeyukiro/3m-ui">kazeyukiro/3m-ui</a>',
         },
       },
     },

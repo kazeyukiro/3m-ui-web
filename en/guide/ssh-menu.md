@@ -60,11 +60,11 @@ Certificates land in `/etc/3m-ui/certs/` (`<domain>.key` and `<domain>.crt`).
 
 ### Licensing note
 
-acme.sh is **GPL-3.0** while 3m-ui is **EPL-2.0**; the two are incompatible.
-3m-ui therefore does **not** bundle acme.sh source. The menu drives the
-independently installed acme.sh on your machine (default `~/.acme.sh/acme.sh`)
-and can install it for you on demand. No licence conflict, and acme.sh stays
-free to upgrade on its own.
+Both 3m-ui and acme.sh are licensed under **GPL-3.0**. Even so, 3m-ui does **not**
+bundle acme.sh source. The menu drives the independently installed acme.sh on
+your machine (default `~/.acme.sh/acme.sh`) and can install it for you on demand.
+That keeps acme.sh free to upgrade on its own, with the two projects' licenses
+and copyright holders staying independent.
 
 For the panel's own HTTPS, keep using the built-in ACME under
 Settings → SSL. This integration is mainly for issuing certificates for nodes
