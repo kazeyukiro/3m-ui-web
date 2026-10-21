@@ -65,6 +65,8 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 > SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
 
+> Loon 的 Hysteria2 节点**始终输出** `server-ports`（Loon 无此字段不拨号）：有端口跳跃时输出区间（`server-ports="443,5000:6000"`，冒号为区间分隔符），单端口时回落主端口（`server-ports="13290"`）。Surge 的 `port-hopping` 为可选参数，无跳跃时不输出。
+
 ## TUIC / Hysteria2 分享链
 
 导出 URI 会带上客户端常用参数（`sni`、`alpn`、`congestion_control`、`allow_insecure` / `allowInsecure` 等）。部分旧版 v2rayNG 能列出 `tuic://` 但无法拨号 QUIC，这类协议更建议 Clash Meta / NekoBox / Hiddify 等。

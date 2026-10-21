@@ -65,6 +65,8 @@ All three are rendered as **native formats in the panel** (no subconverter depen
 
 > For SIP003 plugins on Shadowsocks, kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are commented out as well.
 
+> Loon Hysteria 2 nodes **always** carry `server-ports` — Loon does not dial without the field: a hopping range renders as `server-ports="443,5000:6000"` (colon separates ranges), a single-port node falls back to the main port (`server-ports="13290"`). Surge's `port-hopping` is optional and is only emitted when hopping exists.
+
 ## TUIC / Hysteria2 share links
 
 Exported URIs include client-oriented params (`sni`, `alpn`, `congestion_control`, `allow_insecure` / `allowInsecure`, etc.). Classic v2rayNG may list `tuic://` but not dial QUIC; prefer Clash Meta / NekoBox / Hiddify for those protocols.
