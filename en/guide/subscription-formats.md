@@ -43,9 +43,9 @@ When no keyword matches, Clash-style is used. Pass `?target=` explicitly for a s
 
 All three are rendered as **native formats in the panel** (no subconverter dependency — they work even without a deployed subconverter):
 
-- **Loon**: `[Proxy]` lines `proto,addr,port,password/params…`, e.g. `vmess-ws = VMess,cdn.example.com,20015,auto,uuid,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true`
+- **Loon**: `[Proxy]` lines `proto,addr,port,password/params…`, e.g. `vmess-ws = VMess,127.0.0.1,20015,auto,91066351-60f7-44b9-ad7e-c4bcc82524a6,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
 - **Surge**: a complete mini profile (empty `[General]` + `[Proxy]` + a `[Proxy Group]` referencing only real nodes + `[Rule]`); VMess uses the documented `username=` + `vmess-aead=true` form
-- **Quantumult X**: `[server_local]` lines `proto=host:port, key=value, …, tag=name`, e.g. `vless=127.0.0.1:20024, method=none, password=uuid, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="node-name"`
+- **Quantumult X**: `[server_local]` lines `proto=host:port, key=value, …, tag=name`, e.g. `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### Protocol matrix
 
@@ -64,17 +64,6 @@ All three are rendered as **native formats in the panel** (no subconverter depen
 | grpc / xhttp / quic transport | ❌ commented out | ❌ commented out | ❌ commented out |
 
 > For SIP003 plugins on Shadowsocks, kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are commented out as well.
-
-### Unsupported means commented, never silently broken
-
-Protocols or transports a client cannot express are never rendered into plausible-but-broken lines. Instead the panel emits `#` comment lines with a reason, e.g.:
-
-```text
-# tuic-v5: Loon 暂不支持 TUIC 协议
-# less-grpc: loon renderer could not represent this node
-```
-
-Surge's `[Proxy Group]` only references policies that were really rendered, so imports never fail with policy not found; comment lines are ignored by Loon / Quantumult X as well.
 
 ## TUIC / Hysteria2 share links
 

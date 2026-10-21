@@ -43,9 +43,9 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 三家均为**原生格式直接生成**（无 subconverter 依赖，未部署 subconverter 也能导出）：
 
-- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行，如 `vmess-ws = VMess,cdn.example.com,20015,auto,uuid,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true`
+- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行，如 `vmess-ws = VMess,127.0.0.1,20015,auto,91066351-60f7-44b9-ad7e-c4bcc82524a6,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
 - **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`），VMess 用手册语法 `username=` + `vmess-aead=true`
-- **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=uuid, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="节点名"`
+- **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### 协议支持矩阵
 
@@ -64,17 +64,6 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 | grpc / xhttp / quic 传输 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
 
 > SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
-
-### 不支持即注释，绝不静默出错
-
-客户端不支持的协议或传输，面板不会渲染成看似合法、实际连不上的行，而是输出 `# 注释行` 并附原因，例如：
-
-```text
-# tuic-v5: Loon 暂不支持 TUIC 协议
-# less-grpc: loon renderer could not represent this node
-```
-
-Surge 的 `[Proxy Group]` 只引用真实渲染成功的策略，避免导入时 policy not found；Quantumult X / Loon 的注释行同样会被客户端忽略。
 
 ## TUIC / Hysteria2 分享链
 
