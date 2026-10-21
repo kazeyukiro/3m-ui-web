@@ -8,16 +8,73 @@ title: 订阅格式与 target
 
 `/api/v1/client/sub/{token}`，或配置中的订阅基址 + token。
 
+同一个地址追加 `?target=` 即可切换客户端格式；不指定时按请求 UA 自动识别。
+
 ## `?target=`
 
 | target | 响应内容 |
 |--------|----------|
-| *空 / clash / 默认* | Mihomo / Clash Meta YAML |
+| *空 / clash / mihomo / meta* | Mihomo / Clash Meta YAML（proxies + 分组） |
 | `v2ray` / `base64` | **始终**为分享链接换行拼接后再标准 Base64（`vless://`、`vmess://`、`tuic://` 等），与 HTML 订阅页「是否加密 URI 列表」无关 |
 | `uri` / `raw` | 同样链接；关闭加密时可为明文 |
-| `singbox` / `sing-box` | sing-box JSON（含默认 TUN、DNS、路由等，适配较新 sing-box 迁移）及节点 outbound |
+| `singbox` / `sing-box` / `sfa` / `sfm` | sing-box JSON（含默认 TUN、DNS、路由等，适配较新 sing-box 迁移）及节点 outbound |
+| `loon` | Loon 插件配置（`[Proxy]` 段，原生格式，见下文） |
+| `surge` | Surge 配置文件（`[General]`/`[Proxy]`/`[Proxy Group]`/`[Rule]` 迷你档，原生格式，见下文） |
+| `quanx` / `quantumult` / `qx` | Quantumult X `[server_local]` 段（原生格式，见下文） |
 
-未指定 `target` 时，可能按 UA 自动在 Clash 与 v2ray 风格之间选择。
+部分客户端有硬编码短路径，也一并注册：`/api/v1/client/json/<token>` 固定 singbox、`/api/v1/client/clash/<token>` 固定 clash、`/api/v1/client/v2ray/<token>` 固定 v2ray；根级 `/sub/<token>`、`/json/<token>`、`/clash/<token>`、`/v2ray/<token>` 等效。短路径只覆盖 clash/v2ray/singbox 三种，其余格式一律用 `?target=`。
+
+## UA 自动识别
+
+不带 `?target=` 时按 User-Agent 选择默认格式，常见对应：
+
+| UA 关键字 | 落到格式 |
+|---|---|
+| `clash` / `mihomo` / `meta` / `stash` / `verge` / `flclash`、Shadowrocket | Mihomo YAML |
+| `sing-box` / `sfa` / `sfm` / `sfi` / `singbox` | sing-box JSON |
+| `surge` | Surge |
+| `quantumult` | Quantumult X |
+| `loon` | Loon |
+| `v2ray` / `v2rayng` / `streisand` / `hiddify` / `nekobox` 等 | Base64 分享链接列表 |
+
+UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请显式带 `?target=`。
+
+## Apple 客户端（Loon / Surge / Quantumult X）
+
+三家均为**原生格式直接生成**（无 subconverter 依赖，未部署 subconverter 也能导出）：
+
+- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行，如 `vmess-ws = VMess,cdn.example.com,20015,auto,uuid,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true`
+- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`），VMess 用手册语法 `username=` + `vmess-aead=true`
+- **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=uuid, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="节点名"`
+
+### 协议支持矩阵
+
+| 协议 | Loon | Surge | Quantumult X |
+|---|---|---|---|
+| Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（QX 不支持 Hysteria2） |
+| Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` 关键字 + `obfs=http/tls` |
+| VMess（ws/tls、AEAD） | ✅ | ✅ `username=` + `vmess-aead=true` | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
+| VLESS（含 xtls-rprx-vision） | ✅ | ❌ 注释降级（Surge 协议清单无 VLESS） | ✅ `vless-flow=` 透传 |
+| REALITY 传输 | ✅（VLESS/Trojan/VMess） | ❌ 注释降级（Surge TLS 参数集无 reality 入口） | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
+| Trojan（tls/ws） | ✅ | ✅ | ✅（tls 走 `over-tls=true`+`tls-host`，ws 走 `obfs=wss`） |
+| TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` 分流 | ❌ 注释降级（QX 不支持 TUIC） |
+| AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
+| WebSocket 传输 | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / TLS 时 `obfs=wss` |
+| http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
+| grpc / xhttp / quic 传输 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
+
+> SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
+
+### 不支持即注释，绝不静默出错
+
+客户端不支持的协议或传输，面板不会渲染成看似合法、实际连不上的行，而是输出 `# 注释行` 并附原因，例如：
+
+```text
+# tuic-v5: Loon 暂不支持 TUIC 协议
+# less-grpc: loon renderer could not represent this node
+```
+
+Surge 的 `[Proxy Group]` 只引用真实渲染成功的策略，避免导入时 policy not found；Quantumult X / Loon 的注释行同样会被客户端忽略。
 
 ## TUIC / Hysteria2 分享链
 
