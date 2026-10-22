@@ -227,4 +227,4 @@ docker compose exec 3m-ui /usr/local/bin/3m-ui reset-admin
 
 内嵌 Web UI 为 **React + Ant Design**，图标来自 **Lucide**（`lucide-react`，封装于 `frontend/src/icons.tsx`）。构建面板二进制时会在 `frontend/` 下执行 `npm ci` / `npm install` 与 `npm run build`。
 
-概览（仪表盘）为灰底画布与浮动卡片（资源、流量、连接），约 **2 秒** 轮询，连接按 TCP/UDP 拆分。功能搜索可在侧边栏（桌面）、移动端顶栏使用，快捷键为 **Ctrl/Cmd+K**。配套 Mihomo 版本固定在 `distribution/mihomo.env`（当前为 **v1.19.32**）。
+概览（仪表盘）为灰底画布与浮动卡片（资源、流量、连接），约 **2 秒** 轮询，连接按 TCP/UDP 拆分。功能搜索可在侧边栏（桌面）、移动端顶栏使用，快捷键为 **Ctrl/Cmd+K**。配套 Mihomo 版本固定在 `distribution/mihomo.env`（当前为 **v1.19.33**）。

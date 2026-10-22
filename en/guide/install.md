@@ -105,4 +105,4 @@ At startup the panel gzip-precompresses embedded text assets and serves compress
 
 Embedded UI: **React + Ant Design**, icons from **Lucide** (`lucide-react`, wrapped in `frontend/src/icons.tsx`). Building the panel runs `npm ci` / `npm install` and `npm run build` under `frontend/`.
 
-Overview (dashboard): gray canvas, floating cards (resources, traffic, connections), ~**2s** polling, TCP/UDP split. Feature search: sidebar (desktop), mobile header, **Ctrl/Cmd+K**. Bundled Mihomo is pinned in `distribution/mihomo.env` (currently **v1.19.32**).
+Overview (dashboard): gray canvas, floating cards (resources, traffic, connections), ~**2s** polling, TCP/UDP split. Feature search: sidebar (desktop), mobile header, **Ctrl/Cmd+K**. Bundled Mihomo is pinned in `distribution/mihomo.env` (currently **v1.19.33**).
