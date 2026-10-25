@@ -55,6 +55,8 @@ ip:1.2.3.4                   # IP / CIDR
 
 Imported text goes through the same validation and normalization as manual entries; duplicates (same type + value) are dropped, first occurrence wins.
 
+Clicking **Import** opens a **preview** first: accepted entries are listed normalized (bare IPs gain `/32`), rejected lines are reported one by one (line number + reason), and the append only happens on confirmation; entries duplicating existing ones are skipped and reported. A single import is capped at **5000** entries.
+
 ## Rules and limits
 
 - At most **5000** entries; each value ≤ **253** characters with no commas or whitespace;
@@ -85,6 +87,7 @@ The boundary this creates: for **geo-rotating CDNs**, the server's local resolut
 |--------|------|-------------|
 | GET | `/api/v1/config/blocklist` | Read the blocklist (array) |
 | PUT | `/api/v1/config/blocklist` | Replace it; returns the normalized list |
+| POST | `/api/v1/config/blocklist/parse` | Batch-import **preview** (entries / per-line issues / dedup + truncation counts; never persists) |
 
 Entry shape:
 
