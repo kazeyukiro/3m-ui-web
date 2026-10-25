@@ -26,6 +26,8 @@ title: 路由规则
 
 规则类型与参数完全以官方文档为准：37 种规则类型（含 `AND` / `OR` / `NOT` / `SUB-RULE` 逻辑规则）；`no-resolve` / `src` 参数仅接受于关于目标 IP 的规则（`IP-CIDR`、`IP-SUFFIX`、`GEOIP`、`IP-ASN`、`RULE-SET` 等）。预览接口：`POST /api/v1/config/rules/parse`（不落库）。
 
+> **RULE-SET 注意事项**：`RULE-SET,<名称>,<出站>` 引用**同一份配置内**的 rule-provider。服务端出站范围请在下方「规则集 (rule-providers)」定义同名 provider，随「保存 → 生成并应用」生效；客户端订阅生成器只产出 `rules` 段、不产出 `rule-providers`，若在客户端范围使用该规则，需所用客户端自己的配置中已定义同名 provider，否则核心会报 `rule set [<名称>] not found`（mihomo 行为，非导入校验问题）。
+
 ## 客户端订阅
 
 - 社区模板（YiXuan / echs / AIsouler 等）会 **覆盖** 规则与策略组（不是只追加）。

@@ -27,6 +27,8 @@ A single import is capped at **5000** rules. Rule targets (`PROXY`, group names,
 
 Rule types and params follow the official docs exactly: 37 rule types (including the `AND` / `OR` / `NOT` / `SUB-RULE` logic rules); `no-resolve` / `src` params are only accepted on rules about the target IP (`IP-CIDR`, `IP-SUFFIX`, `GEOIP`, `IP-ASN`, `RULE-SET`, …). Preview endpoint: `POST /api/v1/config/rules/parse` (never persists).
 
+> **RULE-SET caveat**: `RULE-SET,<name>,<TARGET>` references a rule-provider **in the same config**. In the server-egress scope, declare a same-named provider under **Rule providers (rule-set)** below; it takes effect on **Save → Generate & apply**. The client-subscription generator only emits the `rules` section (never `rule-providers`), so a RULE-SET rule in the client scope requires the client's own config to already define the same-named provider — otherwise the core errors with `rule set [<name>] not found` (mihomo behaviour, not an import-validation issue).
+
 ## Client subscription
 
 - Community templates (YiXuanZX / echs-top / AIsouler) fill groups + rules for the **client** YAML. Switching a template **replaces** rules and groups (does not only append).
