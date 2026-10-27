@@ -19,12 +19,18 @@ To reduce the chance of the panel being discovered by internet-wide scans, on fi
 - The bare domain (`https://panel.example.com/`) always returns **404** and does not reveal the panel
 - Public endpoints such as client subscriptions `/api/v1/client/...`, health checks `/api/v1/health` and `/healthz` remain reachable on the bare domain by design
 
-**View / change the path**: edit the config and restart.
+**View the path**: the management command prints the full access URL (IP, port and random path):
 
 ```bash
-# View the current random path
-grep web_path /etc/3m-ui/config.yaml
+3m-ui status        # Panel URL: http://<server-ip>:8080/<random>/
+3m-ui config show   # full config, including server.web_path
+```
 
+The installer prints that same `Panel URL` line when it finishes, so you can open the panel straight from it.
+
+**Change the path**: edit the config and restart.
+
+```bash
 # Change to a custom path (e.g. /secret), or set "" to serve from the domain root
 # server:
 #   web_path: "/secret"

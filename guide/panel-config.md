@@ -24,12 +24,18 @@ systemctl restart 3m-ui
 - 裸域名（`https://panel.example.com/`）一律返回 **404**，不会暴露面板入口
 - 客户端订阅 `/api/v1/client/...`、健康检查 `/api/v1/health`、`/healthz` 等公开端点仍可在裸域名下访问（它们是设计上公开的）
 
-**查看 / 修改路径**：编辑配置后重启服务。
+**查看路径**：管理命令会直接给出完整访问地址（含 IP、端口与随机路径）：
 
 ```bash
-# 查看当前随机路径
-grep web_path /etc/3m-ui/config.yaml
+3m-ui status        # Panel URL: http://<服务器IP>:8080/<随机路径>/
+3m-ui config show   # 查看完整配置（含 server.web_path）
+```
 
+安装结束时安装器同样会打印这行 `Panel URL`，直接用它打开面板即可。
+
+**修改路径**：编辑配置后重启服务。
+
+```bash
 # 改为自定义路径（例如 /secret），或设为 "" 从域名根路径提供服务
 # server:
 #   web_path: "/secret"
