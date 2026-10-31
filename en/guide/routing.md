@@ -41,6 +41,8 @@ GEOSITE/GEOIP templates need MetaCubeX geodata — update under **Settings → G
 
 No community templates on this tab. Use **WARP domains** (after registering WARP in Settings) plus custom rules. Default remains `MATCH,DIRECT`.
 
+The outbounds (proxy nodes) these rules point at are managed on the [Outbounds](./outbounds.md) page; this tab only picks one as the target. For the core's own DNS behaviour see [DNS settings](./dns.md).
+
 ## Server egress detail
 
 Controls how traffic **leaves the VPS** after a user connects to a node.
