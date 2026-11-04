@@ -1,0 +1,22 @@
+---
+title: 友链
+description: 3m-ui 的朋友们 —— 相关客户端、工具与社区
+---
+
+# 友链
+
+这里收录与 3m-ui 生态相关的客户端、工具与社区。感谢这些项目的开发者与维护者。
+
+<div class="links-grid">
+<a class="link-card" href="https://github.com/appshubcc/Bettbox" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">BE</span><span class="link-card-body"><span class="link-card-title">Bettbox</span><span class="link-card-desc">更好用的网络工具箱，面向 Mihomo / Clash 生态的客户端</span><span class="link-card-url">github.com/appshubcc/Bettbox</span></span></a>
+<a class="link-card" href="https://github.com/MetaCubeX/ClashMetaForAndroid" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">CM</span><span class="link-card-body"><span class="link-card-title">Clash Meta for Android</span><span class="link-card-desc">Android 端基于规则的网络隧道客户端</span><span class="link-card-url">github.com/MetaCubeX/ClashMetaForAndroid</span></span></a>
+<a class="link-card" href="https://github.com/clash-verge-rev/clash-verge-rev" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">CV</span><span class="link-card-body"><span class="link-card-title">Clash Verge Rev</span><span class="link-card-desc">基于 Tauri 的现代 GUI 客户端，支持 Windows / macOS / Linux</span><span class="link-card-url">github.com/clash-verge-rev/clash-verge-rev</span></span></a>
+<a class="link-card" href="https://github.com/xishang0128/sparkle" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">SP</span><span class="link-card-body"><span class="link-card-title">Sparkle</span><span class="link-card-desc">另一款 Mihomo GUI，持续开发中</span><span class="link-card-url">github.com/xishang0128/sparkle</span></span></a>
+<a class="link-card" href="https://github.com/YumeYucca/YumeBox" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">YB</span><span class="link-card-body"><span class="link-card-title">YumeBox</span><span class="link-card-desc">与 9-nine 系列相关的 Galgame 工具项目</span><span class="link-card-url">github.com/YumeYucca/YumeBox</span></span></a>
+<a class="link-card" href="https://t.me/zhetengsha" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">TG</span><span class="link-card-body"><span class="link-card-title">折腾啥</span><span class="link-card-desc">Telegram 频道，折腾与分享</span><span class="link-card-url">t.me/zhetengsha</span></span></a>
+<a class="link-card" href="https://github.com/sub-store-org/Sub-Store" target="_blank" rel="noopener noreferrer"><span class="link-card-icon">SS</span><span class="link-card-body"><span class="link-card-title">Sub-Store</span><span class="link-card-desc">高级订阅管理器，支持 QX / Loon / Surge / Stash / Egern / Shadowrocket</span><span class="link-card-url">github.com/sub-store-org/Sub-Store</span></span></a>
+</div>
+
+## 申请友链
+
+想加入友链？欢迎到 [3m-ui-web Issues](https://github.com/kazeyukiro/3m-ui-web/issues) 提交站点名称、简介与链接。

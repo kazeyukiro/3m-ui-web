@@ -3,12 +3,14 @@ import { defineConfig } from 'vitepress'
 const zhNav = [
   { text: '文档', link: '/docs/' },
   { text: '安装', link: '/guide/install' },
+  { text: '友链', link: '/links' },
   { text: 'GitHub', link: 'https://github.com/kazeyukiro/3m-ui' },
 ]
 
 const enNav = [
   { text: 'Docs', link: '/en/docs/' },
   { text: 'Install', link: '/en/guide/install' },
+  { text: 'Links', link: '/en/links' },
   { text: 'GitHub', link: 'https://github.com/kazeyukiro/3m-ui' },
 ]
 
