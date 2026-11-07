@@ -19,7 +19,7 @@ description: 3m-ui 的朋友们 —— 相关客户端、工具与社区
 
 ## 友链说明
 
-本站友链为**互链**：请先在你方站点或项目主页挂上 3m-ui，再提交申请。我们会定期复核，长期未回链的会移出列表。
+本站友链**我方先挂，对方后挂**：无需你方先回链，我们会先把你加进列表；之后你方再挂上 3m-ui 即可。
 
 **我方信息（可直接复制）**
 
@@ -31,7 +31,7 @@ description: 3m-ui 的朋友们 —— 相关客户端、工具与社区
 | 简介 | Mihomo 服务端 Web 管理面板 |
 | 图标 | https://3m-ui.top/logo.png |
 
-可直接粘贴的回链代码：
+对方后挂时可直接粘贴的链接代码：
 
 ```html
 <a href="https://3m-ui.top" target="_blank" rel="noopener noreferrer">
@@ -40,4 +40,4 @@ description: 3m-ui 的朋友们 —— 相关客户端、工具与社区
 </a>
 ```
 
-回链完成后，到 [3m-ui-web Issues](https://github.com/kazeyukiro/3m-ui-web/issues) 提交你方站点名称、简介与链接。
+想加入友链，直接到 [3m-ui-web Issues](https://github.com/kazeyukiro/3m-ui-web/issues) 提交你方站点名称、简介与链接，我方会先挂上；之后如方便再回挂 3m-ui。

@@ -19,7 +19,7 @@ Clients, tools and communities around the 3m-ui ecosystem. Thanks to everyone wh
 
 ## Link policy
 
-Links are **reciprocal**: please add 3m-ui to your site or project README before submitting a request. We review the list periodically and remove entries that never link back.
+We **link first — you link back later**: no backlink is required up front. We'll add your site to the list first; you can then add 3m-ui to your site or project README afterwards.
 
 **Our details (copy as-is)**
 
@@ -31,7 +31,7 @@ Links are **reciprocal**: please add 3m-ui to your site or project README before
 | Description | Web panel for Mihomo — nodes, users, subscriptions and ops |
 | Logo | https://3m-ui.top/logo.png |
 
-Ready-to-paste backlink:
+Ready-to-paste code for when you link back:
 
 ```html
 <a href="https://3m-ui.top" target="_blank" rel="noopener noreferrer">
@@ -40,4 +40,4 @@ Ready-to-paste backlink:
 </a>
 ```
 
-Once the backlink is live, open an issue at [3m-ui-web Issues](https://github.com/kazeyukiro/3m-ui-web/issues) with your site name, a short description and the URL.
+To be listed, just open an issue at [3m-ui-web Issues](https://github.com/kazeyukiro/3m-ui-web/issues) with your site name, a short description and the URL — we'll add you first, and you're welcome to link back to 3m-ui afterwards.
