@@ -22,6 +22,8 @@ description: 3m-ui · 订阅
 
 订阅内容中的分流规则来自 **客户端配置 / 路由模板**，不是服务端强制代用户翻墙；服务端入站侧常见为 `MATCH,DIRECT` 一类落地。
 
+`sub_pull_limit` 在订阅路径上生效（见[用户与流量](./users-traffic)）；TUIC/Hysteria2 分享链接带客户端 TLS 参数。
+
 ## 订阅信息页
 
 在订阅 URL 后加 `?html=1` 打开**订阅信息页**：

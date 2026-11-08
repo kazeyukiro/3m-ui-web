@@ -41,6 +41,7 @@ Mirrored node names carry an `R<remote-id>-` prefix so they never collide with l
 
 - Prefer HTTPS and restricted API tokens on remotes.
 - Health checks skip dead remotes so one outage does not empty the whole subscription.
+- Confirm the port and name conflict policy before pushing, so existing remote nodes are not overwritten.
 - Mirrors marked "remote off" in the binding modal do not feed subscriptions until the parent remote is enabled again.
 
 Button and field names follow the current panel's Cluster page.

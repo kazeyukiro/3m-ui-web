@@ -5,39 +5,28 @@ description: 3m-ui · DNS control for the panel's Mihomo core
 
 # DNS settings
 
-**DNS settings** control the DNS behaviour of the **panel's Mihomo core**. They
-live under **Config → General settings → DNS settings**.
+**DNS settings** control the DNS behaviour of the **panel's Mihomo core**. They live under **Config → General settings → DNS settings**.
 
-They affect the Mihomo process on this host only and are never written into
-client subscriptions.
+They affect the Mihomo process on this host only and are never written into client subscriptions.
 
 ## Saving and applying
 
 1. Click **Save general settings** (persisted by the panel);
 2. Click **Generate & apply** so the core reloads.
 
-Saving alone does not change the running core — the page reminds you to generate,
-validate and apply after a successful save.
+Saving alone does not change the running core — the page reminds you to generate, validate and apply after a successful save.
 
 ## DNS is off by default (read this on upgrade)
 
-**DNS is disabled by default.** On a fresh install the switch is off and the
-generated configuration contains `dns: {enable: false}`.
+**DNS is disabled by default.** On a fresh install the switch is off and the generated configuration contains `dns: {enable: false}`.
 
-- Before this feature existed, the DNS section came from the default template
-  (enabled, `fake-ip`, built-in resolvers);
+- Before this feature existed, the DNS section came from the default template (enabled, `fake-ip`, built-in resolvers);
 - Now DNS follows these settings, and the default is off;
-- If you had already saved DNS in the panel, that saved value is still used — it
-  is not switched off behind your back.
+- If you had already saved DNS in the panel, that saved value is still used — it is not switched off behind your back.
 
-Enable it manually if you rely on `fake-ip`, `nameserver-policy`, `fallback` or
-`respect-rules` — for example domain-based routing or per-domain resolvers. WARP
-domain or global routing is unaffected; see "How it interacts with other
-configuration" below.
+Enable it manually if you rely on `fake-ip`, `nameserver-policy`, `fallback` or `respect-rules` — for example domain-based routing or per-domain resolvers. WARP domain or global routing is unaffected; see "How it interacts with other configuration" below.
 
-The values shown the first time you open the form are: off, `fake-ip`,
-`0.0.0.0:1053`, `119.29.29.29` and `223.5.5.5`. Anything you leave empty falls
-back to the core default.
+The values shown the first time you open the form are: off, `fake-ip`, `0.0.0.0:1053`, `119.29.29.29` and `223.5.5.5`. Anything you leave empty falls back to the core default.
 
 ## Fields
 
@@ -107,13 +96,9 @@ The backend validates on save and returns 400 naming the offending field:
 
 ## How it interacts with other configuration
 
-- **It overrides custom fragments.** Saved panel DNS wins over a `dns:` section in
-  a custom fragment regardless of fragment order — hand-written DNS in a fragment
-  is dropped silently. Move it here if it must apply to the server core.
-- **WARP forces DNS on.** With WARP domain or global routing enabled, the generated
-  configuration turns DNS on even when this switch is off.
-- **It never reaches subscriptions.** Server DNS settings are not exported to client
-  subscriptions; subscription DNS stays on the subscription side.
+- **It overrides custom fragments.** Saved panel DNS wins over a `dns:` section in a custom fragment regardless of fragment order — hand-written DNS in a fragment is dropped silently. Move it here if it must apply to the server core.
+- **WARP forces DNS on.** With WARP domain or global routing enabled, the generated configuration turns DNS on even when this switch is off.
+- **It never reaches subscriptions.** Server DNS settings are not exported to client subscriptions; subscription DNS stays on the subscription side.
 
 ## Related
 

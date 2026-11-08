@@ -10,9 +10,8 @@ description: 3m-ui · 预发布通道
 尝试预发布：
 
 ```bash
-sudo 3m-ui update --pre
-# 或在管理菜单 / 面板设置中切换通道
+sudo 3m-ui channel pre --update
+# 或在交互式菜单中切换；`3m-ui update pre` 亦可
 ```
 
 生产环境建议使用稳定版。预发布可能随 `pre` 标签滚动更新，行为以当次构建说明为准。
-

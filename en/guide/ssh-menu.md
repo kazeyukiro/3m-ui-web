@@ -5,16 +5,14 @@ description: 3m-ui · SSH management menu (acme.sh / language switch / command r
 
 # SSH management menu
 
-Run `3m-ui` on the server to open the management menu. It is the main rescue
-entry point when the web panel is unreachable.
+Run `3m-ui` on the server to open the management menu. It is the main rescue entry point when the web panel is unreachable.
 
 ```bash
 3m-ui            # interactive menu
 3m-ui help       # command-line usage
 ```
 
-It is a classic **numbered text menu**: type a number and press Enter. The
-legacy `a` (uninstall) and `0` (exit) keys keep working.
+It is a classic **numbered text menu**: type a number and press Enter. The legacy `a` (uninstall) and `0` (exit) keys keep working.
 
 ## Menu items
 
@@ -37,8 +35,7 @@ legacy `a` (uninstall) and `0` (exit) keys keep working.
 
 ## SSL certificate helper (acme.sh)
 
-Menu **21** actually drives [acme.sh](https://github.com/acmesh-official/acme.sh)
-to issue, deploy and renew certificates:
+Menu **21** actually drives [acme.sh](https://github.com/acmesh-official/acme.sh) to issue, deploy and renew certificates:
 
 | # | Action |
 |---|--------|
@@ -60,15 +57,9 @@ Certificates land in `/etc/3m-ui/certs/` (`<domain>.key` and `<domain>.crt`).
 
 ### Licensing note
 
-Both 3m-ui and acme.sh are licensed under **GPL-3.0**. Even so, 3m-ui does **not**
-bundle acme.sh source. The menu drives the independently installed acme.sh on
-your machine (default `~/.acme.sh/acme.sh`) and can install it for you on demand.
-That keeps acme.sh free to upgrade on its own, with the two projects' licenses
-and copyright holders staying independent.
+Both 3m-ui and acme.sh are licensed under **GPL-3.0**. Even so, 3m-ui does **not** bundle acme.sh source. The menu drives the independently installed acme.sh on your machine (default `~/.acme.sh/acme.sh`) and can install it for you on demand. That keeps acme.sh free to upgrade on its own, with the two projects' licenses and copyright holders staying independent.
 
-For the panel's own HTTPS, keep using the built-in ACME under
-Settings → SSL. This integration is mainly for issuing certificates for nodes
-or a reverse proxy.
+For the panel's own HTTPS, keep using the built-in ACME under Settings → SSL. This integration is mainly for issuing certificates for nodes or a reverse proxy.
 
 ### Choosing a certificate authority (CA)
 
@@ -86,9 +77,7 @@ Issuing a certificate (menu 2) asks for the CA first:
 
 Choosing "Back" keeps whatever CA acme.sh currently defaults to (ZeroSSL since v3).
 
-> Buypass terminated its certificate service on 2025-10-31 and its ACME endpoint
-> no longer works, so the option has been removed from the menu. If you still
-> have a Buypass certificate, reissue it from one of the CAs above.
+> Buypass terminated its certificate service on 2025-10-31 and its ACME endpoint no longer works, so the option has been removed from the menu. If you still have a Buypass certificate, reissue it from one of the CAs above.
 
 ### Validation methods
 
@@ -103,19 +92,13 @@ Menu 2 asks how the challenge should be solved, matching acme.sh's `--issue` fla
 | apache | `--apache` | Same, for apache |
 | TLS-ALPN | `--alpn` | Port 80 busy but 443 free; `--tlsport` changes the port |
 
-DNS API names (`dns_cf`, `dns_ali`, `dns_dp`, `dns_aws`, `dns_gd`, `dns_ovh`, ...) are
-listed in the [acme.sh dnsapi wiki](https://github.com/acmesh-official/acme.sh/wiki/dnsapi).
+DNS API names (`dns_cf`, `dns_ali`, `dns_dp`, `dns_aws`, `dns_gd`, `dns_ovh`, ...) are listed in the [acme.sh dnsapi wiki](https://github.com/acmesh-official/acme.sh/wiki/dnsapi).
 
 ### IP certificates
 
-acme.sh can issue a certificate for an IP address — just type the address into
-the "Domain or IP address" prompt (it becomes `-d 1.2.3.4`, see
-[wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)).
+acme.sh can issue a certificate for an IP address — just type the address into the "Domain or IP address" prompt (it becomes `-d 1.2.3.4`, see [wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)).
 
-**Restriction (RFC 8738)**: an IP identifier **cannot be validated over DNS**,
-only via http-01 or tls-alpn-01. So standalone / webroot / nginx / apache /
-TLS-ALPN are available; if you enter an IP and then pick DNS API, the menu
-refuses right away instead of collecting API credentials and failing at the CA.
+**Restriction (RFC 8738)**: an IP identifier **cannot be validated over DNS**, only via http-01 or tls-alpn-01. So standalone / webroot / nginx / apache / TLS-ALPN are available; if you enter an IP and then pick DNS API, the menu refuses right away instead of collecting API credentials and failing at the CA.
 
 Not every CA issues IP certificates either — if one refuses, try another.
 
@@ -134,12 +117,9 @@ While issuing, the menu asks for these optional extras — **press Enter to skip
 | Preferred chain | `--preferred-chain` | e.g. `ISRG Root X1` |
 | EAB credentials | `--eab-kid` / `--eab-hmac-key` | Required by some CAs; **both must be given** |
 
-Invalid values (`-k 1024`, `--debug 9`, a half-filled EAB pair) are rejected on the
-spot instead of being handed to acme.sh.
+Invalid values (`-k 1024`, `--debug 9`, a half-filled EAB pair) are rejected on the spot instead of being handed to acme.sh.
 
-acme.sh stores ECC certificates under `<domain>_ecc`. The menu adds `--ecc`
-automatically when renewing, deploying, revoking or exporting, so you never have
-to tell them apart.
+acme.sh stores ECC certificates under `<domain>_ecc`. The menu adds `--ecc` automatically when renewing, deploying, revoking or exporting, so you never have to tell them apart.
 
 ### Certificate management
 
@@ -153,9 +133,7 @@ to tell them apart.
 
 ### Showing certificate details
 
-Menu 5 prints the subject, issuer and validity window, and warns when the
-certificate expires within 30 days (it reads the file with `openssl x509`; if
-openssl is missing you get told so). It then offers to show the actual material:
+Menu 5 prints the subject, issuer and validity window, and warns when the certificate expires within 30 days (it reads the file with `openssl x509`; if openssl is missing you get told so). It then offers to show the actual material:
 
 | Option | Notes |
 |--------|-------|
@@ -163,14 +141,9 @@ openssl is missing you get told so). It then offers to show the actual material:
 | Public key PEM | Extracts the public key with `openssl x509 -pubkey` |
 | Private key PEM | Prints the private key — **warns and asks first** (default no) |
 
-A private key is printed in full and may linger in the terminal scrollback or in
-logs, so it is never shown without confirmation.
+A private key is printed in full and may linger in the terminal scrollback or in logs, so it is never shown without confirmation.
 
-The private key is looked up the way acme.sh actually stores it: the copy
-deployed into the panel first, then `<domain>/` (RSA) and `<domain>_ecc/`
-(ECC, acme.sh's default type). Wildcards, IP addresses and IDN names are kept
-verbatim in the directory name, so every certificate type resolves — enter the
-domain exactly as it was issued (case-sensitive).
+The private key is looked up the way acme.sh actually stores it: the copy deployed into the panel first, then `<domain>/` (RSA) and `<domain>_ecc/` (ECC, acme.sh's default type). Wildcards, IP addresses and IDN names are kept verbatim in the directory name, so every certificate type resolves — enter the domain exactly as it was issued (case-sensitive).
 
 ### Install source
 
@@ -185,10 +158,7 @@ If acme.sh is already installed, the menu just upgrades it without asking.
 
 ### Automatic renewal
 
-acme.sh relies on crontab to renew certificates. When `crontab` is missing the
-install is refused; the menu then offers to continue with `--force` — **but the
-certificates will not renew automatically**, and you must add your own cron job
-running `acme.sh --cron` daily. Installing cron first is recommended:
+acme.sh relies on crontab to renew certificates. When `crontab` is missing the install is refused; the menu then offers to continue with `--force` — **but the certificates will not renew automatically**, and you must add your own cron job running `acme.sh --cron` daily. Installing cron first is recommended:
 
 ```bash
 # Debian / Ubuntu
@@ -199,8 +169,7 @@ yum install -y cronie
 
 ## Language switch
 
-The menu ships two **fully separate** string tables (Chinese and English)
-instead of cramming "Chinese | English" into one line.
+The menu ships two **fully separate** string tables (Chinese and English) instead of cramming "Chinese | English" into one line.
 
 ```bash
 3m-ui lang           # show the current language
@@ -215,9 +184,7 @@ You can also pick **24. Language** in the menu, or override for one run:
 THREE_M_UI_LANG=en 3m-ui
 ```
 
-Precedence: **environment variable > saved setting > locale auto-detection**.
-The setting lives in `/etc/3m-ui/menu.conf` and is **never written to
-`config.yaml`**, which belongs to the panel binary.
+Precedence: **environment variable > saved setting > locale auto-detection**. The setting lives in `/etc/3m-ui/menu.conf` and is **never written to `config.yaml`**, which belongs to the panel binary.
 
 ## Non-interactive commands
 
@@ -235,7 +202,5 @@ Subcommands are unchanged and safe to use from scripts and cron:
 
 ## Notes
 
-- Opening firewall ports asks for confirmation first, so a stray keypress
-  cannot widen your public exposure.
-- If a bad panel config makes the web UI unreachable, use **16. Reset-config
-  (SSH rescue)** to fall back to HTTP.
+- Opening firewall ports asks for confirmation first, so a stray keypress cannot widen your public exposure.
+- If a bad panel config makes the web UI unreachable, use **16. Reset-config (SSH rescue)** to fall back to HTTP.

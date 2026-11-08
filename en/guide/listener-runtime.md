@@ -4,30 +4,46 @@ title: Listener runtime status
 
 # Listener runtime status
 
-This page describes how 3m-ui decides a listener is **running** versus merely **enabled**.
+The Nodes page separates "enabled" from "actually reachable". The main badge reflects a connectivity check result (pass / fail / checking / untested / unknown / disabled). **A listening socket alone is not shown as usable**. Clicking a node opens diagnostics; a cached result is reused while still valid, otherwise a check runs against the exported client endpoints. Saving and enabling a node also triggers a check. The detail drawer distinguishes stages: socket observation, client config, test client start, authentication, and proxy access.
 
-## States
+Lightweight socket polling only runs while the page is visible and **never** starts a test client. End-to-end results are cached in memory for about one minute and invalidated when the applied config, service process, or exported client config changes. Reading the cache re-exports the current config and verifies its hash (covering public endpoints and valid credentials; no credential-bearing YAML is stored in the cache). A failed request clears the display to unknown instead of leaving it green.
 
-| State | Meaning |
-|-------|---------|
-| Enabled | Stored in DB and intended to be compiled into config |
-| Applied | Present in the last successfully applied Mihomo config |
-| Live | Core reports the inbound as active (when API is available) |
+## API
 
-## Update path
+Use the existing authenticated node/Listener routes:
 
-1. Save listener in the panel  
-2. **Generate → Validate → Apply**  
-3. Core reloads; runtime badges refresh on the next poll  
+- `GET /api/v1/nodes/runtime-status`: runtime status of all local nodes  
+- `POST /api/v1/nodes/:id/check`: one fresh read-only check for a single node  
+- `/api/v1/listeners` exposes the same aliases  
 
-## Traffic & connections
+The list endpoint returns an array; a single check returns one object.  
+`GET /api/v1/nodes/runtime-status?summary=true` performs the same socket inspection but returns an empty `endpoints` array, suitable for page polling; fetch full endpoints when opening the drawer or running a manual check. Omitting `summary=true` keeps the full list. A single check always returns full endpoints.
 
-Active connection counts (TCP/UDP) come from the core statistics API and feed the dashboard charts.
+Full response example:
 
-## Common failures
+```json
+{
+  "id": 1,
+  "state": "listening",
+  "reason": "sockets_bound",
+  "checked_at": "2026-01-01T00:00:00Z",
+  "endpoints": []
+}
+```
 
-- Port conflict or permission denied on bind  
-- TLS/certificate path missing at apply time  
-- Core crashed or not started after apply  
+## Common status meanings
 
-Check panel logs and Mihomo logs under the data directory configured for your install.
+| Status tendency | Meaning |
+|----------|------|
+| Enabled but unavailable | Config not applied, core not running, port conflict, or failed check |
+| Applied but unknown | Panel cannot reach the core API or the check request failed |
+| Check passed | Reachability verified via the exported client path (not just a listening port) |
+
+## Troubleshooting
+
+1. Confirm **Generate → Validate → Apply** has run  
+2. Check core and panel logs for bind / TLS errors  
+3. Verify public address, port, and certificate match the exported URI  
+4. Re-run the check after credential changes to avoid stale cache  
+
+Finer field and stage details follow the panel diagnostics drawer and API responses; the implementation evolves with the build, so prefer the current one.

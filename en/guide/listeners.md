@@ -5,28 +5,29 @@ description: 3m-ui · Listeners
 
 # Listeners
 
-## Listeners (nodes)
+Create inbound listeners from the panel. The protocol model follows Mihomo's official `listeners` (VLESS, VMess, Trojan, Shadowsocks, Hysteria2, TUIC, and more).
 
-Create inbound listeners from the panel. Supported protocols follow the Mihomo listener model (VLESS, VMess, Trojan, Shadowsocks, Hysteria2, TUIC, and more).
+## One-click create
 
-### One-click create
+Use **Quick create** when you only need **protocol + name** — the panel allocates a free port and fills credentials / REALITY–TLS defaults, producing usable defaults. Use the full edit form for fine-grained control.
 
-Use **Quick create** when you only need a protocol and a name. The panel allocates a free port and fills credentials / REALITY–TLS defaults. Full form create is still available for advanced fields.
+## How saves work
 
-### How saves work
-
-Create / update / delete write the panel database first and return success immediately. Mihomo config application is **debounced in the background** (about 400ms), same idea as user credential sync. A successful UI response does not mean the core has finished reloading yet — wait a moment, then use runtime status / connectivity checks. Activation failures are logged and do not roll back the panel record; fix the config and reload if needed.
+Create / update / delete write the panel database first and return success immediately. Mihomo config application is **debounced in the background** (about 400ms), same idea as user credential sync. A successful UI response does not mean the core has finished reloading — wait a moment, then confirm with runtime status / connectivity checks. Activation failures are logged and do not roll back the panel record; fix the config and reload.
 
 API: `POST /api/v1/nodes`, `POST /api/v1/nodes/quick` (aliases under `/listeners`). OpenAPI: `GET /api/v1/openapi.yaml`.
 
-### Traffic multiplier
+## Certificates
 
-Field `traffic_multiplier` (default 1): raw traffic on this node × multiplier counts toward each user’s quota. Configure in the node form.
+- Panel SSL: domain ACME, IP short-lived certificate, or manual PEM
+- Nodes: self-sign, upload, or **apply one certificate to many nodes** (PEM body, allowlisted certificate file paths, or reuse panel SSL)
 
-### Batch certificate
+Batch certificate API: `POST /api/v1/nodes/batch/certificate`.
 
-Select multiple nodes and apply one TLS certificate (PEM body, allowlisted file paths such as Let's Encrypt, or reuse panel SSL). API: `POST /api/v1/nodes/batch/certificate`.
+## Traffic multiplier
+
+Field `traffic_multiplier` (default 1): raw traffic on this node × multiplier counts toward each user's quota. Configure it in the node form.
 
 ## Same-port TCP/UDP
 
-TCP and UDP listeners may share the same port; config generation allows coexistence.
+TCP and UDP listeners may share the same port; config generation allows coexistence too.

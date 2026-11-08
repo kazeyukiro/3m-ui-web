@@ -13,3 +13,4 @@ description: 3m-ui · NAT 与端口
 
 节点接入地址可与面板域名完全不同，在 Listener 上单独填写公网 host/端口即可。
 
+设置 `public_url` 让订阅链接使用公网域名或 IP。

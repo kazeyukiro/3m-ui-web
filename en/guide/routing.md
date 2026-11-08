@@ -54,6 +54,8 @@ Controls how traffic **leaves the VPS** after a user connects to a node.
   body example: `{ "proxies": [], "proxyGroups": [], "rules": ["MATCH,DIRECT"], "warpDomains": [], "ruleProviders": [] }`
 - If no `MATCH,...` line is present, the panel appends `MATCH,DIRECT`.
 
+Server-side GEOIP/GEOSITE rules also need local Geo data.
+
 ## Config engine
 
 **Generate & apply** rebuilds listeners and applies **server egress** into the serving config. Client community rules stay subscription-only.

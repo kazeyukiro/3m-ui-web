@@ -5,11 +5,16 @@ description: 3m-ui · Panel config
 
 # Panel config
 
-## Panel configuration
+Main config file: `/etc/3m-ui/config.yaml`  
+Data directory defaults to `/var/lib/3m-ui`.
 
-Main config file: `/etc/3m-ui/config.yaml`. Data directory defaults to `/var/lib/3m-ui`.
+Change the listen port with the `3m-ui` menu item "Change panel port", or edit config and restart the service:
 
-Change the listen port with `3m-ui` menu item “Change panel port”, or edit config and restart the service.
+```bash
+systemctl restart 3m-ui
+```
+
+**Public URL (public_url)** builds subscription links and some callbacks; fill it in under **System settings** (e.g. `https://panel.example.com`).
 
 ## Hidden panel path (web_path)
 
@@ -46,7 +51,7 @@ The environment variable `THREE_M_UI_WEB_PATH` (short `WEB_PATH`) overrides the 
 On the **Config** page:
 
 | Where | Mihomo keys | Scope |
-|-------|-------------|--------|
+|-------|-------------|-------|
 | **General** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; **not** written into client subscriptions |
 | **Proxy entry** | `tfo` / `mptcp` | Client outbound flags ([Mihomo docs](https://wiki.metacubex.one/config/proxies/#tfo)); booleans — not `inbound-*` |
 

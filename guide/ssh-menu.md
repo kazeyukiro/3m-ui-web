@@ -57,9 +57,7 @@ description: 3m-ui · SSH 管理菜单（acme.sh 证书 / 语言切换 / 命令�
 
 ### 关于许可证
 
-3m-ui 与 acme.sh 同采用 **GPL-3.0**。即便如此，3m-ui 仍**不内置 acme.sh 源码**，
-而是在菜单里驱动你机器上独立安装的 acme.sh（默认 `~/.acme.sh/acme.sh`），需要时由菜单帮你安装。
-这样 acme.sh 可以独立升级，两个项目的版权归属与许可证也各自独立、互不牵连。
+3m-ui 与 acme.sh 同采用 **GPL-3.0**。即便如此，3m-ui 仍**不内置 acme.sh 源码**， 而是在菜单里驱动你机器上独立安装的 acme.sh（默认 `~/.acme.sh/acme.sh`），需要时由菜单帮你安装。 这样 acme.sh 可以独立升级，两个项目的版权归属与许可证也各自独立、互不牵连。
 
 面板自身的 HTTPS 仍推荐使用面板内「系统设置 → SSL」的内置 ACME；这里的集成主要用于给节点或反向代理签发证书。
 
@@ -79,8 +77,7 @@ description: 3m-ui · SSH 管理菜单（acme.sh 证书 / 语言切换 / 命令�
 
 选「返回」则沿用 acme.sh 当前的默认 CA（v3 起为 ZeroSSL）。
 
-> Buypass 已于 2025-10-31 终止证书服务、ACME 端点不再可用，因此菜单已移除该选项；
-> 仍在使用旧证书的用户请改用上表中的 CA 重新签发。
+> Buypass 已于 2025-10-31 终止证书服务、ACME 端点不再可用，因此菜单已移除该选项； 仍在使用旧证书的用户请改用上表中的 CA 重新签发。
 
 ### 验证方式
 
@@ -95,17 +92,13 @@ description: 3m-ui · SSH 管理菜单（acme.sh 证书 / 语言切换 / 命令�
 | apache | `--apache` | 同上，用于 apache |
 | TLS-ALPN | `--alpn` | 80 被占用但 443 可用；可用 `--tlsport` 改端口 |
 
-DNS API 名称（如 `dns_cf`、`dns_ali`、`dns_dp`、`dns_aws`、`dns_gd`、`dns_ovh`）见
-[acme.sh dnsapi 列表](https://github.com/acmesh-official/acme.sh/wiki/dnsapi)。
+DNS API 名称（如 `dns_cf`、`dns_ali`、`dns_dp`、`dns_aws`、`dns_gd`、`dns_ovh`）见 [acme.sh dnsapi 列表](https://github.com/acmesh-official/acme.sh/wiki/dnsapi)。
 
 ### IP 证书
 
-acme.sh 支持给 IP 地址签发证书，做法就是把 IP 直接填进「域名或 IP 地址」输入框
-（对应 `-d 1.2.3.4`，见 [wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)）。
+acme.sh 支持给 IP 地址签发证书，做法就是把 IP 直接填进「域名或 IP 地址」输入框 （对应 `-d 1.2.3.4`，见 [wiki/ipcert](https://github.com/acmesh-official/acme.sh/wiki/ipcert)）。
 
-**限制（RFC 8738）**：IP 标识符**不能用 DNS 方式验证**，只能通过 http-01 或 tls-alpn-01。
-所以可用的是 standalone / webroot / nginx / apache / TLS-ALPN；当输入是 IP 而你选了
-DNS API 时，菜单会直接拒绝并提示，而不是让你填完 API 凭据才在 CA 端失败。
+**限制（RFC 8738）**：IP 标识符**不能用 DNS 方式验证**，只能通过 http-01 或 tls-alpn-01。 所以可用的是 standalone / webroot / nginx / apache / TLS-ALPN；当输入是 IP 而你选了 DNS API 时，菜单会直接拒绝并提示，而不是让你填完 API 凭据才在 CA 端失败。
 
 另外并非所有 CA 都签发 IP 证书；若某个 CA 拒绝，换一个 CA 再试即可。
 
@@ -126,8 +119,7 @@ DNS API 时，菜单会直接拒绝并提示，而不是让你填完 API 凭据�
 
 取值不合法（例如 `-k 1024`、`--debug 9`、只填一半的 EAB）会当场拒绝，不会传给 acme.sh。
 
-ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、部署、吊销、导出时会自动补上 `--ecc`，
-无需手动区分。
+ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、部署、吊销、导出时会自动补上 `--ecc`， 无需手动区分。
 
 ### 证书管理
 
@@ -141,8 +133,7 @@ ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、
 
 ### 查看证书详情
 
-菜单 5 会显示证书的主题、颁发者、有效期起止，并提示是否在 30 天内到期
-（用 `openssl x509` 读取；若系统没有 openssl 会给出提示）。随后可以选择查看实际内容：
+菜单 5 会显示证书的主题、颁发者、有效期起止，并提示是否在 30 天内到期 （用 `openssl x509` 读取；若系统没有 openssl 会给出提示）。随后可以选择查看实际内容：
 
 | 选项 | 说明 |
 |------|------|
@@ -150,13 +141,9 @@ ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、
 | 公钥 PEM | 用 `openssl x509 -pubkey` 从证书提取公钥 |
 | 私钥 PEM | 打印私钥 —— **会先警告并要你确认**（默认否） |
 
-私钥会完整显示在屏幕上，并可能留存于终端回滚缓冲或日志中，所以默认不显示；
-未确认时不会输出任何私钥内容。
+私钥会完整显示在屏幕上，并可能留存于终端回滚缓冲或日志中，所以默认不显示； 未确认时不会输出任何私钥内容。
 
-私钥按 acme.sh 的真实存储布局查找：面板部署目录优先，其次是 `<域名>/`（RSA）
-与 `<域名>_ecc/`（ECC，acme.sh 的默认类型）。通配符、IP 地址、IDN 等各类证书的
-域名在目录名中原样保留，因此都能正确找到；输入域名时请与申请时保持一致
-（大小写敏感）。
+私钥按 acme.sh 的真实存储布局查找：面板部署目录优先，其次是 `<域名>/`（RSA） 与 `<域名>_ecc/`（ECC，acme.sh 的默认类型）。通配符、IP 地址、IDN 等各类证书的 域名在目录名中原样保留，因此都能正确找到；输入域名时请与申请时保持一致 （大小写敏感）。
 
 ### 安装源
 
@@ -171,9 +158,7 @@ ECC 证书会被 acme.sh 存放在 `<域名>_ecc` 目录下；菜单在续期、
 
 ### 自动续期
 
-acme.sh 依赖 crontab 自动续期证书。若系统没有 `crontab`，安装会被拒绝；
-此时菜单会询问是否用 `--force` 继续 —— **但证书将不会自动续期**，
-你需要自行添加定时任务每天执行 `acme.sh --cron`。建议先安装 cron：
+acme.sh 依赖 crontab 自动续期证书。若系统没有 `crontab`，安装会被拒绝； 此时菜单会询问是否用 `--force` 继续 —— **但证书将不会自动续期**， 你需要自行添加定时任务每天执行 `acme.sh --cron`。建议先安装 cron：
 
 ```bash
 # Debian / Ubuntu
@@ -199,8 +184,7 @@ yum install -y cronie
 THREE_M_UI_LANG=en 3m-ui
 ```
 
-优先级：**环境变量 > 已保存的设置 > 系统 locale 自动检测**。
-设置保存在 `/etc/3m-ui/menu.conf`，**不会写入 `config.yaml`**（后者属于面板程序）。
+优先级：**环境变量 > 已保存的设置 > 系统 locale 自动检测**。 设置保存在 `/etc/3m-ui/menu.conf`，**不会写入 `config.yaml`**（后者属于面板程序）。
 
 ## 非交互命令
 

@@ -5,12 +5,13 @@ description: 3m-ui · Pre-release channel
 
 # Pre-release channel
 
-Stable installs use formal GitHub Releases by default. To try pre-releases:
+Default installs and `3m-ui update` use **formal Releases (stable)**.
 
+To try pre-releases:
+
+```bash
+sudo 3m-ui channel pre --update
+# or switch in the interactive menu; `3m-ui update pre` also works
 ```
-sudo 3m-ui update --pre
-# or switch channel via the management menu
-```
 
-Prefer stable for production. Pre-releases may change without notice.
-
+Prefer stable for production. Pre-releases may roll under the `pre` tag; behaviour follows that build's notes.

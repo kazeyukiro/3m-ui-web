@@ -5,6 +5,8 @@ description: 3m-ui · 校验发布签名
 
 # 校验发布签名
 
+## 发布校验材料
+
 官方 Release 提供校验和（以及工作流发布的签名材料）。生产环境安装前请核对下载文件与 `SHA256SUMS`（及说明中的 Sigstore 验证步骤）。
 
 ## 关于 `SHA256SUMS.pem` 的编码
