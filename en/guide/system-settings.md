@@ -7,9 +7,17 @@ description: 3m-ui · System settings
 
 Panel **System settings** groups operational options (mostly stored in the database; you usually need not edit `config.yaml`).
 
-## System settings
+## Setting groups
 
-Theme, subscription page options, Telegram, public URL and related panel options live under Settings (grouped sections).
+Common groups:
+
+- Appearance / subscription page
+- Public URL, Telegram
+- Panel SSL (HTTP-01 / DNS-01 wildcard / IP certificate / manual paths)
+- Backup & restore
+- Update channel (stable / pre) and panel restart
+
+Saving SSL or listener-related options usually requires a **panel process restart** before they fully take effect.
 
 ## Cloudflare WARP
 
@@ -23,7 +31,7 @@ The **System ops** section (Settings → System ops) provides one-click panel ma
 
 ### Restart panel
 
-Click **Restart now** to gracefully restart the 3m-ui panel process. The panel calls `os.Exit(0)` and systemd's `Restart=always` brings it back automatically. The web page polls `/api/v1/health` and auto-reloads when the panel is back (typically 2-3 seconds).
+Click **Restart now** to gracefully restart the 3m-ui panel process. The panel calls `os.Exit(0)` and systemd's `Restart=always` brings it back automatically. The web page polls `/api/v1/health` and auto-reloads when the panel is back (typically 2–3 seconds).
 
 Use this after config changes that require a restart, or if the panel is behaving unexpectedly.
 
@@ -36,22 +44,18 @@ The panel automatically checks for the latest 3m-ui release on GitHub when you o
 It shows:
 
 - **Current version** — your installed version + channel badge (cyan "Stable" or purple "Pre-release")
-
-- **Channel switcher** — a Segmented control to switch between **Stable** and **Pre-release** channels. Each option shows the latest version tag for that channel inline.
-
+- **Channel switcher** — a Segmented control to switch between **Stable** and **Pre-release** channels. Each option shows the latest version tag for that channel inline
 - **Latest version** — the latest version in the target (selected) channel
-
 - **Update available** badge (green) or **Up to date** badge (gray)
-
 - Collapsible release notes from the GitHub release body for the target channel
 
-Click **Check for updates** to re-check. Click **Update now** (only enabled when an update is available) to trigger `update.sh` in the background with the selected channel — the panel downloads the release for that channel, replaces itself, and restarts automatically. The web page polls health with a 120-second timeout (updates typically take 30-60 seconds).
+Click **Check for updates** to re-check. Click **Update now** (only enabled when an update is available) to trigger `update.sh` in the background with the selected channel — the panel downloads the release for that channel, replaces itself, and restarts automatically. The web page polls health with a 120-second timeout (updates typically take 30–60 seconds).
 
-**Switching channels:** If you’re on Stable, selecting "Pre-release" and clicking "Update now" will download the latest pre-release build and switch your panel to the pre channel. If you’re on Pre-release, selecting "Stable" will switch back to the latest stable release. The channel is persisted in `/usr/local/lib/3m-ui/CHANNEL` by `update.sh`.
+**Switching channels:** If you're on Stable, selecting "Pre-release" and clicking "Update now" will download the latest pre-release build and switch your panel to the pre channel. If you're on Pre-release, selecting "Stable" will switch back to the latest stable release. The channel is persisted in `/usr/local/lib/3m-ui/CHANNEL` by `update.sh`.
 
 API:
 
-```
+```bash
 # Check for updates (returns both stable + pre info)
 curl -H "Authorization: Bearer <token>" \
   https://panel.example.com/api/v1/system/update-info
@@ -65,7 +69,6 @@ curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/js
 curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
   -d '{"channel":"pre"}' \
   https://panel.example.com/api/v1/system/update
-
 ```
 
 If GitHub is unreachable (firewall, GFW), the panel shows a fallback hint: *"Cannot check for updates (GitHub API unreachable). Update via SSH: 3m-ui update"*.
@@ -78,4 +81,3 @@ Pre-release URL: [https://github.com/kazeyukiro/3m-ui/releases/tag/pre](https://
 - Panel: `GET /api/v1/system/panel-logs`
 
 The UI **Logs** page exposes each stream on its own tab. OpenAPI: panel `GET /api/v1/openapi.yaml` (auth required); source file `backend/docs/openapi.yaml` in the main repo.
-
