@@ -6,7 +6,7 @@ title: AI 提示词安装
 
 把下面的提示词复制到 ChatGPT / Claude / Cursor 等 AI 助手，并说明你的系统（如 Ubuntu 22.04）以及是否已有 root SSH。助手应只协助执行官方脚本，不要改写下载地址或臆造不明来源命令。
 
-提示词在此仓库内为**单一来源**，所有 README 与文档均指向本页，避免内容不一致。
+提示词正文同步维护于仓库的 `docs/ai-install-prompt.zh.txt` / `docs/ai-install-prompt.en.txt`，本页展示相同内容；README 与其他文档均指向本页，不另复制，避免内容不一致。
 
 ## 一键获取提示词（推荐）
 

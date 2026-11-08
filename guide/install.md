@@ -29,7 +29,6 @@ sudo env PANEL_PORT=8080 sh install.sh --yes
 
 从旧版安装脚本迁移时，先执行上面的最新安装命令一次，以安装新的快照与恢复流程；旧版 `3m-ui update` 不具备本文描述的完整备份保证。
 
-
 ### AI 提示词安装
 
 把提示词复制到 ChatGPT / Claude / Cursor 等助手，并说明你的系统（如 Ubuntu 22.04）与是否已有 root SSH。助手应只协助执行官方脚本，不要改写成不明来源命令。完整提示词及使用说明见 [AI 提示词安装文档](ai-install-prompt.md)。
@@ -53,8 +52,7 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 默认仍应安装稳定版。
 ```
 
-完整预发布提示词可追加到主提示词末尾，详见 [AI 提示词安装文档](ai-install-prompt.md#测试--预发布通道可选非默认)。
-
+完整预发布提示词可追加到主提示词末尾，详见 [AI 提示词安装文档](ai-install-prompt.md#测试-预发布通道-可选-非默认)。
 
 ### HTTPS 与对外访问
 
@@ -62,12 +60,14 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 
 - **单域名**：默认 HTTP-01（公网 **80** 可达）。
 - **通配符 `*.example.com`**：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [面板 SSL / ACME](./ssl-cert)。
-- **公网 IP**：Let’s Encrypt 短效证书（约 6 天、面板自动续期，需 80/443 可达）。
+- **公网 IP**：Let’s Encrypt `shortlived` 证书（160 小时，约 6 天，面板自动续期，需 80/443 可达）。
 - **手动路径**：fullchain + privkey（如 certbot 签好的文件）。
 
 已有 Nginx / Caddy 的用户可设置面板只监听 `127.0.0.1`，由反向代理提供 HTTPS。域名不是安装前置要求；HTTP 端口本身不代表已启用 HTTPS。
 
 配置证书时，将自管证书放在 `/etc/3m-ui/` 或 `/var/lib/3m-ui/`，以便与数据库、密钥一起备份。域名解析、验证所需端口、防火墙与云安全组需要与所选择的访问方式匹配。
+
+保存 SSL 设置后需**重启面板**，`ListenTLS` 才会生效。请把 `public_url` 设为客户端可访问的公网基址，订阅链接、OAuth 回调与分享链接都基于它生成。
 
 ### 版本与来源
 
@@ -84,7 +84,7 @@ sudo env THREE_M_UI_CHANNEL=pre 3m-ui update
 sudo env THREE_M_UI_CHANNEL=stable 3m-ui update
 ```
 
-没有稳定版可用时会明确失败，不会自动改装 `pre`。默认不会自动升级；执行更新命令时才下载目标版本。
+**稳定版**是安装、`3m-ui update` 与 Docker `latest` 的默认通道；**Pre** 是独立的滚动预发布通道，需显式选择并保留至切回稳定版。没有稳定版可用时会明确失败，不会自动改装 `pre`。默认不会自动升级；执行更新命令时才下载目标版本。
 
 发布自己的 fork 时，需要显式选定发行来源，例如：
 
@@ -111,9 +111,10 @@ sudo 3m-ui logs
 sudo 3m-ui restart
 sudo 3m-ui backup
 sudo 3m-ui update
+sudo 3m-ui reset-config --panel --yes   # 救援错误的 SSL / 监听绑定
 ```
 
-`backup` 会短暂停服，在 `/var/lib/3m-ui/backups/` 创建完整快照，然后恢复原先的运行状态。快照目录可能较大，可在面板 **设置 → 备份** 清理，或调用 `POST /api/v1/system/backups/cleanup`。快照包含面板程序、配套核心、管理脚本、服务定义、配置、加密密钥、数据库及其辅助文件、Mihomo 数据和证书；历史备份不会递归收入新快照。
+`backup` 会短暂停服，在 `/var/lib/3m-ui/backups/` 创建完整快照，然后恢复原先的运行状态。快照目录可能较大，可在面板 **设置 → 备份** 清理，或调用 `POST /api/v1/system/backups/cleanup`。快照包含面板程序、配套核心、管理脚本、服务定义、配置、加密密钥、数据库及其辅助文件、Mihomo 数据和证书；历史备份不会递归收入新快照。详见 [备份与恢复](./backup-restore)。
 
 更新先完成下载和校验，再停服建立一致快照，替换程序并执行初始化与 HTTP/HTTPS 健康检查。更新失败会尝试恢复整份快照，包括迁移前的数据库和密钥。恢复失败时会输出可用快照位置。
 
@@ -144,7 +145,7 @@ docker compose logs 3m-ui
 
 镜像包含面板、配套 Mihomo，首次启动自动生成配置与密钥，并在日志中输出一次随机初始密码。只有密码哈希写入数据库；首次登录改密后可按自己的日志保留策略轮转首次启动日志。配置、数据和日志使用命名卷，卷权限由镜像准备。重启与容器重建不会再次生成账号或密钥。
 
-镜像以非 root 用户运行。普通监听默认不需要 `privileged` 或 `NET_ADMIN`。低于 1024 的监听端口如受宿主机限制，可以使用高端口或为确有需要的部署添加 `NET_BIND_SERVICE`；TUN 等功能的权限需要自行配置。
+镜像以非 root 用户运行。普通监听默认不需要 `privileged` 或 `NET_ADMIN`。低于 1024 的监听端口如受宿主机限制，可以使用高端口或为确有需要的部署添加 `NET_BIND_SERVICE`；TUN 等功能的权限需要自行配置。持久化卷丢失即丢失数据库与证书，即使镜像仍在。
 
 ### 网络与版本
 
@@ -209,7 +210,6 @@ docker compose exec 3m-ui /usr/local/bin/3m-ui reset-admin
 正式 / 候选版本工作流按标签构建，并拒绝覆盖已发布版本。滚动 `pre` 是独立通道。镜像发布到 `ghcr.io/<当前仓库所有者>/<当前仓库名>`；仓库管理员首次发布时需要确保 package 可见性适合公众拉取。
 
 发布验证应涵盖两种架构、首次初始化、真实核心运行、登录改密、创建节点、实际代理连接、更新保留数据和快照恢复。仅编译成功不能证明一台全新服务器可以安装。
-
 
 ## 订阅路径与端口
 
