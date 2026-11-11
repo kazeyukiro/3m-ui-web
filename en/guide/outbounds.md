@@ -25,7 +25,7 @@ The UI writes Mihomo's own names: Shadowsocks → `ss`, SOCKS → `socks5`, both
 
 ## The form
 
-**Basic connection** fields come first; **optional parameters** — protocol, transport, TLS, dial, multiplexing, WireGuard — are grouped underneath using Mihomo's field names (the catalogue follows the bundled Mihomo v1.19.33 option structs).
+**Basic connection** fields come first; **optional parameters** — protocol, transport, TLS, dial, multiplexing, WireGuard — are grouped underneath using Mihomo's field names (the catalogue follows the bundled Mihomo v1.19.34 option structs).
 
 Optional booleans are **tri-state**: enabled, disabled, or Mihomo default. Clearing an optional field restores the core default instead of writing `false`.
 

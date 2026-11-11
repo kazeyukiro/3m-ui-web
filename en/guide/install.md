@@ -227,4 +227,4 @@ At startup the panel **gzip-precompresses** embedded text assets once and serves
 
 The embedded Web UI is **React + Ant Design** with icons from **Lucide** (`lucide-react`, wrapped in `frontend/src/icons.tsx`). Building the panel binary runs `npm ci` / `npm install` and `npm run build` under `frontend/`.
 
-The overview (dashboard) is a gray canvas with floating cards (resources, traffic, connections), polls about every **2 seconds**, and splits connections by TCP/UDP. Feature search is available in the sidebar (desktop) and the mobile header, with **Ctrl/Cmd+K** as the shortcut. The bundled Mihomo version is pinned in `distribution/mihomo.env` (currently **v1.19.33**).
+The overview (dashboard) is a gray canvas with floating cards (resources, traffic, connections), polls about every **2 seconds**, and splits connections by TCP/UDP. Feature search is available in the sidebar (desktop) and the mobile header, with **Ctrl/Cmd+K** as the shortcut. The bundled Mihomo version is pinned in `distribution/mihomo.env` (currently **v1.19.34**).
