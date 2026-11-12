@@ -44,7 +44,7 @@ When no keyword matches, Clash-style is used. Pass `?target=` explicitly for a s
 All three are rendered as **native formats in the panel** (no subconverter dependency — they work even without a deployed subconverter):
 
 - **Loon**: `[Proxy]` lines `proto,addr,port,password/params…`, e.g. `vmess-ws = VMess,127.0.0.1,20015,auto,91066351-60f7-44b9-ad7e-c4bcc82524a6,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**: a complete mini profile (empty `[General]` + `[Proxy]` + a `[Proxy Group]` referencing only real nodes + `[Rule]`); VMess uses the documented `username=` + `vmess-aead=true` form
+- **Surge**: a complete mini profile (empty `[General]` + `[Proxy]` + a `[Proxy Group]` referencing only real nodes + `[Rule]`); VMess uses the documented `username=` + `vmess-aead=true` form; VLESS (Surge iOS 6.0.0+ / Mac 6.12.0+) uses `vless,host,port,username=` and supports REALITY (`reality-public-key` / `reality-short-id`), Vision (`flow=xtls-rprx-vision`), WS (`ws=true` / `ws-path`) and gRPC (`grpc=true` / `grpc-service-name`)
 - **Quantumult X**: `[server_local]` lines `proto=host:port, key=value, …, tag=name`, e.g. `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### Protocol matrix
@@ -54,14 +54,19 @@ All three are rendered as **native formats in the panel** (no subconverter depen
 | Hysteria2 (salamander / port hopping / download bandwidth) | ✅ `salamander-password`, `server-ports`, `download-bandwidth` | ✅ `salamander-password`, `port-hopping`, `download-bandwidth` | ❌ commented out (QX has no Hysteria2) |
 | Shadowsocks (incl. simple-obfs) | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` keyword + `obfs=http/tls` |
 | VMess (ws/tls, AEAD) | ✅ | ✅ `username=` + `vmess-aead=true` | ✅ `method` limited to `none`/`aes-128-gcm`/`chacha20-poly1305` |
-| VLESS (incl. xtls-rprx-vision) | ✅ | ❌ commented out (Surge has no VLESS) | ✅ `vless-flow=` passthrough |
-| REALITY transport | ✅ (VLESS/Trojan/VMess) | ❌ commented out (no reality params in Surge) | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
+| VLESS (incl. xtls-rprx-vision) | ✅ | ✅ `vless,host,port,username=` (Surge iOS 6.0.0+ / Mac 6.12.0+), see matrix below | ✅ `vless-flow=` passthrough |
+| VLESS REALITY | ✅ | ✅ `reality-public-key` / `reality-short-id` (VLESS only; Trojan/VMess REALITY still commented out) | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
+| VLESS Vision flow | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443` (RAW+TLS or RAW+REALITY only) | ✅ `vless-flow=` |
+| VLESS gRPC | ❌ commented out | ✅ `grpc=true` / `grpc-service-name` (VLESS only, needs TLS or REALITY) | ❌ commented out |
 | Trojan (tls/ws) | ✅ | ✅ | ✅ (tls via `over-tls=true`+`tls-host`, ws via `obfs=wss`) |
 | TUIC v4 / v5 | ❌ commented out | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ commented out (QX has no TUIC) |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket transport | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` under TLS |
 | http transport (vmess/vless) | ✅ `transport=http` | ❌ commented out | ❌ commented out |
-| grpc / xhttp / quic transport | ❌ commented out | ❌ commented out | ❌ commented out |
+| XHTTP / HTTPUpgrade / mKCP / quic transport | ❌ commented out | ❌ commented out (Surge VLESS does not support it either) | ❌ commented out |
+| VLESS Encryption (`mlkem768x25519plus…`) | ❌ commented out | ❌ commented out (only `encryption=none` accepted) | ❌ commented out |
+
+> Surge VLESS combinations ([official manual](https://manual.nssurge.com/policies/vless.html)): RAW/TCP supports `none` / `tls` / `reality` and Vision only on RAW; WebSocket supports `none` / `tls` and no Vision or REALITY; gRPC supports only `tls` / `reality` and no Vision. `fp` / `spx` are not used (Surge sends its own BoringSSL ClientHello); REALITY emits neither `tls=true` nor `skip-cert-verify`. Combinations outside the matrix are commented out rather than emitted as lines a client cannot parse.
 
 > For SIP003 plugins on Shadowsocks, kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are commented out as well.
 

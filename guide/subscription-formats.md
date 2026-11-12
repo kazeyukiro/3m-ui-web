@@ -44,7 +44,7 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 三家均为**原生格式直接生成**（无 subconverter 依赖，未部署 subconverter 也能导出）：
 
 - **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行，如 `vmess-ws = VMess,127.0.0.1,20015,auto,91066351-60f7-44b9-ad7e-c4bcc82524a6,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`），VMess 用手册语法 `username=` + `vmess-aead=true`
+- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`），VMess 用手册语法 `username=` + `vmess-aead=true`；VLESS（Surge iOS 6.0.0+ / Mac 6.12.0+）用 `vless,host,port,username=`，支持 REALITY（`reality-public-key` / `reality-short-id`）、Vision（`flow=xtls-rprx-vision`）、WS（`ws=true` / `ws-path`）与 gRPC（`grpc=true` / `grpc-service-name`）
 - **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### 协议支持矩阵
@@ -54,14 +54,19 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 | Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（QX 不支持 Hysteria2） |
 | Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` 关键字 + `obfs=http/tls` |
 | VMess（ws/tls、AEAD） | ✅ | ✅ `username=` + `vmess-aead=true` | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
-| VLESS（含 xtls-rprx-vision） | ✅ | ❌ 注释降级（Surge 协议清单无 VLESS） | ✅ `vless-flow=` 透传 |
-| REALITY 传输 | ✅（VLESS/Trojan/VMess） | ❌ 注释降级（Surge TLS 参数集无 reality 入口） | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
+| VLESS（含 xtls-rprx-vision） | ✅ | ✅ `vless,host,port,username=`（Surge iOS 6.0.0+ / Mac 6.12.0+），见下方组合矩阵 | ✅ `vless-flow=` 透传 |
+| VLESS REALITY | ✅ | ✅ `reality-public-key` / `reality-short-id`（仅 VLESS；Trojan/VMess 的 REALITY 仍注释降级） | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
+| VLESS Vision flow | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`（仅 RAW+TLS 或 RAW+REALITY） | ✅ `vless-flow=` |
+| VLESS gRPC | ❌ 注释降级 | ✅ `grpc=true` / `grpc-service-name`（仅 VLESS，需 TLS 或 REALITY） | ❌ 注释降级 |
 | Trojan（tls/ws） | ✅ | ✅ | ✅（tls 走 `over-tls=true`+`tls-host`，ws 走 `obfs=wss`） |
 | TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` 分流 | ❌ 注释降级（QX 不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket 传输 | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / TLS 时 `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
-| grpc / xhttp / quic 传输 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
+| XHTTP / HTTPUpgrade / mKCP / quic 传输 | ❌ 注释降级 | ❌ 注释降级（Surge VLESS 亦不支持） | ❌ 注释降级 |
+| VLESS Encryption（`mlkem768x25519plus…`） | ❌ 注释降级 | ❌ 注释降级（仅接受 `encryption=none`） | ❌ 注释降级 |
+
+> Surge VLESS 组合矩阵（[官方手册](https://manual.nssurge.com/policies/vless.html)）：RAW/TCP 支持 `none` / `tls` / `reality` 且仅 RAW 可用 Vision；WebSocket 支持 `none` / `tls`、不支持 Vision 与 REALITY；gRPC 仅 `tls` / `reality`、不支持 Vision。`fp` / `spx` 不使用（Surge 自带 BoringSSL ClientHello），REALITY 下不输出 `tls=true` 与 `skip-cert-verify`。超出矩阵的组合一律注释降级，避免生成客户端无法解析的行。
 
 > SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
 
