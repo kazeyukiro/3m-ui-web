@@ -41,11 +41,11 @@ When no keyword matches, Clash-style is used. Pass `?target=` explicitly for a s
 
 ## Apple clients (Loon / Surge / Quantumult X)
 
-All three are emitted as native formats; no subconverter needed.
+All three are generated in native format and do not require a subconverter.
 
-- **Loon**: one node per line in `[Proxy]`, with the password or UUID in double quotes as in the official examples (the manual only requires quotes when the value contains a comma, but every format line and example uses them, and Loon adds them when saving), e.g. `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**: a complete mini profile (empty `[General]`, `[Proxy]`, a `[Proxy Group]` listing only real nodes, and `[Rule]`). VMess is written as `username=<UUID>`, with `encrypt-method` only for `aes-128-gcm` / `chacha20-ietf-poly1305`; `vmess-aead` is a separate switch that has to match the server and can't be derived from the cipher, so it's left out. VLESS (iOS 6.0.0+ / Mac 6.12.0+) uses `vless,host,port,username=` and covers REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
-- **Quantumult X**: one node per line in `[server_local]`, e.g. `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
+- **Loon**: one node per line in `[Proxy]`, with the password or UUID enclosed in double quotes. The manual only mandates quoting when the value contains a comma, but every format line and example uses quotes, and Loon adds them when saving the configuration. For example: `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
+- **Surge**: a complete mini profile consisting of an empty `[General]`, `[Proxy]`, a `[Proxy Group]` that references only real nodes, and `[Rule]`. VMess is written as `username=<UUID>`, and `encrypt-method` is emitted only for `aes-128-gcm` or `chacha20-ietf-poly1305`. `vmess-aead` is an independent Boolean that must match the server setting; the manual defines no rule for deriving it from the cipher, so it is not emitted. VLESS (iOS 6.0.0+ / Mac 6.12.0+) is written as `vless,host,port,username=` and supports REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
+- **Quantumult X**: one node per line in `[server_local]`, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### Protocol matrix
 
@@ -68,28 +68,28 @@ All three are emitted as native formats; no subconverter needed.
 | quic / kcp and others | ❌ commented out | ❌ commented out | ❌ commented out |
 | VLESS Encryption | ❌ commented out | ✅ `encryption=` passthrough | ❌ commented out |
 
-Surge supports these VLESS transport and security combinations ([manual](https://manual.nssurge.com/policies/vless.html)):
+The supported VLESS transport and security combinations in Surge are as follows ([manual](https://manual.nssurge.com/policies/vless.html)):
 
 | Transport | Security | Vision |
 |---|---|---|
-| RAW / TCP | none, TLS, REALITY | needs TLS, REALITY or VLESS Encryption |
-| WebSocket | none, TLS | needs VLESS Encryption |
+| RAW / TCP | none, TLS, REALITY | requires TLS, REALITY or VLESS Encryption |
+| WebSocket | none, TLS | requires VLESS Encryption |
 | gRPC | TLS, REALITY | not supported |
-| XHTTP | none, TLS, REALITY | needs VLESS Encryption |
+| XHTTP | none, TLS, REALITY | requires VLESS Encryption |
 
-VLESS Encryption can sit on top of any of them. HTTPUpgrade and mKCP aren't supported. With REALITY, `tls=true` and `skip-cert-verify` are left out, and so are `fp` / `spx`. Trojan and VMess REALITY are still commented out.
+VLESS Encryption may be added to any of these combinations; HTTPUpgrade and mKCP are not supported. With REALITY, `tls=true` and `skip-cert-verify` are omitted, as are `fp` / `spx`. Trojan and VMess REALITY remain commented out.
 
-XHTTP share links map like this: `type=xhttp` (or `splithttp`) plus `path` / `host` / `mode` become `xhttp=true`, `xhttp-path`, `xhttp-host` and `xhttp-mode`; `xhttp-mode` accepts `auto`, `packet-up`, `stream-up` or `stream-one`.
+XHTTP share-link parameters map as follows: `type=xhttp` (or `splithttp`) together with `path` / `host` / `mode` are emitted as `xhttp=true`, `xhttp-path`, `xhttp-host` and `xhttp-mode`; `xhttp-mode` accepts only `auto`, `packet-up`, `stream-up` or `stream-one`.
 
-Some parameters have a fixed value set (`flow`, `encryption`, `reality-short-id`, `grpc-mode`, `xhttp-mode`, `ws-path`, VMess `encrypt-method`, SS cipher and `obfs`, Loon's cipher / flow / obfs); a value outside that set comments out the whole line rather than dropping the parameter and falling back to a default. A VMess node with `scy=auto`, for instance, is skipped on Surge. The `extra`, `pcs` and `vcn` fields from the official mapping table aren't handled yet and are simply left out.
+For parameters with a fixed value set (`flow`, `encryption`, `reality-short-id`, `grpc-mode`, `xhttp-mode`, `ws-path`, VMess `encrypt-method`, the SS cipher and `obfs`, and Loon's cipher / flow / obfs), a value outside that set degrades the entire line to a comment rather than omitting the parameter and falling back to a default. A VMess node with `scy=auto`, for example, is skipped on Surge. The `extra`, `pcs` and `vcn` entries in the official mapping table are not yet mapped and are therefore omitted.
 
-quic / kcp, and VLESS Encryption on Loon and QX, are just not implemented by the exporter — that is not the same as the manual rejecting them.
+quic / kcp and VLESS Encryption on Loon and QX are not yet implemented by the exporter; this does not mean the manual rejects them.
 
-Three behaviours differ from the Loon doc examples on purpose, kept from real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always gets `over-tls=true`, and Hysteria2 still writes `server-ports` for a single port (see the note below).
+The following three behaviours differ from the Loon documentation examples and are retained on the basis of real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always emits `over-tls=true`, and Hysteria2 still emits `server-ports` for a single port (see the note below).
 
-> SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are commented out.
+> SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are handled as commented-out entries.
 >
-> Loon Hysteria 2 nodes **always** carry `server-ports` — Loon does not dial without the field: a hopping range renders as `server-ports="443,5000:6000"` (colon separates ranges), a single-port node falls back to the main port (`server-ports="13290"`). Surge's `port-hopping` is optional and is only emitted when hopping exists.
+> Loon Hysteria 2 nodes **always** carry `server-ports`, as Loon does not dial without the field: a hopping range is rendered as `server-ports="443,5000:6000"` (a colon separates ranges), and a single-port node falls back to the main port (`server-ports="13290"`). Surge's `port-hopping` is optional and is emitted only when hopping exists.
 
 ## TUIC / Hysteria2 share links
 
