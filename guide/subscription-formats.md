@@ -43,8 +43,8 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 三家均为**原生格式直接生成**（无 subconverter 依赖，未部署 subconverter 也能导出）：
 
-- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行，如 `vmess-ws = VMess,127.0.0.1,20015,auto,91066351-60f7-44b9-ad7e-c4bcc82524a6,path=/vmessws,host=cdn.example.com,transport=ws,alterId=0,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`），VMess 用手册语法 `username=` + `vmess-aead=true`；VLESS（Surge iOS 6.0.0+ / Mac 6.12.0+）用 `vless,host,port,username=`，支持 REALITY（`reality-public-key` / `reality-short-id`）、Vision（`flow=xtls-rprx-vision`）、WS（`ws=true` / `ws-path`）与 gRPC（`grpc=true` / `grpc-service-name`）
+- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行；[官方格式行与完整示例](https://nsloon.app/docs/Node) 中的位置参数密码 / UUID **一律以双引号包裹**，导出器按此形式输出（官方原文：「参数使用英文逗号分隔。密码、路径或参数值中含有英文逗号时，请使用双引号包裹。」），如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
+- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`）；VMess 用官方语法 `username=<UUID>`，仅当加密方式为官方列出的 `aes-128-gcm` / `chacha20-ietf-poly1305` 时输出 `encrypt-method` —— `vmess-aead` 是独立布尔值且官方要求「must match the server's setting」，未给出由加密方式推导的规则，故**不输出**；VLESS（Surge iOS 6.0.0+ / Mac 6.12.0+）用 `vless,host,port,username=`，支持 REALITY（`reality-public-key` / `reality-short-id`）、Vision（`flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`）、WS（`ws=true` / `ws-path` / `ws-headers`）、gRPC（`grpc=true` / `grpc-service-name` / `grpc-mode`）、XHTTP（`xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`）与 VLESS Encryption（`encryption=` 透传）
 - **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### 协议支持矩阵
@@ -53,20 +53,28 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 |---|---|---|---|
 | Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（QX 不支持 Hysteria2） |
 | Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` 关键字 + `obfs=http/tls` |
-| VMess（ws/tls、AEAD） | ✅ | ✅ `username=` + `vmess-aead=true` | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
+| VMess（ws/tls） | ✅ | ✅ `username=` + 可选 `encrypt-method`（`aes-128-gcm` / `chacha20-ietf-poly1305`） | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
 | VLESS（含 xtls-rprx-vision） | ✅ | ✅ `vless,host,port,username=`（Surge iOS 6.0.0+ / Mac 6.12.0+），见下方组合矩阵 | ✅ `vless-flow=` 透传 |
 | VLESS REALITY | ✅ | ✅ `reality-public-key` / `reality-short-id`（仅 VLESS；Trojan/VMess 的 REALITY 仍注释降级） | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
-| VLESS Vision flow | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`（仅 RAW+TLS 或 RAW+REALITY） | ✅ `vless-flow=` |
+| VLESS Vision flow | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`（RAW 需 TLS / REALITY；经 VLESS Encryption 亦可用于 WS / XHTTP；gRPC 不可用） | ✅ `vless-flow=` |
 | VLESS gRPC | ❌ 注释降级 | ✅ `grpc=true` / `grpc-service-name`（仅 VLESS，需 TLS 或 REALITY） | ❌ 注释降级 |
 | Trojan（tls/ws） | ✅ | ✅ | ✅（tls 走 `over-tls=true`+`tls-host`，ws 走 `obfs=wss`） |
 | TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` 分流 | ❌ 注释降级（QX 不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket 传输 | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / TLS 时 `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
-| XHTTP / HTTPUpgrade / mKCP / quic 传输 | ❌ 注释降级 | ❌ 注释降级（Surge VLESS 亦不支持） | ❌ 注释降级 |
-| VLESS Encryption（`mlkem768x25519plus…`） | ❌ 注释降级 | ❌ 注释降级（仅接受 `encryption=none`） | ❌ 注释降级 |
+| XHTTP（含 `splithttp` 别名） | ❌ 注释降级 | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` | ❌ 注释降级 |
+| HTTPUpgrade / mKCP 传输 | ❌ 注释降级 | ❌ 注释降级（[官方手册](https://manual.nssurge.com/policies/vless.html) 明确不支持） | ❌ 注释降级 |
+| quic / kcp 等其它传输 | ❌ 注释降级（导出器未实现） | ❌ 注释降级（导出器未实现） | ❌ 注释降级（导出器未实现） |
+| VLESS Encryption（`mlkem768x25519plus…`） | ❌ 注释降级（导出器未实现） | ✅ `encryption=` 透传（官方映射表 `encryption → encryption`） | ❌ 注释降级（导出器未实现） |
 
-> Surge VLESS 组合矩阵（[官方手册](https://manual.nssurge.com/policies/vless.html)）：RAW/TCP 支持 `none` / `tls` / `reality` 且仅 RAW 可用 Vision；WebSocket 支持 `none` / `tls`、不支持 Vision 与 REALITY；gRPC 仅 `tls` / `reality`、不支持 Vision。`fp` / `spx` 不使用（Surge 自带 BoringSSL ClientHello），REALITY 下不输出 `tls=true` 与 `skip-cert-verify`。超出矩阵的组合一律注释降级，避免生成客户端无法解析的行。
+> **Surge VLESS 组合矩阵**（[官方手册](https://manual.nssurge.com/policies/vless.html) 原文 `Supported combinations`）：RAW/TCP 支持 `none` / `TLS` / `REALITY`，Vision 需 TLS、REALITY 或 VLESS Encryption；WebSocket 支持 `none` / `TLS`，Vision 需 VLESS Encryption；gRPC 仅 `TLS` / `REALITY` 且不支持 Vision；XHTTP 支持 `none` / `TLS` / `REALITY`，Vision 需 VLESS Encryption。官方原文：`VLESS Encryption can be added to any of these combinations. HTTPUpgrade and mKCP transports are not supported.` `fp` / `spx` 不使用（Surge 自带 BoringSSL ClientHello），REALITY 下不输出 `tls=true` 与 `skip-cert-verify`。
+>
+> **XHTTP 参数映射**（官方 `Share Link Parameters` 表）：`type=xhttp`（或 `splithttp`）+ `path` / `host` / `mode` → `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`；`xhttp-mode` 的封闭取值为 `auto` / `packet-up` / `stream-up` / `stream-one`。REALITY 的 `pbk` / `sid` → `reality-public-key` / `reality-short-id`。
+>
+> **封闭取值集合与整行降级**：官方页给出封闭集合的参数（`flow`、`encryption` 的 `mlkem768x25519plus.*` 前缀、`reality-short-id` ≤16 位十六进制、`grpc-mode` = `gun` / `multi`、`xhttp-mode` 上述 4 值、`ws-path` 须以 `/` 开头、VMess `encrypt-method` 两值、SS `encrypt-method` / `obfs`，以及 Loon 的 cipher / flow / obfs 集合），只要分享链接里出现集合外的值，就**整行降级为注释** —— 不省略参数使用默认值、不输出文档未定义的值。因此 `scy=auto` 的 VMess 节点在 Surge 会被降级。官方映射表中的 `extra`、`pcs` / `vcn` 目前未做映射，不输出，也**不声称官方不支持**。
+>
+> **按实测行为保留、与文档示例不完全一致的三处（如实标注）**：Loon AnyTLS 的 REALITY 参数降级为 password-only、Loon Trojan REALITY 统一输出 `over-tls=true`、Loon Hysteria2 单端口仍输出 `server-ports`（见下方说明）。
 
 > SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
 
