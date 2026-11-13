@@ -41,43 +41,54 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 ## Apple 客户端（Loon / Surge / Quantumult X）
 
-三家均为**原生格式直接生成**（无 subconverter 依赖，未部署 subconverter 也能导出）：
+三家都直接生成原生格式，不需要 subconverter。
 
-- **Loon**：`[Proxy]` 段 `协议名,地址,端口,密码/参数…` 行；[官方格式行与完整示例](https://nsloon.app/docs/Node) 中的位置参数密码 / UUID **一律以双引号包裹**，导出器按此形式输出（官方原文：「参数使用英文逗号分隔。密码、路径或参数值中含有英文逗号时，请使用双引号包裹。」），如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**：完整迷你档（`[General]` 空段 + `[Proxy]` + 只引用真实节点的 `[Proxy Group]` + `[Rule]`）；VMess 用官方语法 `username=<UUID>`，仅当加密方式为官方列出的 `aes-128-gcm` / `chacha20-ietf-poly1305` 时输出 `encrypt-method` —— `vmess-aead` 是独立布尔值且官方要求「must match the server's setting」，未给出由加密方式推导的规则，故**不输出**；VLESS（Surge iOS 6.0.0+ / Mac 6.12.0+）用 `vless,host,port,username=`，支持 REALITY（`reality-public-key` / `reality-short-id`）、Vision（`flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`）、WS（`ws=true` / `ws-path` / `ws-headers`）、gRPC（`grpc=true` / `grpc-service-name` / `grpc-mode`）、XHTTP（`xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`）与 VLESS Encryption（`encryption=` 透传）
-- **Quantumult X**：`[server_local]` 段 `proto=host:port, key=value, …, tag=name` 行，如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
+- **Loon**：`[Proxy]` 里每行一个节点，密码和 UUID 用双引号包住（官方只要求值里含英文逗号时加引号，但格式行和示例一律这么写，Loon 保存时也会补上），如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
+- **Surge**：输出一份完整小配置（空的 `[General]`、`[Proxy]`、只列真实节点的 `[Proxy Group]`、`[Rule]`）。VMess 写 `username=<UUID>`，`encrypt-method` 只在 `aes-128-gcm` / `chacha20-ietf-poly1305` 时出现；`vmess-aead` 是独立开关、须和服务端一致，没法从加密方式推出来，所以不写。VLESS（iOS 6.0.0+ / Mac 6.12.0+）用 `vless,host,port,username=`，支持 REALITY、Vision、WS、gRPC、XHTTP 和 VLESS Encryption。
+- **Quantumult X**：`[server_local]` 里每行一个节点，如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### 协议支持矩阵
 
 | 协议 | Loon | Surge | Quantumult X |
 |---|---|---|---|
-| Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（QX 不支持 Hysteria2） |
-| Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` 关键字 + `obfs=http/tls` |
-| VMess（ws/tls） | ✅ | ✅ `username=` + 可选 `encrypt-method`（`aes-128-gcm` / `chacha20-ietf-poly1305`） | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
-| VLESS（含 xtls-rprx-vision） | ✅ | ✅ `vless,host,port,username=`（Surge iOS 6.0.0+ / Mac 6.12.0+），见下方组合矩阵 | ✅ `vless-flow=` 透传 |
-| VLESS REALITY | ✅ | ✅ `reality-public-key` / `reality-short-id`（仅 VLESS；Trojan/VMess 的 REALITY 仍注释降级） | ✅ `reality-base64-pubkey`/`reality-hex-shortid` |
-| VLESS Vision flow | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443`（RAW 需 TLS / REALITY；经 VLESS Encryption 亦可用于 WS / XHTTP；gRPC 不可用） | ✅ `vless-flow=` |
-| VLESS gRPC | ❌ 注释降级 | ✅ `grpc=true` / `grpc-service-name`（仅 VLESS，需 TLS 或 REALITY） | ❌ 注释降级 |
-| Trojan（tls/ws） | ✅ | ✅ | ✅（tls 走 `over-tls=true`+`tls-host`，ws 走 `obfs=wss`） |
-| TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` 分流 | ❌ 注释降级（QX 不支持 TUIC） |
+| Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（不支持 Hysteria2） |
+| Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` + `obfs=http/tls` |
+| VMess | ✅ | ✅ `username=` + 可选 `encrypt-method` | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
+| VLESS | ✅ | ✅ `vless,host,port,username=`（iOS 6.0.0+ / Mac 6.12.0+） | ✅ `vless-flow=` |
+| VLESS REALITY | ✅ | ✅ `reality-public-key` / `reality-short-id` | ✅ `reality-base64-pubkey` / `reality-hex-shortid` |
+| VLESS Vision | ✅ | ✅ `flow=xtls-rprx-vision` / `flow=xtls-rprx-vision-udp443` | ✅ `vless-flow=` |
+| VLESS gRPC | ❌ 注释降级 | ✅ `grpc=true` / `grpc-service-name` / `grpc-mode` | ❌ 注释降级 |
+| Trojan（tls/ws） | ✅ | ✅ | ✅（tls 用 `over-tls=true` + `tls-host`，ws 用 `obfs=wss`） |
+| TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ 注释降级（不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
-| WebSocket 传输 | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / TLS 时 `obfs=wss` |
+| WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
-| XHTTP（含 `splithttp` 别名） | ❌ 注释降级 | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` | ❌ 注释降级 |
-| HTTPUpgrade / mKCP 传输 | ❌ 注释降级 | ❌ 注释降级（[官方手册](https://manual.nssurge.com/policies/vless.html) 明确不支持） | ❌ 注释降级 |
-| quic / kcp 等其它传输 | ❌ 注释降级（导出器未实现） | ❌ 注释降级（导出器未实现） | ❌ 注释降级（导出器未实现） |
-| VLESS Encryption（`mlkem768x25519plus…`） | ❌ 注释降级（导出器未实现） | ✅ `encryption=` 透传（官方映射表 `encryption → encryption`） | ❌ 注释降级（导出器未实现） |
+| XHTTP（含 `splithttp`） | ❌ 注释降级 | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` | ❌ 注释降级 |
+| HTTPUpgrade / mKCP | ❌ 注释降级 | ❌ 注释降级（官方明确不支持） | ❌ 注释降级 |
+| quic / kcp 等 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
+| VLESS Encryption | ❌ 注释降级 | ✅ `encryption=` 透传 | ❌ 注释降级 |
 
-> **Surge VLESS 组合矩阵**（[官方手册](https://manual.nssurge.com/policies/vless.html) 原文 `Supported combinations`）：RAW/TCP 支持 `none` / `TLS` / `REALITY`，Vision 需 TLS、REALITY 或 VLESS Encryption；WebSocket 支持 `none` / `TLS`，Vision 需 VLESS Encryption；gRPC 仅 `TLS` / `REALITY` 且不支持 Vision；XHTTP 支持 `none` / `TLS` / `REALITY`，Vision 需 VLESS Encryption。官方原文：`VLESS Encryption can be added to any of these combinations. HTTPUpgrade and mKCP transports are not supported.` `fp` / `spx` 不使用（Surge 自带 BoringSSL ClientHello），REALITY 下不输出 `tls=true` 与 `skip-cert-verify`。
->
-> **XHTTP 参数映射**（官方 `Share Link Parameters` 表）：`type=xhttp`（或 `splithttp`）+ `path` / `host` / `mode` → `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`；`xhttp-mode` 的封闭取值为 `auto` / `packet-up` / `stream-up` / `stream-one`。REALITY 的 `pbk` / `sid` → `reality-public-key` / `reality-short-id`。
->
-> **封闭取值集合与整行降级**：官方页给出封闭集合的参数（`flow`、`encryption` 的 `mlkem768x25519plus.*` 前缀、`reality-short-id` ≤16 位十六进制、`grpc-mode` = `gun` / `multi`、`xhttp-mode` 上述 4 值、`ws-path` 须以 `/` 开头、VMess `encrypt-method` 两值、SS `encrypt-method` / `obfs`，以及 Loon 的 cipher / flow / obfs 集合），只要分享链接里出现集合外的值，就**整行降级为注释** —— 不省略参数使用默认值、不输出文档未定义的值。因此 `scy=auto` 的 VMess 节点在 Surge 会被降级。官方映射表中的 `extra`、`pcs` / `vcn` 目前未做映射，不输出，也**不声称官方不支持**。
->
-> **按实测行为保留、与文档示例不完全一致的三处（如实标注）**：Loon AnyTLS 的 REALITY 参数降级为 password-only、Loon Trojan REALITY 统一输出 `over-tls=true`、Loon Hysteria2 单端口仍输出 `server-ports`（见下方说明）。
+Surge 的 VLESS 按传输区分（[官方手册](https://manual.nssurge.com/policies/vless.html)）：
 
-> SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 三家均无对应表达，按注释降级处理。
+| 传输 | 安全层 | Vision |
+|---|---|---|
+| RAW / TCP | none、TLS、REALITY | 需 TLS、REALITY 或 VLESS Encryption |
+| WebSocket | none、TLS | 需 VLESS Encryption |
+| gRPC | TLS、REALITY | 不支持 |
+| XHTTP | none、TLS、REALITY | 需 VLESS Encryption |
 
+VLESS Encryption 可以叠加在上面任意一种组合上，HTTPUpgrade 和 mKCP 不支持。REALITY 下不写 `tls=true` 和 `skip-cert-verify`，`fp` / `spx` 也不用。Trojan 和 VMess 的 REALITY 仍按注释降级。
+
+XHTTP 的分享链接参数这样对应：`type=xhttp`（或 `splithttp`）加 `path` / `host` / `mode`，分别写成 `xhttp=true`、`xhttp-path`、`xhttp-host`、`xhttp-mode`；`xhttp-mode` 只有 `auto`、`packet-up`、`stream-up`、`stream-one`。
+
+有固定取值范围的参数（`flow`、`encryption`、`reality-short-id`、`grpc-mode`、`xhttp-mode`、`ws-path`、VMess 的 `encrypt-method`、SS 的加密方式和 `obfs`、Loon 的 cipher / flow / obfs），值不在范围内就整行注释掉，不会省略参数去套默认值。比如 `scy=auto` 的 VMess 在 Surge 里会被跳过。官方映射表里的 `extra`、`pcs`、`vcn` 还没做，暂时不输出。
+
+quic / kcp，以及 Loon 和 QX 的 VLESS Encryption，是导出器还没实现，不是官方不支持。
+
+有三处和 Loon 文档示例不同，是按真机结果留的：AnyTLS 的 REALITY 参数降级成只留密码，Trojan REALITY 统一加 `over-tls=true`，Hysteria2 单端口也照样写 `server-ports`（下面有说明）。
+
+> SS 的 SIP003 包装插件里，kcptun / shadow-tls / restls / jls 都没有对应表达，按注释降级处理。
+>
 > Loon 的 Hysteria2 节点**始终输出** `server-ports`（Loon 无此字段不拨号）：有端口跳跃时输出区间（`server-ports="443,5000:6000"`，冒号为区间分隔符），单端口时回落主端口（`server-ports="13290"`）。Surge 的 `port-hopping` 为可选参数，无跳跃时不输出。
 
 ## TUIC / Hysteria2 分享链
