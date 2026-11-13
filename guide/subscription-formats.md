@@ -83,8 +83,6 @@ XHTTP 的分享链接参数映射如下：`type=xhttp`（或 `splithttp`）配�
 
 对于取值集合固定的参数（`flow`、`encryption`、`reality-short-id`、`grpc-mode`、`xhttp-mode`、`ws-path`、VMess 的 `encrypt-method`、SS 的加密方式与 `obfs`，以及 Loon 的 cipher / flow / obfs），若分享链接中的取值超出该集合，则整行降级为注释，而非省略参数并采用默认值。例如，`scy=auto` 的 VMess 节点在 Surge 中将被跳过。官方映射表中的 `extra`、`pcs`、`vcn` 尚未实现映射，暂不输出。
 
-quic / kcp 以及 Loon、QX 的 VLESS Encryption 属导出器尚未实现，并非官方不支持。
-
 以下三处与 Loon 文档示例存在差异，系依据真机测试结果保留：AnyTLS 的 REALITY 参数降级为仅保留密码，Trojan REALITY 统一输出 `over-tls=true`，Hysteria2 单端口仍输出 `server-ports`（详见下文）。
 
 > SS 的 SIP003 包装插件中，kcptun / shadow-tls / restls / jls 在三款客户端中均无对应表达，按注释降级处理。

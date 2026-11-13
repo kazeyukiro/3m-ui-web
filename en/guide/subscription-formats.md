@@ -83,8 +83,6 @@ XHTTP share-link parameters map as follows: `type=xhttp` (or `splithttp`) togeth
 
 For parameters with a fixed value set (`flow`, `encryption`, `reality-short-id`, `grpc-mode`, `xhttp-mode`, `ws-path`, VMess `encrypt-method`, the SS cipher and `obfs`, and Loon's cipher / flow / obfs), a value outside that set degrades the entire line to a comment rather than omitting the parameter and falling back to a default. A VMess node with `scy=auto`, for example, is skipped on Surge. The `extra`, `pcs` and `vcn` entries in the official mapping table are not yet mapped and are therefore omitted.
 
-quic / kcp and VLESS Encryption on Loon and QX are not yet implemented by the exporter; this does not mean the manual rejects them.
-
 The following three behaviours differ from the Loon documentation examples and are retained on the basis of real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always emits `over-tls=true`, and Hysteria2 still emits `server-ports` for a single port (see the note below).
 
 > SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are handled as commented-out entries.
