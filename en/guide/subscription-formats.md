@@ -39,6 +39,14 @@ Without `?target=`, the default format is chosen from the User-Agent:
 
 When no keyword matches, Clash-style is used. Pass `?target=` explicitly for a stable output.
 
+## sing-box version handling
+
+The exported JSON switches field sets by client core version. The two branches are mutually exclusive: 1.12 / 1.13 reject the whole document with `json: unknown field` when they see `http_clients` or `route.default_http_client`, while 1.14 deprecated the implicit HTTP client that remote rule-sets used and removes it in 1.16.
+
+Cores at or above 1.14 receive an explicit `http_clients` whose `detour` points at `proxy`, matching the previous implicit behaviour; older cores do not. The version is read from `sing-box x.y.z` in the User-Agent (SFA sends `SFA (sing-box 1.14.4; language zh_CN)`) and can be forced with `?sbver=1.14`.
+
+The compatibility floor is sing-box 1.12.0. 1.11 and earlier use the removed legacy DNS server format, which cannot coexist with the 1.12+ format.
+
 ## Apple clients (Loon / Surge / Quantumult X)
 
 All three are generated in native format and do not require a subconverter.

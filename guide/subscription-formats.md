@@ -39,6 +39,14 @@ title: 订阅格式与 target
 
 UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请显式带 `?target=`。
 
+## sing-box 版本适配
+
+导出的 JSON 按客户端内核版本切换字段集。两个分支互斥：1.12 / 1.13 遇到 `http_clients`、`route.default_http_client` 会以 `json: unknown field` 拒绝整份配置；而 1.14 起，用默认出站为远程规则集隐式创建 HTTP 客户端的行为已废弃，并将在 1.16 移除。
+
+内核不低于 1.14 时输出显式 `http_clients`，`detour` 指向 `proxy`，与隐式行为一致；低于 1.14 时省略该字段。版本取自 User-Agent 中的 `sing-box x.y.z`（SFA 形如 `SFA (sing-box 1.14.4; language zh_CN)`），可用 `?sbver=1.14` 覆盖。
+
+兼容下限为 sing-box 1.12.0。1.11 及更早版本使用已被移除的旧 DNS 服务器格式，无法与 1.12 起的新格式共存。
+
 ## Apple 客户端（Loon / Surge / Quantumult X）
 
 三者均直接生成原生配置，不依赖 subconverter。
