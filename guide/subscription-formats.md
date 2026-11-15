@@ -47,6 +47,32 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 兼容下限为 sing-box 1.12.0。1.11 及更早版本使用已被移除的旧 DNS 服务器格式，无法与 1.12 起的新格式共存。
 
+### 订阅链接写法
+
+链接主机名取自 `PUBLIC_URL`，路径前缀取自 `sub_path`，未设置 `sub_path` 时为 `/api/v1/client/sub`。下表省略公共前缀：
+
+| 追加 | 行为 |
+|---|---|
+| 无 | 按 User-Agent 选择客户端格式 |
+| `?target=singbox` | 固定输出 sing-box JSON，版本仍取自 User-Agent |
+| `&sbver=1.14` | 接于上一行之后，强制 1.14 形态 |
+
+完整形式：
+
+```
+https://example.com/api/v1/client/sub/<token>?target=singbox&sbver=1.14
+```
+
+`sbver` 只比较主次版本，`1.14` 与 `1.14.4` 等价；取值无法解析时忽略该参数，回落到 User-Agent。该参数仅在生成 sing-box 文档时读取，其它格式不受影响。
+
+订阅页的复制按钮给出的是不带参数的链接，形态由客户端 User-Agent 决定。仅当 User-Agent 不含版本号（部分分支版本、由第三方转换器代下载）时才需手工补 `sbver`。此类客户端的真实内核低于 1.14 时不得补 `sbver=1.14`，否则整份配置会因 `http_clients` 被拒绝。
+
+sing-box 深链需对内层查询参数整体编码：
+
+```
+sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub%2F<token>%3Ftarget%3Dsingbox%26sbver%3D1.14
+```
+
 ## Apple 客户端（Loon / Surge / Quantumult X）
 
 三者均直接生成原生配置，不依赖 subconverter。
@@ -85,9 +111,7 @@ Surge 的 VLESS 按传输方式区分，支持组合如下（[官方手册](http
 | gRPC | TLS、REALITY | 不支持 |
 | XHTTP | none、TLS、REALITY | 需 VLESS Encryption |
 
-VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支持。使用 REALITY 时不输出 `tls=true` 与 `skip-cert-verify`，亦不使用 `fp` / `spx`。Trojan 与 VMess 的 REALITY 仍按注释降级。
-
-XHTTP 的分享链接参数映射如下：`type=xhttp`（或 `splithttp`）配合 `path` / `host` / `mode`，分别输出 `xhttp=true`、`xhttp-path`、`xhttp-host` 与 `xhttp-mode`；`xhttp-mode` 的取值仅限 `auto`、`packet-up`、`stream-up`、`stream-one`。
+VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支持。Surge 在 REALITY 下不输出 `tls=true` 与 `skip-cert-verify`，`fp` / `spx` 在任何情况下均不上送。Trojan 与 VMess 的 REALITY 仍按注释降级。
 
 对于取值集合固定的参数（`flow`、`encryption`、`reality-short-id`、`grpc-mode`、`xhttp-mode`、`ws-path`、VMess 的 `encrypt-method`、SS 的加密方式与 `obfs`，以及 Loon 的 cipher / flow / obfs），若分享链接中的取值超出该集合，则整行降级为注释，而非省略参数并采用默认值。例如，`scy=auto` 的 VMess 节点在 Surge 中将被跳过。官方映射表中的 `extra`、`pcs`、`vcn` 尚未实现映射，暂不输出。
 

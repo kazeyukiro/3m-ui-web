@@ -47,6 +47,32 @@ Cores at or above 1.14 receive an explicit `http_clients` whose `detour` points 
 
 The compatibility floor is sing-box 1.12.0. 1.11 and earlier use the removed legacy DNS server format, which cannot coexist with the 1.12+ format.
 
+### Subscription link forms
+
+The host comes from `PUBLIC_URL` and the prefix from `sub_path`, which defaults to `/api/v1/client/sub`. The table below omits the common prefix:
+
+| Appended | Behaviour |
+|---|---|
+| nothing | Client format selected from the User-Agent |
+| `?target=singbox` | Always sing-box JSON; the version still comes from the User-Agent |
+| `&sbver=1.14` | Added to the row above; forces the 1.14 form |
+
+The full form:
+
+```
+https://example.com/api/v1/client/sub/<token>?target=singbox&sbver=1.14
+```
+
+`sbver` compares major and minor only, so `1.14` and `1.14.4` are equivalent; an unparsable value is ignored and the User-Agent decides. It is read only while rendering a sing-box document and has no effect on other formats.
+
+The copy buttons on the subscription page hand out the bare link, leaving the form to the client User-Agent. `sbver` is needed only when the User-Agent carries no version, which happens with some forks and with third-party converters fetching on the client's behalf. Do not add `sbver=1.14` for such a client if its core is below 1.14, since the document would then be rejected over `http_clients`.
+
+The sing-box deep link requires the inner query to be encoded as a whole:
+
+```
+sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub%2F<token>%3Ftarget%3Dsingbox%26sbver%3D1.14
+```
+
 ## Apple clients (Loon / Surge / Quantumult X)
 
 All three are generated in native format and do not require a subconverter.
@@ -85,9 +111,7 @@ The supported VLESS transport and security combinations in Surge are as follows 
 | gRPC | TLS, REALITY | not supported |
 | XHTTP | none, TLS, REALITY | requires VLESS Encryption |
 
-VLESS Encryption may be added to any of these combinations; HTTPUpgrade and mKCP are not supported. With REALITY, `tls=true` and `skip-cert-verify` are omitted, as are `fp` / `spx`. Trojan and VMess REALITY remain commented out.
-
-XHTTP share-link parameters map as follows: `type=xhttp` (or `splithttp`) together with `path` / `host` / `mode` are emitted as `xhttp=true`, `xhttp-path`, `xhttp-host` and `xhttp-mode`; `xhttp-mode` accepts only `auto`, `packet-up`, `stream-up` or `stream-one`.
+VLESS Encryption may be added to any of these combinations; HTTPUpgrade and mKCP are not supported. Under REALITY, Surge emits neither `tls=true` nor `skip-cert-verify`, and `fp` / `spx` are never emitted. Trojan and VMess REALITY remain commented out.
 
 For parameters with a fixed value set (`flow`, `encryption`, `reality-short-id`, `grpc-mode`, `xhttp-mode`, `ws-path`, VMess `encrypt-method`, the SS cipher and `obfs`, and Loon's cipher / flow / obfs), a value outside that set degrades the entire line to a comment rather than omitting the parameter and falling back to a default. A VMess node with `scy=auto`, for example, is skipped on Surge. The `extra`, `pcs` and `vcn` entries in the official mapping table are not yet mapped and are therefore omitted.
 
