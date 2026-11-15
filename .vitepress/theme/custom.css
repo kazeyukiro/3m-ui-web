@@ -113,3 +113,10 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Prompt blocks are meant to be read in full; wrap them instead of clipping. */
+.vp-doc div.language-text pre,
+.vp-doc div.language-text pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
