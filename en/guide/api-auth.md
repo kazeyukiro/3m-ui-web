@@ -31,6 +31,16 @@ One-click listener create: `POST /api/v1/nodes/quick` with JSON `{"name":"...","
 
 CPU is a short delta (first sample after a gap may be near 0). Full OpenAPI: `GET /api/v1/openapi.yaml`.
 
+### Tunnel health watchdog
+
+The tunnel health monitor exposes its settings, live status and manual probe through dedicated endpoints under `/api/v1/tunnel-health`; the machine-readable spec is in OpenAPI:
+
+- `GET/PUT /api/v1/tunnel-health/settings` — read / save monitor settings; saving applies them to the running monitor immediately.
+- `GET /api/v1/tunnel-health/status` — read the consecutive-failure count, cumulative restart count and the timestamps of the last probe, restart and error.
+- `POST /api/v1/tunnel-health/test` — run one probe and report the result, without triggering a restart or requiring the core to be running.
+
+For configuration details, probe criteria and restart behaviour, see [Tunnel health watchdog](./tunnel-health).
+
 
 ## GitHub OAuth
 

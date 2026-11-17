@@ -31,6 +31,16 @@ HTTP API 前缀为 `/api/v1`。登录返回 JWT Bearer token；受保护路由�
 
 CPU 为短时增量（间隔后首次采样可能接近 0）。完整规格：`GET /api/v1/openapi.yaml`。
 
+### 隧道健康自愈
+
+隧道健康监视器的配置、运行状态与手动探测通过 `/api/v1/tunnel-health` 下的专用端点提供，机器可读规格见 OpenAPI：
+
+- `GET/PUT /api/v1/tunnel-health/settings` — 读取 / 保存监视器配置；保存后立即应用于运行中的监视器。
+- `GET /api/v1/tunnel-health/status` — 读取连续失败次数、累计重启次数及最近探测、重启、错误时间。
+- `POST /api/v1/tunnel-health/test` — 执行一次探测并报告结果，不触发重启，也不要求内核正在运行。
+
+配置细节、探测判定与重启行为见[隧道健康自愈](./tunnel-health)。
+
 
 ## GitHub OAuth
 
