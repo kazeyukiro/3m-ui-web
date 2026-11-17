@@ -27,7 +27,7 @@ API: `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`. T
 
 ## System ops (restart & update)
 
-The **System ops** section (Settings → System ops) provides one-click panel management from the web UI — no SSH required.
+The **System ops** section (Settings → System ops) provides one-click panel management from the web UI — no SSH required. It also includes the [tunnel health watchdog](./tunnel-health), which restarts the core when the tunnel becomes unavailable.
 
 ### Restart panel
 

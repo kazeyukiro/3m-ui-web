@@ -27,7 +27,7 @@ API：`POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`�
 
 ## 系统运维（重启与更新）
 
-**系统运维** 区（设置 → 系统运维）提供面板的网页端一键管理，无需 SSH。
+**系统运维** 区（设置 → 系统运维）提供面板的网页端一键管理，无需 SSH。该区另含 [隧道健康自愈](./tunnel-health)：在隧道不可用时按配置自动重启内核。
 
 ### 重启面板
 
