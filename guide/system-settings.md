@@ -25,9 +25,9 @@ description: 3m-ui · 系统设置
 
 API：`POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`。它**不会**注入 Routing 模板；请把 YAML 粘贴到客户端或手动添加的 outbound 中。另见 [Cloudflare WARP](./warp)。
 
-## 系统运维（重启与更新）
+## 系统操作（重启与更新）
 
-**系统运维** 区（设置 → 系统运维）提供面板的网页端一键管理，无需 SSH。该区另含 [隧道健康自愈](./tunnel-health)：在隧道不可用时按配置自动重启内核。
+**系统操作** 区（设置 → 系统操作）提供面板的网页端一键管理，无需 SSH。该区另含 [隧道健康自愈](./tunnel-health)：在隧道不可用时按配置自动重启内核。
 
 ### 重启面板
 
@@ -39,7 +39,7 @@ API：`POST /api/v1/system/restart`
 
 ### 面板更新
 
-打开「系统运维」页时，面板会自动检查 GitHub 上的最新 3m-ui 版本，**同时**查询稳定通道（`/releases/latest`）与预发通道（`/releases/tags/pre`）。
+打开「系统操作」页时，面板会自动检查 GitHub 上的最新 3m-ui 版本，**同时**查询稳定通道（`/releases/latest`）与预发通道（`/releases/tags/pre`）。
 
 页面显示：
 
