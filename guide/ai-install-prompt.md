@@ -4,7 +4,7 @@ title: AI 提示词安装
 
 # AI 提示词安装
 
-本页提供一段可直接交给 AI 助手的安装提示词。粘贴到 ChatGPT / Claude / Cursor 等助手，并补充你的系统版本（如 Ubuntu 22.04）、是否已有 root SSH、是否已安装过 3m-ui。
+本页提供一段可直接交给 AI 助手的安装提示词。粘贴到 ChatGPT / Claude / Cursor 等助手，并补充所用系统版本（如 Ubuntu 22.04）、是否已有 root SSH、是否已安装过 3m-ui。
 
 提示词正文同步维护于仓库的 `docs/ai-install-prompt.zh.txt` 与 `docs/ai-install-prompt.en.txt`，本页展示相同内容。README 与其它文档均指向本页，不再另行复制，以免多处副本出现差异。
 

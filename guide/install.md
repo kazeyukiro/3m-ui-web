@@ -31,7 +31,7 @@ sudo env PANEL_PORT=8080 sh install.sh --yes
 
 ### AI 提示词安装
 
-把提示词复制到 ChatGPT / Claude / Cursor 等助手，并说明你的系统（如 Ubuntu 22.04）与是否已有 root SSH。助手应只协助执行官方脚本，不要改写成不明来源命令。完整提示词及使用说明见 [AI 提示词安装文档](ai-install-prompt.md)。
+把提示词复制到 ChatGPT / Claude / Cursor 等助手，并说明所用系统（如 Ubuntu 22.04）与是否已有 root SSH。助手应只协助执行官方脚本，不要改写成不明来源命令。完整提示词及使用说明见 [AI 提示词安装文档](ai-install-prompt.md)。
 
 无需手动复制大段文本，用 `curl` 直接把纯文本提示词加载到剪贴板再粘贴：
 
