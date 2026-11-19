@@ -85,7 +85,7 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 
 | 协议 | Loon | Surge | Quantumult X |
 |---|---|---|---|
-| Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ❌ 注释降级（不支持 Hysteria2） |
+| Hysteria2（salamander / 端口跳跃 / 下载带宽） | ✅ `salamander-password`、`server-ports`、`download-bandwidth` | ✅ `salamander-password`、`port-hopping`、`download-bandwidth` | ✅ `password`、`salamander-password`、`port-hopping`、`port-hopping-interval`、`download-bandwidth`（见下文） |
 | Shadowsocks（含 simple-obfs） | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` + `obfs=http/tls` |
 | VMess | ✅ | ✅ `username=` + 可选 `encrypt-method` | ✅ `method` 限 `none`/`aes-128-gcm`/`chacha20-poly1305` |
 | VLESS | ✅ | ✅ `vless,host,port,username=`（iOS 6.0.0+ / Mac 6.12.0+） | ✅ `vless-flow=` |
@@ -122,6 +122,8 @@ VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支
 > SS 的 SIP003 包装插件中，kcptun / shadow-tls / restls / jls 在三款客户端中均无对应表达，按注释降级处理。
 >
 > Loon 的 Hysteria2 节点**始终输出** `server-ports`（Loon 缺少该字段时不发起拨号）：存在端口跳跃时输出区间（`server-ports="443,5000:6000"`，冒号为区间分隔符），单端口时回落至主端口（`server-ports="13290"`）。Surge 的 `port-hopping` 为可选参数，无跳跃时不输出。
+>
+> Quantumult X 的 Hysteria2 节点按 Sub-Store 的 QX 输出格式生成，例如 `hysteria2=host:port, password=…, port-hopping=…, salamander-password=…, tls-host=…, tls-alpn=…, udp-relay=true, tag=…`。字段仅在分享链接带有对应来源时输出：`port-hopping` 取自端口跳跃区间（逗号分隔），`port-hopping-interval` 仅在 5–3600 秒区间内输出，`tls-alpn` 为长度前缀的十六进制编码（如 `h3` 编码为 `026833`），`tls-verification=false` 对应不安全链接。混淆仅接受 `salamander`，其他取值整行降级为注释。需要说明的是，Quantumult X 官方示例配置尚未列出 Hysteria2 语法，上述格式由 Sub-Store 定义，实际可用性取决于客户端版本。
 
 ## TUIC / Hysteria2 分享链
 
