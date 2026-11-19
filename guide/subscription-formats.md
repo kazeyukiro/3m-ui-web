@@ -97,10 +97,12 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
-| XHTTP（含 `splithttp`） | ❌ 注释降级 | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` | ❌ 注释降级 |
+| XHTTP | ✅ VLESS/VMess/Trojan：`transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`（含 `splithttp`） | ❌ 注释降级 |
 | HTTPUpgrade / mKCP | ❌ 注释降级 | ❌ 注释降级（官方明确不支持） | ❌ 注释降级 |
 | quic / kcp 等 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
 | VLESS Encryption | ❌ 注释降级 | ✅ `encryption=` 透传 | ❌ 注释降级 |
+
+Loon 的 XHTTP 依据[官方文档](https://nsloon.app/docs/Node)，作为 VLESS、VMess、Trojan 的 `transport` 取值输出，字段为 `transport=xhttp`、`path`、`host`、`over-tls`、`alpn` 与 `xhttp-mode`。`xhttp-mode` 接受 `auto`、`packet-up`、`stream-up`、`stream-one`（默认 `auto`），超出该集合的取值整行降级；VLESS 的 XHTTP 节点按官方说明省略 `flow`。分享链接中的 `mode` 映射到 `xhttp-mode`。目前仅导出官方文档列出的基础参数，其余 `xhttp-*` 高级参数尚未映射，不输出。
 
 Surge 的 VLESS 按传输方式区分，支持组合如下（[官方手册](https://manual.nssurge.com/policies/vless.html)）：
 

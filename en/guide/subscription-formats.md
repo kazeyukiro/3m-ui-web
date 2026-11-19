@@ -97,10 +97,12 @@ All three are generated in native format and do not require a subconverter.
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http transport (vmess/vless) | ✅ `transport=http` | ❌ commented out | ❌ commented out |
-| XHTTP (incl. `splithttp`) | ❌ commented out | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` | ❌ commented out |
+| XHTTP | ✅ VLESS/VMess/Trojan: `transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` (incl. `splithttp`) | ❌ commented out |
 | HTTPUpgrade / mKCP | ❌ commented out | ❌ commented out (excluded by the manual) | ❌ commented out |
 | quic / kcp and others | ❌ commented out | ❌ commented out | ❌ commented out |
 | VLESS Encryption | ❌ commented out | ✅ `encryption=` passthrough | ❌ commented out |
+
+Loon's XHTTP follows the [official documentation](https://nsloon.app/en/docs/Node): it is emitted as a `transport` value for VLESS, VMess and Trojan, with the fields `transport=xhttp`, `path`, `host`, `over-tls`, `alpn` and `xhttp-mode`. `xhttp-mode` accepts `auto`, `packet-up`, `stream-up` and `stream-one` (default `auto`); a value outside that set degrades the whole line. As the manual states, VLESS nodes omit `flow` under XHTTP. The share-link `mode` field maps to `xhttp-mode`. Only the basic parameters documented by Loon are exported; the remaining `xhttp-*` advanced parameters are not yet mapped and are therefore omitted.
 
 The supported VLESS transport and security combinations in Surge are as follows ([manual](https://manual.nssurge.com/policies/vless.html)):
 
