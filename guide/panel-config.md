@@ -14,7 +14,7 @@ description: 3m-ui · 面板配置
 systemctl restart 3m-ui
 ```
 
-**公网 URL（public_url）** 用于拼订阅链接、部分回调场景，在面板 **系统设置** 中填写（例如 `https://panel.example.com`）。
+**公网 URL（public_url）** 用于拼订阅链接、部分回调场景，在面板 **系统设置 → 面板 / 外观** 中填写（例如 `https://panel.example.com`）。
 
 ## 面板随机路径（web_path）隐藏入口
 
@@ -48,14 +48,14 @@ systemctl restart 3m-ui
 
 ## 配置引擎中的 TFO / MPTCP
 
-面板 **配置** 页：
+面板 **配置引擎** 页：
 
 | 位置 | Mihomo 字段 | 作用 |
 |------|-------------|------|
-| **常规设置** | `inbound-tfo` / `inbound-mptcp` | 全局，仅**服务端** Mihomo 监听；**不会**写入客户端订阅 |
-| **代理条目** | `tfo` / `mptcp` | 客户端出站字段（见 [Mihomo 文档](https://wiki.metacubex.one/config/proxies/#tfo)），布尔值；勿与 inbound-* 混淆 |
+| **通用内核设置** | `inbound-tfo` / `inbound-mptcp` | 全局，仅**服务端** Mihomo 监听；**不会**写入客户端订阅 |
+| **代理配置** | `tfo` / `mptcp` | 客户端出站字段（见 [Mihomo 文档](https://wiki.metacubex.one/config/proxies/#tfo)），布尔值；勿与 inbound-* 混淆 |
 
-常规设置中的 **运行模式（mode）** 不在此编辑。仅对 **TCP** 有意义。接口：`GET/POST /api/v1/config/visual`。
+通用内核设置中的 **运行模式（mode）** 不在此编辑。仅对 **TCP** 有意义。接口：`GET/POST /api/v1/config/visual`。
 
 ## 同端口 TCP 与 UDP
 

@@ -7,7 +7,7 @@ description: 3m-ui · 用户与流量
 
 ### 一键创建
 
-用户页 → **一键创建**：用户名可空（自动生成），自动生成密码与 UUID，可选绑定全部本地节点。明文密钥只在弹窗中显示一次。
+**用户管理 → 一键创建**：用户名可空（自动生成），自动生成密码与 UUID，可选 **绑定全部节点**。明文密钥只在弹窗中显示一次。
 
 API：`POST /api/v1/users/quick`，请求体 `{ "username"?: string, "bind_all_listeners"?: boolean, "remark"?: string }`。响应包含 `{ user, password, uuid }`。完整创建仍为 `POST /api/v1/users`。OpenAPI：`GET /api/v1/openapi.yaml`。
 
@@ -28,7 +28,7 @@ API：`POST /api/v1/users/quick`，请求体 `{ "username"?: string, "bind_all_l
 
 每个节点有 **流量倍率**（默认 1）。该节点原始字节 × 倍率计入用户配额（`traffic_used`）。
 
-用户页 → 节点流量操作可查看各节点原始与计费用量。API：`GET /api/v1/users/{id}/node-traffic`。
+**用户管理 → 节点流量**可查看各节点原始与计费用量。API：`GET /api/v1/users/{id}/node-traffic`。
 
 ### 用户字段（摘要）
 

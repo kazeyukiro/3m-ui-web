@@ -29,7 +29,7 @@ const zhSidebar = [
     items: [
       { text: '面板配置', link: '/guide/panel-config' },
       { text: 'NAT 与端口', link: '/guide/nat-port' },
-      { text: '节点（Listeners）', link: '/guide/listeners' },
+      { text: '入站管理（Listeners）', link: '/guide/listeners' },
       { text: '节点运行状态', link: '/guide/listener-runtime' },
       { text: '用户与流量', link: '/guide/users-traffic' },
       { text: '用户限制', link: '/guide/users-limits' },
@@ -39,8 +39,8 @@ const zhSidebar = [
       { text: '路由规则', link: '/guide/routing' },
       { text: '出站管理', link: '/guide/outbounds' },
       { text: 'DNS 设置', link: '/guide/dns' },
-      { text: '内核', link: '/guide/core' },
-      { text: '分享', link: '/guide/share' },
+      { text: '核心管理', link: '/guide/core' },
+      { text: '分享 / 订阅', link: '/guide/share' },
     ],
   },
   {
@@ -84,7 +84,7 @@ const enSidebar = [
     items: [
       { text: 'Panel config', link: '/en/guide/panel-config' },
       { text: 'NAT & ports', link: '/en/guide/nat-port' },
-      { text: 'Listeners', link: '/en/guide/listeners' },
+      { text: 'Inbounds', link: '/en/guide/listeners' },
       { text: 'Listener runtime', link: '/en/guide/listener-runtime' },
       { text: 'Users & traffic', link: '/en/guide/users-traffic' },
       { text: 'User limits', link: '/en/guide/users-limits' },
@@ -95,7 +95,7 @@ const enSidebar = [
       { text: 'Outbounds', link: '/en/guide/outbounds' },
       { text: 'DNS settings', link: '/en/guide/dns' },
       { text: 'Core', link: '/en/guide/core' },
-      { text: 'Share', link: '/en/guide/share' },
+      { text: 'Share / Subscription', link: '/en/guide/share' },
     ],
   },
   {
@@ -107,7 +107,7 @@ const enSidebar = [
       { text: 'Batch node certificates', link: '/en/guide/batch-certificate' },
       { text: 'Core updates', link: '/en/guide/core-updates' },
       { text: 'WARP', link: '/en/guide/warp' },
-      { text: 'Tunnel health watchdog', link: '/en/guide/tunnel-health' },
+      { text: 'Tunnel Health Watchdog', link: '/en/guide/tunnel-health' },
       { text: 'System settings', link: '/en/guide/system-settings' },
       { text: 'Backup & restore', link: '/en/guide/backup-restore' },
       { text: 'Migrate from another panel', link: '/en/guide/migration' },

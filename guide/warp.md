@@ -8,10 +8,10 @@ title: Cloudflare WARP
 
 ## 设置
 
-**设置 → 网络 → Cloudflare WARP**
+**系统设置 → 反代与 Geo → Cloudflare WARP**
 
 1. 选择 WireGuard（服务端推荐）或 MASQUE  
-2. **注册 / 保存 WARP** — 在 Cloudflare 创建设备、写入面板、生成出站 `WARP`  
+2. **注册 WARP** — 在 Cloudflare 创建设备、写入面板、生成出站 `WARP`  
 3. 可查看 YAML；**删除 WARP 账户** 会从数据库**硬删除**该配置（避免 `panel_settings.key` 唯一约束冲突）
 
 接口：
@@ -23,7 +23,7 @@ title: Cloudflare WARP
 
 ## 服务端出站
 
-**路由 → 服务端出站**
+**路由规则 → 服务端出站**
 
 1. **WARP 域名**：每行一个（如 `openai.com`）或 `GEOSITE:openai`  
 2. 可再编辑其它规则（默认 `MATCH,DIRECT`）  

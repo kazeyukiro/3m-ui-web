@@ -56,7 +56,7 @@ The full pre-release prompt can be appended to the main prompt; see [AI install 
 
 ### HTTPS and public access
 
-After changing the password on first login, configure panel HTTPS under **System settings**: either request a certificate or use an existing one.
+After changing the password on first login, configure panel HTTPS under **Settings → Certificates / SSL**: either request a certificate or use an existing one.
 
 - **Single domain**: default HTTP-01 (public port **80** reachable).
 - **Wildcard `*.example.com`**: choose **DNS-01** and configure a Cloudflare API Token (Zone → DNS → Edit); see [Panel SSL / ACME](./ssl-cert).
@@ -114,7 +114,7 @@ sudo 3m-ui update
 sudo 3m-ui reset-config --panel --yes   # rescue broken SSL / listen bind
 ```
 
-`backup` briefly pauses the service, writes a full snapshot under `/var/lib/3m-ui/backups/`, then restores the previous run state. That directory can grow large; clean it from **Settings → Backup** or call `POST /api/v1/system/backups/cleanup`. A snapshot contains panel binaries, the bundled core, management scripts, service definitions, config, encryption keys, the database and its sidecars, Mihomo data and certificates; historical backups are not recursively included. See [Backup & restore](./backup-restore).
+`backup` briefly pauses the service, writes a full snapshot under `/var/lib/3m-ui/backups/`, then restores the previous run state. That directory can grow large; clean it from **Settings → Security & backup** or call `POST /api/v1/system/backups/cleanup`. A snapshot contains panel binaries, the bundled core, management scripts, service definitions, config, encryption keys, the database and its sidecars, Mihomo data and certificates; historical backups are not recursively included. See [Backup & restore](./backup-restore).
 
 An update finishes download and verification first, then stops the service for a consistent snapshot, replaces the binaries, and runs initialization plus HTTP/HTTPS health checks. A failed update attempts to restore the entire snapshot, including the pre-migration database and keys; if recovery fails, it prints the usable snapshot path.
 

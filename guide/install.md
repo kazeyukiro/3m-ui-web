@@ -56,7 +56,7 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 
 ### HTTPS 与对外访问
 
-首次登录改密后，在「系统设置」配置面板 HTTPS：可以申请域名证书，也可以使用已有证书。
+首次登录改密后，在「系统设置 → 证书 / SSL」配置面板 HTTPS：可以申请域名证书，也可以使用已有证书。
 
 - **单域名**：默认 HTTP-01（公网 **80** 可达）。
 - **通配符 `*.example.com`**：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [面板 SSL / ACME](./ssl-cert)。
@@ -114,7 +114,7 @@ sudo 3m-ui update
 sudo 3m-ui reset-config --panel --yes   # 救援错误的 SSL / 监听绑定
 ```
 
-`backup` 会短暂停服，在 `/var/lib/3m-ui/backups/` 创建完整快照，然后恢复原先的运行状态。快照目录可能较大，可在面板 **设置 → 备份** 清理，或调用 `POST /api/v1/system/backups/cleanup`。快照包含面板程序、配套核心、管理脚本、服务定义、配置、加密密钥、数据库及其辅助文件、Mihomo 数据和证书；历史备份不会递归收入新快照。详见 [备份与恢复](./backup-restore)。
+`backup` 会短暂停服，在 `/var/lib/3m-ui/backups/` 创建完整快照，然后恢复原先的运行状态。快照目录可能较大，可在 **系统设置 → 安全与备份** 清理，或调用 `POST /api/v1/system/backups/cleanup`。快照包含面板程序、配套核心、管理脚本、服务定义、配置、加密密钥、数据库及其辅助文件、Mihomo 数据和证书；历史备份不会递归收入新快照。详见 [备份与恢复](./backup-restore)。
 
 更新先完成下载和校验，再停服建立一致快照，替换程序并执行初始化与 HTTP/HTTPS 健康检查。更新失败会尝试恢复整份快照，包括迁移前的数据库和密钥。恢复失败时会输出可用快照位置。
 
@@ -217,7 +217,7 @@ docker compose exec 3m-ui /usr/local/bin/3m-ui reset-admin
 
 ## 独立的核心更新
 
-「内核」页支持在 Linux amd64 / arm64 上手动更新与回滚官方 **稳定版** 与 **Pre** 版 Mihomo。选定版本会保留在现有数据目录中，面板升级后仍可用。校验、恢复与部署集成见 [核心更新](./core-updates)。
+「核心管理」页支持在 Linux amd64 / arm64 上手动更新与回滚官方 **稳定版** 与 **Pre** 版 Mihomo。选定版本会保留在现有数据目录中，面板升级后仍可用。校验、恢复与部署集成见 [核心更新](./core-updates)。
 
 ## 前端压缩与缓存
 

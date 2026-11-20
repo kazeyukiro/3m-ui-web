@@ -1,9 +1,9 @@
 ---
-title: Share
-description: 3m-ui · Share
+title: Share / Subscription
+description: 3m-ui · Share / Subscription
 ---
 
-# Share
+# Share / Subscription
 
 The Share page works per user: after selecting a user it offers two tabs, `?tab=sub` (subscription) and `?tab=uri` (per-node URI). The selection is written to `?user=<id>`, so a link can open it directly.
 

@@ -1,9 +1,9 @@
 ---
-title: 节点（Listeners）
-description: 3m-ui · 节点（Listeners）
+title: 入站管理（Listeners）
+description: 3m-ui · 入站管理（Listeners）
 ---
 
-# 节点（Listeners）
+# 入站管理（Listeners）
 
 在面板中创建入站 Listener，协议模型与 Mihomo 官方 `listeners` 对齐（VLESS、VMess、Trojan、Shadowsocks、Hysteria2、TUIC 等）。
 

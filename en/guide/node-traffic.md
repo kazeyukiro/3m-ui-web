@@ -23,7 +23,7 @@ Example: multiplier `1.5` means 1 GiB transferred counts as 1.5 GiB against `tra
 
 ## Per-node stats
 
-Node and user traffic stats depend on Mihomo connection data. A core reload or incomplete protocol fields can leave the stats briefly empty; check the Listener configuration and user bindings, then watch the dashboard / user page again.
+Node and user traffic stats depend on Mihomo connection data. A core reload or incomplete protocol fields can leave the stats briefly empty; check the Listener configuration and user bindings, then watch the dashboard / Users page again.
 
 ## Tips
 

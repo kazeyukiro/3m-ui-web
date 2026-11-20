@@ -7,7 +7,7 @@ description: 3m-ui · Users & traffic
 
 ### Quick create
 
-Users page → **Quick create**: username may be empty (auto-generated), password and UUID are generated, optional bind-all local nodes. Plain credentials appear **once** in a dialog.
+Users page → **Quick create**: username may be empty (auto-generated), password and UUID are generated, optional **Bind all nodes**. Plain credentials appear **once** in a dialog.
 
 API: `POST /api/v1/users/quick` with body `{ "username"?: string, "bind_all_listeners"?: boolean, "remark"?: string }`. Response includes `{ user, password, uuid }`. Full create remains `POST /api/v1/users`. OpenAPI: `GET /api/v1/openapi.yaml`.
 
@@ -28,7 +28,7 @@ API: `POST /api/v1/users/quick` with body `{ "username"?: string, "bind_all_list
 
 Each node has a **traffic multiplier** (default 1). Raw bytes on that node × multiplier are added to the user’s quota (`traffic_used`).
 
-Users page → node-traffic action shows per-node raw and billed usage. API: `GET /api/v1/users/{id}/node-traffic`.
+Users page → **Node traffic** shows per-node raw and billed usage. API: `GET /api/v1/users/{id}/node-traffic`.
 
 ### User fields (summary)
 

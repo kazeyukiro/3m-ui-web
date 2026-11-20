@@ -4,7 +4,7 @@ title: Listener runtime status
 
 # Listener runtime status
 
-The Nodes page separates "enabled" from "actually reachable". The main badge reflects a connectivity check result (pass / fail / checking / untested / unknown / disabled). **A listening socket alone is not shown as usable**. Clicking a node opens diagnostics; a cached result is reused while still valid, otherwise a check runs against the exported client endpoints. Saving and enabling a node also triggers a check. The detail drawer distinguishes stages: socket observation, client config, test client start, authentication, and proxy access.
+The Inbounds page separates "enabled" from "actually reachable". The main badge reflects a connectivity check result (pass / fail / checking / untested / unknown / disabled). **A listening socket alone is not shown as usable**. Clicking a node opens diagnostics; a cached result is reused while still valid, otherwise a check runs against the exported client endpoints. Saving and enabling a node also triggers a check. The detail drawer distinguishes stages: socket observation, client config, test client start, authentication, and proxy access.
 
 Lightweight socket polling only runs while the page is visible and **never** starts a test client. End-to-end results are cached in memory for about one minute and invalidated when the applied config, service process, or exported client config changes. Reading the cache re-exports the current config and verifies its hash (covering public endpoints and valid credentials; no credential-bearing YAML is stored in the cache). A failed request clears the display to unknown instead of leaving it green.
 

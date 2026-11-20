@@ -11,11 +11,15 @@ Panel **System settings** groups operational options (mostly stored in the datab
 
 Common groups:
 
-- Appearance / subscription page
-- Public URL, Telegram
-- Panel SSL (HTTP-01 / DNS-01 wildcard / IP certificate / manual paths)
-- Backup & restore
-- Update channel (stable / pre) and panel restart
+- Panel / UI (port, listen address, public URL, language and theme)
+- Access profile, Telegram
+- Security & backup (password, two-factor, GitHub OAuth, backup & restore)
+- Subscription page
+- Certificates / SSL
+- Proxy & Geo (GeoIP / GeoSite, Cloudflare WARP, certificate and reverse-proxy templates)
+- Traffic reset
+- System ops (panel restart, panel updates, tunnel health watchdog)
+- About
 
 Saving SSL or listener-related options usually requires a **panel process restart** before they fully take effect.
 
@@ -44,7 +48,7 @@ The panel automatically checks for the latest 3m-ui release on GitHub when you o
 It shows:
 
 - **Current version** — your installed version + channel badge (cyan "Stable" or purple "Pre-release")
-- **Channel switcher** — a Segmented control to switch between **Stable** and **Pre-release** channels. Each option shows the latest version tag for that channel inline
+- **Channel** — a Segmented control to switch between **Stable** and **Pre-release** channels. Each option shows the latest version tag for that channel inline
 - **Latest version** — the latest version in the target (selected) channel
 - **Update available** badge (green) or **Up to date** badge (gray)
 - Collapsible release notes from the GitHub release body for the target channel
@@ -80,4 +84,4 @@ Pre-release URL: [https://github.com/kazeyukiro/3m-ui/releases/tag/pre](https://
 - Core: `GET /api/v1/mihomo/logs`
 - Panel: `GET /api/v1/system/panel-logs`
 
-The UI **Logs** page exposes each stream on its own tab. OpenAPI: panel `GET /api/v1/openapi.yaml` (auth required); source file `backend/docs/openapi.yaml` in the main repo.
+The UI **Logs** page exposes each stream on its own tab. OpenAPI: panel `GET /api/v1/openapi.yaml` (auth required); source file `backend/internal/docs/openapi.yaml` in the main repo.

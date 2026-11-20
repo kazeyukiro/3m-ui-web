@@ -1,9 +1,9 @@
 ---
-title: Listeners
-description: 3m-ui · Listeners
+title: Inbounds
+description: 3m-ui · Inbounds
 ---
 
-# Listeners
+# Inbounds
 
 Create inbound listeners from the panel. The protocol model follows Mihomo's official `listeners` (VLESS, VMess, Trojan, Shadowsocks, Hysteria2, TUIC, and more).
 

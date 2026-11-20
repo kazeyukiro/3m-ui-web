@@ -31,7 +31,7 @@ description: 3m-ui · Migrate from another panel
 2. Review the preview: source, user / node / binding counts, warnings, skipped entries and the node list.
 3. Read the four "Please read before importing" notes, then click "Confirm import".
 4. Review the result: created counts, auto-renames and the pre-import backup filename.
-5. Go to the Listeners page, check every imported node, then enable it manually.
+5. Go to the Inbounds page, check every imported node, then enable it manually.
 
 ## Important notes
 

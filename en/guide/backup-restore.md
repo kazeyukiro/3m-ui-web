@@ -7,7 +7,7 @@ description: 3m-ui · Backup & restore
 
 ## Panel backup & restore
 
-Settings → Backup → **Download backup** exports a `.zip` (SQLite DB + Mihomo config snapshot + meta). Use **Restore** to upload a zip or a raw `.db`.
+Settings → Security & backup → **Download backup** exports a `.zip` (SQLite DB + Mihomo config snapshot + meta). Use **Restore backup** to upload a zip or a raw `.db`.
 
 **Restore behavior:** after a successful upload the panel automatically exits (`os.Exit(0)`) so systemd's `Restart=always` brings it back with the new DB. The web page polls `/api/v1/health` and auto-reloads — **no manual SSH restart needed**.
 
@@ -28,7 +28,7 @@ Cautions:
 
 ```
 
-These can grow large (several GB). In the panel, **Settings → Backup** lists them with a total size. You can:
+These can grow large (several GB). In the panel, **Settings → Security & backup** lists them with a total size. You can:
 
 - Delete one snapshot
 - **Cleanup**: keep the newest *N* and/or delete entries older than *D* days

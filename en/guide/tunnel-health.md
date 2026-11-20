@@ -1,9 +1,9 @@
 ---
-title: Tunnel health watchdog
-description: 3m-ui · Tunnel health watchdog
+title: Tunnel Health Watchdog
+description: 3m-ui · Tunnel Health Watchdog
 ---
 
-# Tunnel health watchdog
+# Tunnel Health Watchdog
 
 The **tunnel health watchdog** restores connectivity when the tunnel is effectively down while the proxy process is still running. The panel issues an HTTP probe at a fixed interval; when consecutive failures reach a configured threshold, it restarts the Mihomo core. The feature is disabled by default and takes effect as soon as settings are saved, without a panel restart.
 
@@ -13,7 +13,7 @@ Restarting the core disconnects every connected client and briefly interrupts pr
 
 ## Settings
 
-Configure under **Settings → System ops → Tunnel health watchdog**:
+Configure under **Settings → System ops → Tunnel Health Watchdog**:
 
 | Setting | Description | Default | Range |
 |---------|-------------|---------|-------|

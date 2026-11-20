@@ -4,7 +4,7 @@ title: Panel SSL / ACME
 
 # Panel SSL / ACME
 
-Configure panel HTTPS under **System → SSL / Certificates**. After saving, **restart the panel** so ListenTLS takes effect. Panel HTTPS and node inbound certificates are two separate configurations; see the end of this page.
+Configure panel HTTPS under **Settings → Certificates / SSL**. After saving, **restart the panel** so ListenTLS takes effect. Panel HTTPS and node inbound certificates are two separate configurations; see the end of this page.
 
 ## Panel HTTPS
 

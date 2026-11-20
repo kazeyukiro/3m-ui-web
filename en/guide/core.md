@@ -23,7 +23,7 @@ Admin JWT required. The two streams are **not** merged in one endpoint.
 
 ## Updating the Mihomo core
 
-Administrators can use **Core → Check for updates** to select an official stable or Pre release, or **Restore previous version** to return to the saved binary. This updates Mihomo independently of the panel. Updates are manual; checking for releases never installs one. The most recent 30 GitHub releases are queried, with drafts and artifacts without a SHA-256 digest excluded. Linux **amd64** (baseline v1) and **arm64** are supported.
+Administrators can use **Core → Mihomo updates** to select an official stable or Pre release, or **Restore previous version** to return to the saved binary. This updates Mihomo independently of the panel. Updates are manual; checking for releases never installs one. The most recent 30 GitHub releases are queried, with drafts and artifacts without a SHA-256 digest excluded. Linux **amd64** (baseline v1) and **arm64** are supported.
 
 The updater downloads only from `MetaCubeX/mihomo` on GitHub, verifies the release asset's GitHub-provided SHA-256 digest, checks its executable version, and runs its configuration test against the current configuration. These steps happen before stopping the existing core. Downloads are limited to 64 MiB compressed and 128 MiB decompressed, with request and validation timeouts.
 

@@ -30,7 +30,7 @@ Users page **Quick create** (or `POST /api/v1/users/quick`):
 
 - Username may be empty (auto-generated)  
 - Password and UUID are generated and shown **once** in the response / dialog  
-- Optional **bind all local nodes**
+- Optional **Bind all nodes**
 
 ## Related APIs
 

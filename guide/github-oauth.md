@@ -15,7 +15,7 @@ title: GitHub OAuth
 
    实际值由面板的 `public_url` 加固定路径拼成（未配置 `public_url` 时回退到请求 host），必须与 GitHub App 中登记的完全一致。
 
-3. 面板 **设置 → 安全与备份 → GitHub OAuth**：
+3. 面板 **系统设置 → 安全与备份 → GitHub OAuth**：
    - 填入 Client ID / Client Secret
    - **允许的 GitHub 用户名**（`allowed_logins`，逗号分隔、大小写不敏感）：首次登录时用于绑定本地管理员
    - 启用并保存

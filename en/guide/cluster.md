@@ -15,7 +15,7 @@ Register remote 3m-ui panels, health-check them, and merge their nodes into a us
 ## Full workflow
 
 1. **Register the remote**: Cluster page → Add node, fill in the panel URL. Then press **Login** and sign in with the remote admin account to obtain a JWT (sync and push both depend on it; re-Login whenever an operation answers 401).
-2. **Sync mirrors**: press **Sync**. Remote listeners are cached locally as mirrors, together with their share links and client YAML.
+2. **Sync mirrors**: press **Sync nodes**. Remote listeners are cached locally as mirrors, together with their share links and client YAML.
 3. **Bind to a user**: Users page → pick a user → **Bind nodes**. The lower half of the modal, **Remote cluster nodes**, is a multi-select of mirrors — choose the ones to distribute and save.
 4. **User subscription**: that user's subscription link now carries both local listeners and mirrored remote nodes.
 

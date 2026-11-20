@@ -4,7 +4,7 @@ title: Core updates
 
 # Core updates
 
-An admin can pick an official stable or pre-release Mihomo build under **Core → Check for updates**, or **restore the previous version** from the saved binary. This is independent of updating the panel program itself. Checking **does not** install automatically; you confirm manually.
+An admin can pick an official stable or pre-release Mihomo build under **Core → Mihomo updates**, or **Restore previous version** from the saved binary. This is independent of updating the panel program itself. Checking **does not** install automatically; you confirm manually.
 
 The updater queries roughly the latest 30 GitHub Releases and skips drafts and assets without a SHA-256 digest; full installs generally support the **amd64** and **arm64** Linux architectures.
 

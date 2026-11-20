@@ -5,7 +5,7 @@ description: 3m-ui · 服务端 Mihomo 内核的 DNS 控制
 
 # DNS 设置
 
-「DNS 设置」控制的是**服务端 Mihomo 内核**自己的 DNS 行为，位于 **配置 → 通用设置 → DNS 设置**。
+「DNS 设置」控制的是**服务端 Mihomo 内核**自己的 DNS 行为，位于 **配置引擎 → 通用内核设置 → DNS 设置**。
 
 它只影响面板这台 Mihomo 进程，不会写进客户端订阅。
 

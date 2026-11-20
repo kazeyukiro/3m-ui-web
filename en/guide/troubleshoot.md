@@ -16,7 +16,7 @@ journalctl -u 3m-ui -n 100 --no-pager
 - After a password change, use the new password; session tokens rotate with `session_version` and may require a new login
 - Mihomo configuration validation errors appear when applying listeners — fix the fields and re-apply
 - If create/delete shows a network error but the list already changed: the panel wrote the DB first and applies Mihomo in the background. Refresh the list and wait 1–2 seconds; this is expected, not a failed save
-- **Disk full / large `/var/lib/3m-ui/backups`**: install snapshots accumulate. Use **Settings → Backup → Cleanup** (or API `POST /system/backups/cleanup`). See [Backup & restore](./backup-restore)
+- **Disk full / large `/var/lib/3m-ui/backups`**: install snapshots accumulate. Use **Settings → Security & backup** (or API `POST /system/backups/cleanup`). See [Backup & restore](./backup-restore)
 - **An update rolls back**: before stopping the running core, the updater validates the candidate executable, its version and the current configuration; a failed switch restores the prior binary and running state. The failed stage and error are available from `GET /api/v1/mihomo/update`
 - SSL failures: check 80/443, DNS resolution, and whether the IP / domain mode was mixed up
 
@@ -59,4 +59,4 @@ The menu walks you through scope selection (1/2/3) and confirmation, then stops 
 
 ### Re-enable SSL after rescue
 
-Open the panel over HTTP, go to **Settings → SSL**, fix the underlying issue (e.g. wrong domain, missing 80/443 access), then toggle SSL back on. The previously-saved domain / cert files are still in the DB, so you only need to flip the switch.
+Open the panel over HTTP, go to **Settings → Certificates / SSL**, fix the underlying issue (e.g. wrong domain, missing 80/443 access), then toggle SSL back on. The previously-saved domain / cert files are still in the DB, so you only need to flip the switch.

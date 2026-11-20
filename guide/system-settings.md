@@ -11,11 +11,15 @@ description: 3m-ui · 系统设置
 
 常见分组：
 
-- 外观 / 订阅页
-- 公网 URL、Telegram
-- 面板 SSL（HTTP-01 / DNS-01 通配符 / IP 证 / 手动路径）
-- 备份与恢复
-- 更新通道（稳定 / 预发）与重启面板
+- 面板 / 外观（端口、监听地址、公网 URL、语言与主题）
+- 访问档案、Telegram
+- 安全与备份（密码、两步验证、GitHub OAuth、备份与恢复）
+- 订阅页
+- 证书 / SSL
+- 反代与 Geo（GeoIP / GeoSite、Cloudflare WARP、证书与反代模板）
+- 流量重置
+- 系统操作（重启面板、面板更新、隧道健康自愈）
+- 关于
 
 保存 SSL、监听相关项后通常需要 **重启面板进程** 才完全生效。
 
@@ -27,7 +31,7 @@ API：`POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`�
 
 ## 系统操作（重启与更新）
 
-**系统操作** 区（设置 → 系统操作）提供面板的网页端一键管理，无需 SSH。该区另含 [隧道健康自愈](./tunnel-health)：在隧道不可用时按配置自动重启内核。
+**系统操作** 区（系统设置 → 系统操作）提供面板的网页端一键管理，无需 SSH。该区另含 [隧道健康自愈](./tunnel-health)：在隧道不可用时按配置自动重启内核。
 
 ### 重启面板
 
@@ -43,10 +47,10 @@ API：`POST /api/v1/system/restart`
 
 页面显示：
 
-- **当前版本** — 已安装版本 + 通道标记（青色「稳定」或紫色「预发」）
-- **通道切换** — Segmented 控件，在 **稳定** 与 **预发** 之间切换，每个选项内联显示该通道最新版本 tag
+- **当前版本** — 已安装版本 + 通道标记（青色「稳定版」或紫色「预发布版」）
+- **切换渠道** — Segmented 控件，在**稳定版**与**预发布版**之间切换，每个选项内联显示该通道最新版本 tag
 - **最新版本** — 目标（当前选中）通道的最新版本
-- **可更新**（绿色）或 **已是最新**（灰色）标记
+- **有新版本**（绿色）或 **已是最新**（灰色）标记
 - 目标通道 GitHub release body 的可折叠更新说明
 
 点击 **检查更新** 可重新检查；点击 **立即更新**（仅在有更新时可用）会按所选通道在后台触发 `update.sh`，下载对应版本、替换自身并自动重启；网页轮询健康检查的超时为 120 秒（更新通常耗时 30–60 秒）。
@@ -71,7 +75,7 @@ curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/js
   https://panel.example.com/api/v1/system/update
 ```
 
-若 GitHub 不可达（防火墙、GFW），面板显示回退提示：*"Cannot check for updates (GitHub API unreachable). Update via SSH: 3m-ui update"*。
+若 GitHub 不可达（防火墙、GFW），面板显示回退提示：*"无法检查更新（GitHub API 不可达）。通过 SSH 更新：3m-ui update"*。
 
 预发版地址：[https://github.com/kazeyukiro/3m-ui/releases/tag/pre](https://github.com/kazeyukiro/3m-ui/releases/tag/pre)
 
@@ -80,4 +84,4 @@ curl -X POST -H "Authorization: Bearer <token>" -H "Content-Type: application/js
 - 核心：`GET /api/v1/mihomo/logs`
 - 面板：`GET /api/v1/system/panel-logs`
 
-面板 UI「日志」页两个 Tab 分别对应上述接口。OpenAPI：面板 `GET /api/v1/openapi.yaml`（需登录），源文件见主仓库 `backend/docs/openapi.yaml`。
+面板「运行日志」页两个 Tab 分别对应上述接口。OpenAPI：面板 `GET /api/v1/openapi.yaml`（需登录），源文件见主仓库 `backend/internal/docs/openapi.yaml`。

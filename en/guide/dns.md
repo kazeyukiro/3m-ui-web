@@ -5,7 +5,7 @@ description: 3m-ui · DNS control for the panel's Mihomo core
 
 # DNS settings
 
-**DNS settings** control the DNS behaviour of the **panel's Mihomo core**. They live under **Config → General settings → DNS settings**.
+**DNS settings** control the DNS behaviour of the **panel's Mihomo core**. They live under **Config Engine → General Kernel Settings → DNS settings**.
 
 They affect the Mihomo process on this host only and are never written into client subscriptions.
 

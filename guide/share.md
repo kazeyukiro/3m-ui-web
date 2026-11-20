@@ -1,11 +1,11 @@
 ---
-title: 分享
-description: 3m-ui · 分享
+title: 分享 / 订阅
+description: 3m-ui · 分享 / 订阅
 ---
 
-# 分享
+# 分享 / 订阅
 
-分享页以「用户」为视角：选择用户后提供两个页签 `?tab=sub`（订阅）与 `?tab=uri`（单节点 URI），选择结果会写入 `?user=<id>`，可直接用链接打开。
+「分享 / 订阅」页以「用户」为视角：选择用户后提供两个页签 `?tab=sub`（订阅）与 `?tab=uri`（单节点 URI），选择结果会写入 `?user=<id>`，可直接用链接打开。
 
 ## 订阅页签
 
@@ -15,11 +15,11 @@ description: 3m-ui · 分享
 
 ## URI 页签
 
-展开该用户已绑定的节点，按需调用 `GET /api/v1/nodes/{id}/uri` 拉取分享 URI（第一个 URI 附二维码）；未绑定节点时提示先到用户页绑定 Listener。`GET /api/v1/users/{id}/nodes` 提供绑定列表。
+展开该用户已绑定的节点，按需调用 `GET /api/v1/nodes/{id}/uri` 拉取分享 URI（第一个 URI 附二维码）；未绑定节点时提示先到用户管理绑定节点。`GET /api/v1/users/{id}/nodes` 提供绑定列表。
 
 ## 其他操作
 
 - **导出全部订阅链接**：`GET /api/v1/users/export-links`，把 `用户名 / 分组 / 订阅地址` 按 TSV 复制到剪贴板
-- **刷新列表**、**重置订阅 Token**：`POST /api/v1/users/{id}/subscription/rotate`
+- **刷新列表**、**轮换订阅 Token**：`POST /api/v1/users/{id}/subscription/rotate`
 
 分享链接与 URI 均含凭证，等同于账号密钥，请勿公开传播。

@@ -11,7 +11,7 @@ The three scopes are independent and never overwrite each other:
 
 | Scope | Where | Affects |
 |-------|-------|---------|
-| Listeners (inbound) | Nodes page | How users connect |
+| Inbounds | Inbounds page | How users connect |
 | **Server outbounds** | **Outbounds + Routing → Server egress** | **How the panel's Mihomo process reaches the internet** |
 | Client subscription | Routing → Client subscription | Only the user's subscription YAML |
 
@@ -45,7 +45,7 @@ Delete and disable are blocked while references remain. The request fails with 4
 
 ## WARP
 
-A WARP account registered in Settings appears automatically as one **enabled, read-only** `WARP` outbound. Registration keeps living in Settings; the outbound list never exposes its private key or Cloudflare token, and links back to Settings for account management.
+A WARP account registered under **Settings → Proxy & Geo** appears automatically as one **enabled, read-only** `WARP` outbound. Registration keeps living in Settings; the outbound list never exposes its private key or Cloudflare token, and links back to Settings for account management.
 
 Account deletion is blocked while rules, groups, providers, dialer references, WARP domains or global WARP still use it. Apply again after deleting the account.
 

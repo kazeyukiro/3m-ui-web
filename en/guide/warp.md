@@ -11,10 +11,10 @@ description: 3m-ui · Cloudflare WARP account and server egress
 
 ## Settings
 
-**Settings → Network → Cloudflare WARP**
+**Settings → Proxy & Geo → Cloudflare WARP**
 
 1. Choose WireGuard (recommended for server egress) or MASQUE  
-2. **Register / save WARP** — creates a device at Cloudflare, stores the account, builds outbound `WARP`  
+2. **Register WARP** — creates a device at Cloudflare, stores the account, builds outbound `WARP`  
 3. Optional YAML preview; **Delete WARP account** **hard-deletes** the row (avoids SQLite `UNIQUE(panel_settings.key)` errors after soft-delete)
 
 API:

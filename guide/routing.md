@@ -5,7 +5,7 @@ description: 3m-ui · 路由规则
 
 # 路由规则
 
-面板「路由」页有两个范围：
+面板「路由规则」页有两个范围：
 
 | 标签 | 存储 | 作用 |
 |------|------|------|
@@ -35,7 +35,7 @@ description: 3m-ui · 路由规则
 - 保存后请在 **客户端更新订阅**。
 - 这些规则 **不会** 合并进服务器上的 `config.yaml`。
 
-使用 GEOSITE/GEOIP 前请在 **设置** 中更新 Geo 数据。
+使用 GEOSITE/GEOIP 前请在 **系统设置 → 反代与 Geo** 中更新 Geo 数据。
 
 ## 服务端出站
 
@@ -60,14 +60,14 @@ description: 3m-ui · 路由规则
 
 **生成并应用** 会重建 Listener，并应用 **服务端出站** 规则。客户端社区模板仍只影响订阅。
 
-WARP 一键注册在 **设置**，见 [WARP](./warp.md)。
+WARP 一键注册在 **系统设置 → 反代与 Geo**，见 [WARP](./warp.md)。
 
 
 ## 规则集 (rule-providers)
 
 服务端出站可配置 Mihomo **`rule-providers`**（[官方文档](https://wiki.metacubex.one/config/rule-providers/)）。
 
-1. **路由 → 服务端出站 → 规则集 → 添加**（`http` / `file` / `inline`，behavior / format 按官方）  
+1. **路由规则 → 服务端出站 → 规则集 → 添加规则集**（`http` / `file` / `inline`，behavior / format 按官方）  
 2. **保存 → 生成并应用**，将 `rule-providers:` 写入服务配置（默认 path：`./rule-providers/{name}.{format}`）  
 3. 规则行：`RULE-SET,<名称>,<出站>`  
 4. **热更新**：调用核心 `PUT /providers/rules/{name}`，刷新该 rule-set  

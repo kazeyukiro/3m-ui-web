@@ -35,7 +35,7 @@ Rule types and params follow the official docs exactly: 37 rule types (including
 - After save, **update the subscription in the client**.
 - These rules are **not** merged into the serving `config.yaml`.
 
-GEOSITE/GEOIP templates need MetaCubeX geodata — update under **Settings → Geo**.
+GEOSITE/GEOIP templates need MetaCubeX geodata — update under **Settings → Proxy & Geo**.
 
 ## Server egress
 
@@ -67,7 +67,7 @@ Cloudflare WARP registration is under **Settings**. See [WARP](./warp.md).
 
 Server egress can declare Mihomo **`rule-providers`** ([docs](https://wiki.metacubex.one/config/rule-providers/)).
 
-1. **Routing → Server egress → Rule providers → Add**  
+1. **Routing → Server egress → Rule providers → Add rule provider**  
 2. **Save → Generate & apply** so `rule-providers:` is written (default path `./rule-providers/{name}.{format}` under Mihomo `-d`)  
 3. Rule line: `RULE-SET,<name>,<TARGET>`  
 4. **Hot update**: Mihomo `PUT /providers/rules/{name}`  

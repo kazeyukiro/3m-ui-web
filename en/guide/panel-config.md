@@ -48,14 +48,14 @@ The environment variable `THREE_M_UI_WEB_PATH` (short `WEB_PATH`) overrides the 
 
 ## TFO / MPTCP in the config engine
 
-On the **Config** page:
+On the **Config Engine** page:
 
 | Where | Mihomo keys | Scope |
 |-------|-------------|-------|
-| **General** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; **not** written into client subscriptions |
-| **Proxy entry** | `tfo` / `mptcp` | Client outbound flags ([Mihomo docs](https://wiki.metacubex.one/config/proxies/#tfo)); booleans — not `inbound-*` |
+| **General Kernel Settings** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; **not** written into client subscriptions |
+| **Proxy Configuration** | `tfo` / `mptcp` | Client outbound flags ([Mihomo docs](https://wiki.metacubex.one/config/proxies/#tfo)); booleans — not `inbound-*` |
 
-**Mode** is not edited in General settings. TCP only. API: `GET/POST /api/v1/config/visual`.
+**Mode** is not edited in General Kernel Settings. TCP only. API: `GET/POST /api/v1/config/visual`.
 
 ## Same port for TCP and UDP
 

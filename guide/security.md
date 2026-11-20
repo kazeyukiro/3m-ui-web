@@ -8,13 +8,13 @@ description: 3m-ui · 安全
 - 首次登录修改管理员密码
 - 配置中使用独立的 JWT / 凭证密钥
 - 尽量限制面板端口暴露面；生产环境建议 HTTPS
-- 面板默认启用 **随机路径（web_path）** 隐藏入口，裸域名返回 404（详见 [面板配置](./panel-config)）
+- 面板默认启用**随机路径（web_path）**隐藏入口，裸域名返回 404（详见 [面板配置](./panel-config)）
 - 保留 SSH 与 `reset-admin` / `reset-config` 作为救援手段
 
 
 ## GitHub OAuth
 
-可选：用 GitHub 登录管理面板。在 **设置 → 安全与备份 → GitHub OAuth** 中配置。
+可选：用 GitHub 登录管理面板。在 **系统设置 → 安全与备份 → GitHub OAuth** 中配置。
 
 1. 创建 GitHub OAuth App，回调 URL：`https://<public_url>/api/v1/auth/oauth/github/callback`
 2. 填写 Client ID / Secret，以及允许绑定的 GitHub 用户名
