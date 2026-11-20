@@ -9,7 +9,7 @@ description: 3m-ui · Backup & restore
 
 Settings → Security & backup → **Download backup** exports a `.zip` (SQLite DB + Mihomo config snapshot + meta). Use **Restore backup** to upload a zip or a raw `.db`.
 
-**Restore behavior:** after a successful upload the panel automatically exits (`os.Exit(0)`) so systemd's `Restart=always` brings it back with the new DB. The web page polls `/api/v1/health` and auto-reloads — **no manual SSH restart needed**.
+On a successful upload the panel exits (`os.Exit(0)`), and systemd's `Restart=always` brings it back with the new database. The web page polls `/api/v1/health` and reloads once it is healthy. No SSH restart needed.
 
 The handler validates the SQLite magic header (`"SQLite format 3\0"`) before replacing the DB file, so corrupt or non-DB uploads are rejected with HTTP **400** (not 500). Stale `-journal` / `-wal` / `-shm` sidecars are removed automatically to prevent rollback.
 
@@ -31,9 +31,9 @@ Cautions:
 These can grow large (several GB). In the panel, **Settings → Security & backup** lists them with a total size. You can:
 
 - Delete one snapshot
-- **Cleanup**: keep the newest *N* and/or delete entries older than *D* days
+- Cleanup: keep the newest *N* and/or delete entries older than *D* days
 
-**Cleanup semantics:** when both `keep` and `older_than_days` are set, the newest `keep` entries are **always** preserved even if they are older than the age threshold; age-based deletion only applies to entries beyond the keep window. This prevents accidentally losing all backups when they are all older than the threshold.
+**Cleanup semantics:** when both `keep` and `older_than_days` are set, the newest `keep` entries are always preserved even if they are older than the age threshold; age-based deletion only applies to entries beyond the keep window. This prevents accidentally losing all backups when they are all older than the threshold.
 
 ### API
 

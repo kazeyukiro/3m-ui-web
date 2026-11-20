@@ -15,7 +15,7 @@ title: 订阅格式与 target
 | target | 响应内容 |
 |--------|----------|
 | *空 / clash / mihomo / meta* | Mihomo / Clash Meta YAML（proxies + 分组） |
-| `v2ray` / `base64` | **始终**为分享链接换行拼接后再标准 Base64（`vless://`、`vmess://`、`tuic://` 等），与 HTML 订阅页「是否加密 URI 列表」无关 |
+| `v2ray` / `base64` | 始终为分享链接换行拼接后再标准 Base64（`vless://`、`vmess://`、`tuic://` 等），与 HTML 订阅页「是否加密 URI 列表」无关 |
 | `uri` / `raw` | 同样链接；关闭加密时可为明文 |
 | `singbox` / `sing-box` / `sfa` / `sfm` | sing-box JSON（含默认 TUN、DNS、路由等，适配较新 sing-box 迁移）及节点 outbound |
 | `loon` | Loon 插件配置（`[Proxy]` 段，原生格式，见下文） |
@@ -77,9 +77,9 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 
 三者均直接生成原生配置，不依赖 subconverter。
 
-- **Loon**：`[Proxy]` 段每行定义一个节点，密码与 UUID 均以双引号包裹。官方仅在取值含英文逗号时作强制要求，但格式行与全部示例均采用该写法，且 Loon 保存配置时会自动补齐，例如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
-- **Surge**：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
-- **Quantumult X**：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
+- Loon：`[Proxy]` 段每行定义一个节点，密码与 UUID 均以双引号包裹。官方仅在取值含英文逗号时作强制要求，但格式行与全部示例均采用该写法，且 Loon 保存配置时会自动补齐，例如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
+- Surge：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
+- Quantumult X：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
 ### 协议支持矩阵
 

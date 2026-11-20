@@ -19,7 +19,7 @@ The **Logs** page has two tabs backed by different APIs:
 | **Mihomo core** | `GET /api/v1/mihomo/logs` | Core process stdout/stderr (in-memory ring) |
 | **Panel process** | `GET /api/v1/system/panel-logs` | Panel `log` output (ACME, startup, errors; `[panel]` prefix) |
 
-Admin JWT required. The two streams are **not** merged in one endpoint.
+Admin JWT required. The two streams are not merged in one endpoint.
 
 ## Updating the Mihomo core
 

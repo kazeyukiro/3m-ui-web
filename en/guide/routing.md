@@ -14,14 +14,14 @@ The **Routing** page has two scopes:
 
 ## Batch import (both scopes)
 
-Both tabs share one **Batch import** button (top-right of the rule editor):
+Both tabs share one **Batch import** button in the top-right of the rule editor.
 
-1. **Paste**: one Mihomo rule per line; `#` starts a comment line; blank lines are ignored;
-2. **Parse & preview**: the backend validates strictly against the [official mihomo rule docs](https://wiki.metacubex.one/config/rules) — no invented rule types —
-   - accepted rules are shown **normalized** (e.g. `GEOIP,CN` → `GEOIP,cn`, bare IPs gain `/32`, `NETWORK,udp` → `NETWORK,UDP`);
-   - rejected lines are reported **one by one** (line number + reason) without aborting the batch;
-   - duplicates inside the batch are dropped;
-3. **Append**: confirmed rules are inserted **before a trailing MATCH rule** (so they can never become dead rules); rules duplicating existing ones are skipped and reported.
+1. Paste one Mihomo rule per line. Lines starting with `#` are comments; blank lines are skipped.
+2. Click Parse & preview. The backend checks every line against the [official mihomo rule docs](https://wiki.metacubex.one/config/rules) and reports unknown rule types instead of guessing:
+   - accepted rules are shown normalized, e.g. `GEOIP,CN` → `GEOIP,cn`, bare IPs gain `/32`, `NETWORK,udp` → `NETWORK,UDP`;
+   - rejected lines show a line number and reason, and the rest of the batch still parses;
+   - duplicates within the batch are dropped.
+3. Confirmed rules go in just before the trailing MATCH rule — anything after MATCH never matches. Rules you already have are skipped and reported.
 
 A single import is capped at **5000** rules. Rule targets (`PROXY`, group names, …) must exist; a typo is rejected by the core at **Generate & apply**.
 
@@ -33,7 +33,7 @@ Rule types and params follow the official docs exactly: 37 rule types (including
 
 - Community templates (YiXuanZX / echs-top / AIsouler) fill groups + rules for the **client** YAML. Switching a template **replaces** rules and groups (does not only append).
 - After save, **update the subscription in the client**.
-- These rules are **not** merged into the serving `config.yaml`.
+- These rules are not merged into the serving `config.yaml`.
 
 GEOSITE/GEOIP templates need MetaCubeX geodata — update under **Settings → Proxy & Geo**.
 
@@ -70,6 +70,6 @@ Server egress can declare Mihomo **`rule-providers`** ([docs](https://wiki.metac
 1. **Routing → Server egress → Rule providers → Add rule provider**  
 2. **Save → Generate & apply** so `rule-providers:` is written (default path `./rule-providers/{name}.{format}` under Mihomo `-d`)  
 3. Rule line: `RULE-SET,<name>,<TARGET>`  
-4. **Hot update**: Mihomo `PUT /providers/rules/{name}`  
+4. Hot update: Mihomo `PUT /providers/rules/{name}`  
 
 API: `ruleProviders` on `server-routing`; `PUT /api/v1/config/rule-providers/{name}/update`; `GET /api/v1/config/rule-providers/status`

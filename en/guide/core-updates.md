@@ -10,8 +10,8 @@ The updater queries roughly the latest 30 GitHub Releases and skips drafts and a
 
 ## Channels
 
-- **Stable**: the default install/update channel, matching the pinned version in the panel release notes
-- **Pre-release**: must be selected explicitly; see [Pre-release channel](./dev-channel)
+- Stable: the default install/update channel, matching the pinned version in the panel release notes
+- Pre-release: must be selected explicitly; see [Pre-release channel](./dev-channel)
 
 ## Behaviour
 

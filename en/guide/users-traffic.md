@@ -7,7 +7,7 @@ description: 3m-ui · Users & traffic
 
 ### Quick create
 
-Users page → **Quick create**: username may be empty (auto-generated), password and UUID are generated, optional **Bind all nodes**. Plain credentials appear **once** in a dialog.
+Users page → **Quick create**: username may be empty (auto-generated), password and UUID are generated, optional **Bind all nodes**. Plain credentials appear once in a dialog.
 
 API: `POST /api/v1/users/quick` with body `{ "username"?: string, "bind_all_listeners"?: boolean, "remark"?: string }`. Response includes `{ user, password, uuid }`. Full create remains `POST /api/v1/users`. OpenAPI: `GET /api/v1/openapi.yaml`.
 

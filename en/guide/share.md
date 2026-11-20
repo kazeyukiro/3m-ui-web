@@ -19,7 +19,7 @@ Expands the nodes bound to that user and calls `GET /api/v1/nodes/{id}/uri` on d
 
 ## Other actions
 
-- **Export all subscription links**: `GET /api/v1/users/export-links` copies `username / group / subscription` as TSV to the clipboard
-- **Refresh list** and **rotate subscription token**: `POST /api/v1/users/{id}/subscription/rotate`
+- Export all subscription links: `GET /api/v1/users/export-links` copies `username / group / subscription` as TSV to the clipboard
+- Refresh list** and **rotate subscription token: `POST /api/v1/users/{id}/subscription/rotate`
 
 Share links and URIs contain credentials and are equivalent to account secrets — do not publish them.

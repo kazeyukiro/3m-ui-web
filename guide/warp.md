@@ -25,7 +25,7 @@ title: Cloudflare WARP
 
 **路由规则 → 服务端出站**
 
-1. **WARP 域名**：每行一个（如 `openai.com`）或 `GEOSITE:openai`  
+1. WARP 域名：每行一个（如 `openai.com`）或 `GEOSITE:openai`  
 2. 可再编辑其它规则（默认 `MATCH,DIRECT`）  
 3. **保存 → 生成并应用**（必须应用，域名才会写入 `config.yaml`）
 

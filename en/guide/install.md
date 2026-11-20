@@ -58,10 +58,10 @@ The full pre-release prompt can be appended to the main prompt; see [AI install 
 
 After changing the password on first login, configure panel HTTPS under **Settings → Certificates / SSL**: either request a certificate or use an existing one.
 
-- **Single domain**: default HTTP-01 (public port **80** reachable).
-- **Wildcard `*.example.com`**: choose **DNS-01** and configure a Cloudflare API Token (Zone → DNS → Edit); see [Panel SSL / ACME](./ssl-cert).
-- **Public IP**: Let's Encrypt `shortlived` certificate (160 hours, about 6 days, renewed automatically by the panel; ports 80/443 must be reachable).
-- **Manual paths**: fullchain + privkey (for example files issued by certbot).
+- Single domain: default HTTP-01 (public port **80** reachable).
+- Wildcard `*.example.com`: choose **DNS-01** and configure a Cloudflare API Token (Zone → DNS → Edit); see [Panel SSL / ACME](./ssl-cert).
+- Public IP: Let's Encrypt `shortlived` certificate (160 hours, about 6 days, renewed automatically by the panel; ports 80/443 must be reachable).
+- Manual paths: fullchain + privkey (for example files issued by certbot).
 
 Users with an existing Nginx / Caddy can bind the panel to `127.0.0.1` only and let the reverse proxy serve HTTPS. A domain is not a prerequisite for installation; an HTTP port alone does not mean HTTPS is enabled.
 

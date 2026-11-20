@@ -5,7 +5,7 @@ description: 3m-ui · 系统设置
 
 # 系统设置
 
-面板「系统设置」集中存放多数运维项（多在数据库中，一般不必改 `config.yaml`）。
+多数运维项都放在「系统设置」里，存在数据库中，一般不用动 `config.yaml`。
 
 ## 设置分组
 
@@ -27,7 +27,7 @@ description: 3m-ui · 系统设置
 
 一键注册会生成 Mihomo outbound YAML 片段。注册前需选择 **WireGuard** 或 **MASQUE**；YAML 会尽可能自动复制，并在主题化弹窗中展示。MASQUE 要求 Mihomo 构建支持 `type: masque`。
 
-API：`POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`。它**不会**注入 Routing 模板；请把 YAML 粘贴到客户端或手动添加的 outbound 中。另见 [Cloudflare WARP](./warp)。
+API：`POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`。它不会注入 Routing 模板；请把 YAML 粘贴到客户端或手动添加的 outbound 中。另见 [Cloudflare WARP](./warp)。
 
 ## 系统操作（重启与更新）
 
@@ -43,7 +43,7 @@ API：`POST /api/v1/system/restart`
 
 ### 面板更新
 
-打开「系统操作」页时，面板会自动检查 GitHub 上的最新 3m-ui 版本，**同时**查询稳定通道（`/releases/latest`）与预发通道（`/releases/tags/pre`）。
+打开「系统操作」页时，面板会自动检查 GitHub 上的最新 3m-ui 版本，同时查询稳定通道（`/releases/latest`）与预发通道（`/releases/tags/pre`）。
 
 页面显示：
 

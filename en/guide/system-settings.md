@@ -27,7 +27,7 @@ Saving SSL or listener-related options usually requires a **panel process restar
 
 One-click registration builds a Mihomo outbound YAML fragment. Choose **WireGuard** or **MASQUE** before registering. YAML is copied when possible and shown in a themed dialog. MASQUE requires a Mihomo build that supports `type: masque`.
 
-API: `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`. This is **not** injected into Routing templates; paste YAML into the client or a manual outbound. See also [Cloudflare WARP](./warp).
+API: `POST /api/v1/system/templates/warp/register?mode=wireguard|masque|both`. This is not injected into Routing templates; paste YAML into the client or a manual outbound. See also [Cloudflare WARP](./warp).
 
 ## System ops (restart & update)
 

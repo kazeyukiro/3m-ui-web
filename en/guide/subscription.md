@@ -12,7 +12,7 @@ Each user has a subscription URL of the form:
 Common formats:
 
 - Default / Clash Meta: Mihomo client YAML
-- `?target=v2ray` / `base64`: **always** Base64 of share links (required by classic clients)
+- `?target=v2ray` / `base64`: always Base64 of share links (required by classic clients)
 - `?target=singbox`: sing-box JSON
 - `?target=loon` / `surge` / `quanx`: native Loon / Surge / Quantumult X configs (no subconverter needed; unsupported protocols are emitted as comment lines)
 

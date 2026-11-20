@@ -19,7 +19,7 @@ description: 3m-ui · 核心管理
 | **Mihomo 核心** | `GET /api/v1/mihomo/logs` | 核心进程 stdout/stderr（内存环形缓冲） |
 | **面板进程** | `GET /api/v1/system/panel-logs` | 面板 `log` 输出（ACME、启动、错误等，带 `[panel]`） |
 
-均需管理员 JWT。二者**不会**混在同一接口里。
+均需管理员 JWT。二者不会混在同一接口里。
 
 ## 独立更新 Mihomo
 

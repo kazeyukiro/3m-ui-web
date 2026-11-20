@@ -28,7 +28,7 @@ API:
 
 **Routing → Server egress**
 
-1. **WARP domains**: one domain per line (or `GEOSITE:name`)  
+1. WARP domains: one domain per line (or `GEOSITE:name`)  
 2. Extra rules if needed (default `MATCH,DIRECT`)  
 3. **Save → Generate & apply** (required for domains to appear in serving `config.yaml`)
 
@@ -38,4 +38,4 @@ If WARP domains are set but no account is saved, apply fails with a clear error.
 
 ## Limits
 
-WARP does **not** guarantee streaming / AI unlock. Domain list is operator-controlled.
+WARP does not guarantee streaming / AI unlock. Domain list is operator-controlled.

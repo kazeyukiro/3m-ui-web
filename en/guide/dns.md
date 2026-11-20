@@ -14,7 +14,7 @@ They affect the Mihomo process on this host only and are never written into clie
 1. Click **Save general settings** (persisted by the panel);
 2. Click **Generate & apply** so the core reloads.
 
-Saving alone does not change the running core — the page reminds you to generate, validate and apply after a successful save.
+Saving alone does not change the running core. The page reminds you to generate, validate and apply next.
 
 ## DNS is off by default (read this on upgrade)
 

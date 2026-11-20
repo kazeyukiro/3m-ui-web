@@ -75,7 +75,7 @@ The state reflects the chain **this process actually loaded**, not a static re-r
 
 ### Relationship to `skip-cert-verify`
 
-Once a formal (non-self-signed) certificate has a complete chain, subscriptions and share links do **not** need `skip-cert-verify`. It is still set for: self-signed certificates, no certificate with an IP endpoint, Reality camouflage certificates, and an explicit user override (which always takes precedence).
+Once a formal (non-self-signed) certificate has a complete chain, subscriptions and share links do not need `skip-cert-verify`. It is still set for: self-signed certificates, no certificate with an IP endpoint, Reality camouflage certificates, and an explicit user override (which always takes precedence).
 
 ## Rescue after a bad SSL config
 

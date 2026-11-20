@@ -14,14 +14,14 @@ description: 3m-ui · 路由规则
 
 ## 批量导入规则
 
-两个范围（客户端订阅 / 服务端出站）通用，点击规则编辑器右上角 **批量导入**：
+两个范围共用规则编辑器右上角的 **批量导入**。
 
-1. **粘贴**：每行一条 Mihomo 规则，`#` 开头为注释行，空行忽略；
-2. **解析预览**：点击「解析预览」。后端按 [mihomo 官方规则文档](https://wiki.metacubex.one/config/rules) **严格校验**，不臆造任何规则类型——
-   - 合法规则**归一化**后预览（如 `GEOIP,CN` → `GEOIP,cn`、裸 IP 补 `/32`、`NETWORK,udp` → `NETWORK,UDP`）；
-   - 非法行**逐行报错**（行号 + 原因），不影响其余行；
-   - 批次内重复自动去重；
-3. **追加**：确认后插入到编辑器**末尾 MATCH 规则之前**（避免成为死规则）；与现有规则重复的条目会被跳过并在提示中说明。
+1. 粘贴规则，每行一条。`#` 开头是注释，空行会跳过。
+2. 点「解析预览」。后端按 [mihomo 官方规则文档](https://wiki.metacubex.one/config/rules) 逐行校验，不认识的类型直接报错，不猜：
+   - 合法规则归一化后预览，比如 `GEOIP,CN` → `GEOIP,cn`、裸 IP 补 `/32`、`NETWORK,udp` → `NETWORK,UDP`；
+   - 非法行给出行号和原因，其余行照常解析；
+   - 同一批里重复的条目自动去掉。
+3. 确认后追加到末尾那条 MATCH 之前——放在 MATCH 后面就永远不会命中。跟现有规则重复的会跳过并提示。
 
 单次导入上限 **5000** 条。规则目标（`PROXY`、策略组名等）需真实存在，拼写错误会在**生成并应用**时被核心拒绝。
 
@@ -31,15 +31,15 @@ description: 3m-ui · 路由规则
 
 ## 客户端订阅
 
-- 社区模板（YiXuan / echs / AIsouler 等）会 **覆盖** 规则与策略组（不是只追加）。
+- 社区模板（YiXuan / echs / AIsouler 等）会 覆盖 规则与策略组（不是只追加）。
 - 保存后请在 **客户端更新订阅**。
-- 这些规则 **不会** 合并进服务器上的 `config.yaml`。
+- 这些规则 不会 合并进服务器上的 `config.yaml`。
 
 使用 GEOSITE/GEOIP 前请在 **系统设置 → 反代与 Geo** 中更新 Geo 数据。
 
 ## 服务端出站
 
-此页**没有**客户端社区模板。在设置中注册 WARP 后，用 **WARP 域名** 列表 + 自定义规则。默认仍是 `MATCH,DIRECT`。
+此页没有客户端社区模板。在设置中注册 WARP 后，用 **WARP 域名** 列表 + 自定义规则。默认仍是 `MATCH,DIRECT`。
 
 规则要指向的出站（代理节点）在 [出站管理](./outbounds.md) 里维护；本页只负责把它们选成目标。服务端内核的 DNS 行为见 [DNS 设置](./dns.md)。
 
@@ -70,6 +70,6 @@ WARP 一键注册在 **系统设置 → 反代与 Geo**，见 [WARP](./warp.md)�
 1. **路由规则 → 服务端出站 → 规则集 → 添加规则集**（`http` / `file` / `inline`，behavior / format 按官方）  
 2. **保存 → 生成并应用**，将 `rule-providers:` 写入服务配置（默认 path：`./rule-providers/{name}.{format}`）  
 3. 规则行：`RULE-SET,<名称>,<出站>`  
-4. **热更新**：调用核心 `PUT /providers/rules/{name}`，刷新该 rule-set  
+4. 热更新：调用核心 `PUT /providers/rules/{name}`，刷新该 rule-set  
 
 接口：`ruleProviders` 字段在 `server-routing`；`PUT /api/v1/config/rule-providers/{name}/update`；`GET /api/v1/config/rule-providers/status`

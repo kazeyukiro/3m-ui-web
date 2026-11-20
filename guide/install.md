@@ -58,10 +58,10 @@ sudo env THREE_M_UI_CHANNEL=pre sh -c 'curl -fsSL https://raw.githubusercontent.
 
 首次登录改密后，在「系统设置 → 证书 / SSL」配置面板 HTTPS：可以申请域名证书，也可以使用已有证书。
 
-- **单域名**：默认 HTTP-01（公网 **80** 可达）。
-- **通配符 `*.example.com`**：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [面板 SSL / ACME](./ssl-cert)。
-- **公网 IP**：Let’s Encrypt `shortlived` 证书（160 小时，约 6 天，面板自动续期，需 80/443 可达）。
-- **手动路径**：fullchain + privkey（如 certbot 签好的文件）。
+- 单域名：默认 HTTP-01（公网 **80** 可达）。
+- 通配符 `*.example.com`：选 **DNS-01**，配置 Cloudflare API Token（Zone → DNS → Edit）；详见 [面板 SSL / ACME](./ssl-cert)。
+- 公网 IP：Let’s Encrypt `shortlived` 证书（160 小时，约 6 天，面板自动续期，需 80/443 可达）。
+- 手动路径：fullchain + privkey（如 certbot 签好的文件）。
 
 已有 Nginx / Caddy 的用户可设置面板只监听 `127.0.0.1`，由反向代理提供 HTTPS。域名不是安装前置要求；HTTP 端口本身不代表已启用 HTTPS。
 

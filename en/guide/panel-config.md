@@ -52,7 +52,7 @@ On the **Config Engine** page:
 
 | Where | Mihomo keys | Scope |
 |-------|-------------|-------|
-| **General Kernel Settings** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; **not** written into client subscriptions |
+| **General Kernel Settings** | `inbound-tfo` / `inbound-mptcp` | Server Mihomo inbounds only; not written into client subscriptions |
 | **Proxy Configuration** | `tfo` / `mptcp` | Client outbound flags ([Mihomo docs](https://wiki.metacubex.one/config/proxies/#tfo)); booleans — not `inbound-*` |
 
 **Mode** is not edited in General Kernel Settings. TCP only. API: `GET/POST /api/v1/config/visual`.

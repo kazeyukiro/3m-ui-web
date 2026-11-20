@@ -19,7 +19,7 @@ description: 3m-ui · 分享 / 订阅
 
 ## 其他操作
 
-- **导出全部订阅链接**：`GET /api/v1/users/export-links`，把 `用户名 / 分组 / 订阅地址` 按 TSV 复制到剪贴板
-- **刷新列表**、**轮换订阅 Token**：`POST /api/v1/users/{id}/subscription/rotate`
+- 导出全部订阅链接：`GET /api/v1/users/export-links`，把 `用户名 / 分组 / 订阅地址` 按 TSV 复制到剪贴板
+- 刷新列表**、**轮换订阅 Token：`POST /api/v1/users/{id}/subscription/rotate`
 
 分享链接与 URI 均含凭证，等同于账号密钥，请勿公开传播。

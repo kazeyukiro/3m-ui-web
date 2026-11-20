@@ -55,7 +55,7 @@ Every outbound has a **Test connection** button on desktop and mobile. It opens 
 
 - Reuses the isolated Mihomo client and the fixed HTTP 204 targets of the inbound test;
 - Tests the **saved** settings, including required dialer proxies and groups (and Settings-managed WARP);
-- Does **not** require applying the configuration and never reloads the serving core;
+- Does not require applying the configuration and never reloads the serving core;
 - Credentials and WARP keys stay on the server and are never returned in the result;
 - Results describe this server's route to the test targets — not every destination;
 - Refreshing the page or changing the outbound clears the displayed result;
