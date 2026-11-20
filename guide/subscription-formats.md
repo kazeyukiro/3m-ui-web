@@ -96,11 +96,11 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 | TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ 注释降级（不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
-| http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ❌ 注释降级 |
+| http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ✅ `obfs=http`（仅明文） |
 | XHTTP | ✅ VLESS/VMess/Trojan：`transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`（含 `splithttp`） | ❌ 注释降级 |
 | HTTPUpgrade / mKCP | ❌ 注释降级 | ❌ 注释降级（官方明确不支持） | ❌ 注释降级 |
 | quic / kcp 等 | ❌ 注释降级 | ❌ 注释降级 | ❌ 注释降级 |
-| VLESS Encryption | ❌ 注释降级 | ✅ `encryption=` 透传 | ❌ 注释降级 |
+| VLESS Encryption | ❌ 忽略该字段 | ✅ `encryption=` 透传 | ❌ 忽略该字段 |
 
 Loon 的 XHTTP 依据[官方文档](https://nsloon.app/docs/Node)，作为 VLESS、VMess、Trojan 的 `transport` 取值输出，字段为 `transport=xhttp`、`path`、`host`、`over-tls`、`alpn` 与 `xhttp-mode`。`xhttp-mode` 接受 `auto`、`packet-up`、`stream-up`、`stream-one`（默认 `auto`），超出该集合的取值整行降级；VLESS 的 XHTTP 节点按官方说明省略 `flow`。分享链接中的 `mode` 映射到 `xhttp-mode`。目前仅导出官方文档列出的基础参数，其余 `xhttp-*` 高级参数尚未映射，不输出。
 
@@ -115,7 +115,7 @@ Surge 的 VLESS 按传输方式区分，支持组合如下（[官方手册](http
 
 VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支持。Surge 在 REALITY 下不输出 `tls=true` 与 `skip-cert-verify`，`fp` / `spx` 在任何情况下均不上送。Trojan 与 VMess 的 REALITY 仍按注释降级。
 
-对于取值集合固定的参数（`flow`、`encryption`、`reality-short-id`、`grpc-mode`、`xhttp-mode`、`ws-path`、VMess 的 `encrypt-method`、SS 的加密方式与 `obfs`，以及 Loon 的 cipher / flow / obfs），若分享链接中的取值超出该集合，则整行降级为注释，而非省略参数并采用默认值。例如，`scy=auto` 的 VMess 节点在 Surge 中将被跳过。官方映射表中的 `extra`、`pcs`、`vcn` 尚未实现映射，暂不输出。
+对于取值集合固定的参数（`flow`、`reality-short-id`、`grpc-mode`、`xhttp-mode`、`ws-path`、VMess 的 `encrypt-method`、SS 的加密方式与 `obfs`，以及 Loon 的 cipher / flow / obfs），若分享链接中的取值超出该集合，则整行降级为注释，而非省略参数并采用默认值。例如，`scy=auto` 的 VMess 节点在 Surge 中将被跳过。`encryption` 的取值校验只存在于 Surge（须符合 `mlkem768x25519plus.*` 格式）；Loon 与 Quantumult X 不输出该字段，也不因它降级。官方映射表中的 `extra`、`pcs`、`vcn` 尚未实现映射，暂不输出。
 
 以下三处与 Loon 文档示例存在差异，系依据真机测试结果保留：AnyTLS 的 REALITY 参数降级为仅保留密码，Trojan REALITY 统一输出 `over-tls=true`，Hysteria2 单端口仍输出 `server-ports`（详见下文）。
 
