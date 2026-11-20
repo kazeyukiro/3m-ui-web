@@ -5,7 +5,7 @@ description: 3m-ui · DNS control for the panel's Mihomo core
 
 # DNS settings
 
-**DNS settings** control resolution on the **panel's Mihomo core**, under **Config Engine → General Kernel Settings → DNS settings**. Nothing here is exported to client subscriptions.
+**DNS settings** manage resolution on the panel's Mihomo core only; changes here do not modify client subscriptions. The controls are under **Config Engine → General Kernel Settings → DNS settings**.
 
 ## Saving and applying
 
