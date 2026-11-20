@@ -31,9 +31,9 @@ description: 3m-ui · 路由规则
 
 ## 客户端订阅
 
-- 社区模板（YiXuan / echs / AIsouler 等）会 覆盖 规则与策略组（不是只追加）。
+- 社区模板（YiXuan / echs / AIsouler 等）会覆盖规则与策略组（不是只追加）。
 - 保存后请在 **客户端更新订阅**。
-- 这些规则 不会 合并进服务器上的 `config.yaml`。
+- 这些规则不会合并进服务器上的 `config.yaml`。
 
 使用 GEOSITE/GEOIP 前请在 **系统设置 → 反代与 Geo** 中更新 Geo 数据。
 

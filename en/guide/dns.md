@@ -5,9 +5,7 @@ description: 3m-ui · DNS control for the panel's Mihomo core
 
 # DNS settings
 
-**DNS settings** control the DNS behaviour of the **panel's Mihomo core**. They live under **Config Engine → General Kernel Settings → DNS settings**.
-
-They affect the Mihomo process on this host only and are never written into client subscriptions.
+**DNS settings** control resolution on the **panel's Mihomo core**, under **Config Engine → General Kernel Settings → DNS settings**. Nothing here is exported to client subscriptions.
 
 ## Saving and applying
 
@@ -18,7 +16,7 @@ Saving alone does not change the running core. The page reminds you to generate,
 
 ## DNS is off by default (read this on upgrade)
 
-**DNS is disabled by default.** On a fresh install the switch is off and the generated configuration contains `dns: {enable: false}`.
+On a fresh install DNS is off — the Enable DNS switch stays at its default and the generated config contains `dns: {enable: false}`.
 
 - Before this feature existed, the DNS section came from the default template (enabled, `fake-ip`, built-in resolvers);
 - Now DNS follows these settings, and the default is off;
@@ -96,9 +94,9 @@ The backend validates on save and returns 400 naming the offending field:
 
 ## How it interacts with other configuration
 
-- **It overrides custom fragments.** Saved panel DNS wins over a `dns:` section in a custom fragment regardless of fragment order — hand-written DNS in a fragment is dropped silently. Move it here if it must apply to the server core.
-- **WARP forces DNS on.** With WARP domain or global routing enabled, the generated configuration turns DNS on even when this switch is off.
-- **It never reaches subscriptions.** Server DNS settings are not exported to client subscriptions; subscription DNS stays on the subscription side.
+- Overrides custom fragments: saved panel DNS wins over a `dns:` section in a custom fragment regardless of fragment order — hand-written DNS in a fragment is dropped silently. Move it here if it must apply to the server core.
+- WARP forces DNS on: with WARP domain or global routing enabled, the generated configuration turns DNS on even when this switch is off.
+- Not exported to subscriptions: server DNS settings stay on the server; what the subscription uses is decided on the subscription side.
 
 ## Related
 
