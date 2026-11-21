@@ -53,10 +53,6 @@ Rules written in the **Server egress** scope affect only the panel's Mihomo proc
 
 Update the Geo data under **System settings → Proxy & Geo** before using GEOSITE or GEOIP rules.
 
-## On site auditing
-
-The panel provides splitting and blocking at the rule level. It does not record the domains visited by each user or produce an access log. A rule decides whether a connection is allowed or dropped, but leaves no record of who initiated it or what was visited. This capability is outside the panel's current scope.
-
 ## See also
 
 - [Routing](./routing.md): fields of both scopes, batch-import details, and rule providers
