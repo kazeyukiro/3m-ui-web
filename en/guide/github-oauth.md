@@ -39,8 +39,8 @@ title: GitHub OAuth
 | GET | `/api/v1/auth/oauth/github/callback` | Callback; success redirects to `/login?oauth_token=...`, failure to `/login?oauth_error=...` |
 | GET/PUT | `/api/v1/auth/oauth/github/settings` | Admin read/write of the configuration |
 
-## Notes
-
+::: warning Notes
 - Disable OAuth anytime to fall back to password (+ optional TOTP)
 - Keep the panel URL stable: changing host, `public_url` or `web_path` breaks the callback until the GitHub App settings are updated
 - The panel server must be able to reach `github.com` and `api.github.com`
+:::

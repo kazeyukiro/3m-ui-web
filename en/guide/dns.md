@@ -18,9 +18,11 @@ Saving alone does not change the running core. The page reminds you to generate,
 
 On a fresh install DNS is off — the Enable DNS switch stays at its default and the generated config contains `dns: {enable: false}`.
 
+::: warning Read this before upgrading
 - Before this feature existed, the DNS section came from the default template (enabled, `fake-ip`, built-in resolvers);
 - Now DNS follows these settings, and the default is off;
 - If you had already saved DNS in the panel, that saved value is still used — it is not switched off behind your back.
+:::
 
 Enable it manually if you rely on `fake-ip`, `nameserver-policy`, `fallback` or `respect-rules` — for example domain-based routing or per-domain resolvers. WARP domain or global routing is unaffected; see "How it interacts with other configuration" below.
 

@@ -37,11 +37,11 @@ Mirrored node names carry an `R<remote-id>-` prefix so they never collide with l
 - Disable a remote: its mirrors are retracted from every subscription immediately; user bindings are kept, and nodes come back automatically once the remote is re-enabled — no re-binding needed.
 - Delete a remote: mirrors and all user bindings pointing at them are removed; subscriptions no longer contain any node from that remote.
 
-## Safety
-
+::: warning Notes on using Cluster
 - Prefer HTTPS and restricted API tokens on remotes.
 - Health checks skip dead remotes so one outage does not empty the whole subscription.
 - Confirm the port and name conflict policy before pushing, so existing remote nodes are not overwritten.
 - Mirrors marked "remote off" in the binding modal do not feed subscriptions until the parent remote is enabled again.
+:::
 
 Button and field names follow the current panel's Cluster page.

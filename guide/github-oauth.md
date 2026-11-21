@@ -39,8 +39,8 @@ title: GitHub OAuth
 | GET | `/api/v1/auth/oauth/github/callback` | 回调；成功跳 `/login?oauth_token=...`，失败跳 `/login?oauth_error=...` |
 | GET/PUT | `/api/v1/auth/oauth/github/settings` | 管理员读写配置 |
 
-## 注意事项
-
+::: warning 注意事项
 - 随时可关闭 OAuth，回退到密码登录（+ 可选 TOTP）
 - 保持面板 URL 稳定：修改 host、`public_url` 或 `web_path` 后，回调会失配，需同步更新 GitHub App 设置
 - 面板服务器需要能访问 `github.com` 与 `api.github.com`
+:::

@@ -13,11 +13,11 @@ On a successful upload the panel exits (`os.Exit(0)`), and systemd's `Restart=al
 
 The handler validates the SQLite magic header (`"SQLite format 3\0"`) before replacing the DB file, so corrupt or non-DB uploads are rejected with HTTP **400** (not 500). Stale `-journal` / `-wal` / `-shm` sidecars are removed automatically to prevent rollback.
 
-Cautions:
-
+::: danger Backup and restore
 - Backups can contain keys, Bot Tokens and 2FA secrets — treat them as confidential files
 - The panel restarts itself after a restore; wait before logging in again
 - Online backups use SQLite `VACUUM INTO` to produce a self-contained, consistent snapshot with no write freeze; for a full-machine restore, still take a CLI snapshot first
+:::
 
 ## On-disk install snapshots
 

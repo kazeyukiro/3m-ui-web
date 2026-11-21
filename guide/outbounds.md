@@ -61,9 +61,13 @@ UI 会按 Mihomo 的命名下发：Shadowsocks → `ss`，SOCKS → `socks5`，T
 - 刷新页面或修改出站配置会清掉已显示的结果；
 - 禁用状态的出站不能测。
 
-> **凭证错误不会"绕过"**：实测密码写错时结果为 `unavailable`，节点侧看到的是认证被拒，流量不会悄悄走直连。`dialer-proxy` 链也一样：两跳链路实测会在第一跳日志里出现 `CONNECT <第二跳地址>`，说明确实走了链，而不是只连最后一跳。
+::: tip 凭证错误不会静默绕过
+实测密码写错时结果为 `unavailable`，节点侧看到的是认证被拒，流量不会悄悄走直连。`dialer-proxy` 链也一样：两跳链路实测会在第一跳日志里出现 `CONNECT <第二跳地址>`，说明确实走了链，而不是只连最后一跳。
+:::
 
-> **测试报 `client_start_failed`**：连接测试用的 Mihomo 二进制必须在面板允许的路径前缀内（`/usr/local/lib/3m-ui/`、`/usr/local/bin/`、`/usr/bin/`、`/opt/`）。把核心放在临时目录会出现这个错误，移进上述目录即恢复。
+::: warning 测试报 `client_start_failed`
+连接测试用的 Mihomo 二进制必须在面板允许的路径前缀内（`/usr/local/lib/3m-ui/`、`/usr/local/bin/`、`/usr/bin/`、`/opt/`）。把核心放在临时目录会出现这个错误，移进上述目录即恢复。
+:::
 
 ## 存储与自定义片段
 

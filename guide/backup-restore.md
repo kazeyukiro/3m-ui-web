@@ -13,11 +13,11 @@ description: 3m-ui · 备份与恢复
 
 处理函数在替换数据库文件前校验 SQLite magic header（`"SQLite format 3\0"`），损坏或非数据库文件返回 HTTP **400**（不是 500）；陈旧的 `-journal` / `-wal` / `-shm` 辅助文件会自动清理，避免回滚。
 
-注意：
-
+::: danger 备份与恢复
 - 备份可能含密钥、Bot Token、2FA 等，请当机密文件保管
 - 恢复后面板会自行重启，请等待再登录
 - 在线备份通过 SQLite `VACUUM INTO` 生成自包含的一致性快照，无需停写；整机恢复仍建议先做一份 CLI 快照
+:::
 
 ## 磁盘安装快照
 

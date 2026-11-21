@@ -61,9 +61,13 @@ Every outbound has a **Test connection** button on desktop and mobile. It opens 
 - Refreshing the page or changing the outbound clears the displayed result;
 - Disabled outbounds cannot be tested.
 
-> **Wrong credentials do not silently bypass:** with a bad password the result is `unavailable` and the node sees the authentication rejected — traffic does not quietly fall through to direct. A `dialer-proxy` chain behaves the same way: a two-hop chain logs `CONNECT <second hop>` on the first hop, proving the first hop is actually used.
+::: tip Wrong credentials do not silently bypass
+With a bad password the result is `unavailable` and the node sees the authentication rejected — traffic does not quietly fall through to direct. A `dialer-proxy` chain behaves the same way: a two-hop chain logs `CONNECT <second hop>` on the first hop, proving the first hop is actually used.
+:::
 
-> **`client_start_failed`**: the Mihomo binary used by the test must live under one of the panel's allowed prefixes (`/usr/local/lib/3m-ui/`, `/usr/local/bin/`, `/usr/bin/`, `/opt/`). A core installed in a temporary directory produces this error; move it into one of those paths and the test works again.
+::: warning Test reports `client_start_failed`
+The Mihomo binary used by the test must live under one of the panel's allowed prefixes (`/usr/local/lib/3m-ui/`, `/usr/local/bin/`, `/usr/bin/`, `/opt/`). A core installed in a temporary directory produces this error; move it into one of those paths and the test works again.
+:::
 
 ## Storage and custom fragments
 

@@ -125,8 +125,8 @@ Otherwise install the stable channel.
 若某一步失败，请按报错信息给出排查步骤，不要臆造命令，也不要改用非官方安装源。
 ```
 
-## Safety notes
-
+::: warning Safety notes
 The prompts only guide the official one-line installer from this repository's `scripts/install.sh`; downloads are verified against `SHA256SUMS`. Setting `THREE_M_UI_VERIFY_COSIGN=1` makes the installer verify the release signature with `cosign`, which must already be installed.
 
 Do not let an AI assistant rewrite download URLs, append unknown flags, or switch to third-party mirrors, since that bypasses verification. Full install, upgrade and recovery instructions are in [Install](./install).
+:::

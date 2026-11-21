@@ -200,7 +200,7 @@ Subcommands are unchanged and safe to use from scripts and cron:
 3m-ui update [vX.Y.Z|pre] | channel stable|pre [--update]
 ```
 
-## Notes
-
+::: tip Notes
 - Opening firewall ports asks for confirmation first, so a stray keypress cannot widen your public exposure.
 - If a bad panel config makes the web UI unreachable, use **16. Reset-config (SSH rescue)** to fall back to HTTP.
+:::

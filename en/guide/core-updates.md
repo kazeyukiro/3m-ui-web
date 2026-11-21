@@ -27,11 +27,11 @@ The updater queries roughly the latest 30 GitHub Releases and skips drafts and a
 
 Do not confuse the two. If something breaks, restore the previous core first or reinstall a known-good release bundle.
 
-## Safety
-
+::: tip Safety advice
 - Prefer stable unless you are testing
 - Back up the data directory before major upgrades
 - If the core fails to start, roll back to the previous binary or reinstall the last good release
+:::
 
 ## Related
 
