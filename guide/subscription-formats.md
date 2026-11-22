@@ -95,6 +95,7 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 | Trojan（tls/ws） | ✅ | ✅ | ✅（tls 经 `over-tls=true` + `tls-host`，ws 经 `obfs=wss`） |
 | TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ 注释降级（不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
+| Mieru | ❌ 注释降级 | ❌ 注释降级 | ✅ `username=` + `password=`（见下文） |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ✅ `obfs=http`（仅明文） |
 | XHTTP | ✅ VLESS/VMess/Trojan：`transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`（含 `splithttp`） | ❌ 注释降级 |
@@ -119,11 +120,17 @@ VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支
 
 以下三处与 Loon 文档示例存在差异，系依据真机测试结果保留：AnyTLS 的 REALITY 参数降级为仅保留密码，Trojan REALITY 统一输出 `over-tls=true`，Hysteria2 单端口仍输出 `server-ports`（详见下文）。
 
+> Loon 的 AnyTLS 节点会把分享链接中的客户端指纹（`fp`）输出为 `tls-profile`，取值按 Loon 文档映射：`chrome` 保持 `chrome`，`safari` / `ios` 映射为 `safari-ios18`，未知取值不输出。AnyTLS 依靠 TLS 指纹规避检测；缺少该字段时 Loon 会使用默认指纹，与按 Chrome 指纹配置的监听端握手失败，表现为节点超时。Quantumult X 官方示例没有 `tls-profile` 字段，因此 QX 的 AnyTLS 行不输出该项。
+>
 > SS 的 SIP003 包装插件中，kcptun / shadow-tls / restls / jls 在三款客户端中均无对应表达，按注释降级处理。
 >
 > Loon 的 Hysteria2 节点**始终输出** `server-ports`（Loon 缺少该字段时不发起拨号）：存在端口跳跃时输出区间（`server-ports="443,5000:6000"`，冒号为区间分隔符），单端口时回落至主端口（`server-ports="13290"`）。Surge 的 `port-hopping` 为可选参数，无跳跃时不输出。
 >
-> Quantumult X 的 Hysteria2 节点按 QX 1.9.0（965）官方示例语法生成，例如 `hysteria2=example.com:443, password=pwd, tls-host=apple.com, tls-verification=true, udp-relay=true, tag=hy2-01`。QX 1.9.0 起支持 Hysteria 2，涵盖 TCP/UDP、Salamander 混淆与端口跳跃。字段仅在分享链接带有对应来源时输出：`port-hopping` 取自端口跳跃区间（逗号分隔），`port-hopping-interval` 仅在 5–3600 秒区间内输出，`salamander-password` 对应 `salamander` 混淆，`tls-host` 取自 SNI，`download-bandwidth` 为下载带宽。`tls-verification` 按官方示例显式输出：验证证书的链接为 `true`，不安全链接为 `false`。`tls-alpn` 为长度前缀的十六进制编码（如 `h3` 编码为 `026833`）。混淆仅接受 `salamander`，其他取值整行降级为注释。
+> Quantumult X 的 Hysteria2 节点按 QX 1.9.0（965）官方示例语法生成，例如 `hysteria2=example.com:443, password=pwd, tls-host=apple.com, tls-verification=true, udp-relay=true, tag=hy2-01`。QX 1.9.0 起支持 Hysteria 2，涵盖 TCP/UDP、Salamander 混淆与端口跳跃。字段仅在分享链接带有对应来源时输出：`port-hopping` 取自端口跳跃区间（逗号分隔），`port-hopping-interval` 仅在 5–3600 秒区间内输出，`salamander-password` 对应 `salamander` 混淆，`tls-host` 取自 SNI，`download-bandwidth` 为下载带宽。`tls-verification` 按官方示例显式输出：验证证书的链接为 `true`，不安全链接为 `false`。混淆仅接受 `salamander`，其他取值整行降级为注释。
+>
+> Hysteria 2 始终在 QUIC 上运行 TLS 1.3，官方说明明确不需要 `over-tls` 与 `tls13`，四个官方示例也只列出上述字段。因此即便分享链接带有 `alpn`、证书固定（`tls-pubkey-sha256` / `tls-cert-sha256`）或会话复用开关，QX 的 Hysteria 2 行也**不输出**这些仅属于标准 TLS（`over-tls`）的参数；否则导入节点会报语法错误。面板默认写入的 `alpn=h3` 会在这一环节被忽略。
+>
+> Quantumult X 的 Mieru 节点按官方示例语法生成，例如 `mieru=example.com:8964, username=name, password=pwd, tag=mieru-01`。面板的 Mieru 监听只提供传输方式与用户凭据，故仅输出官方纯 TCP 形式：`username`、`password` 与 `tag`；当分享链接指定 `transport=udp` 时，按官方说明补上 `udp-relay=true` 与 `udp-over-tcp=true`（Mieru 的 UDP 中继走 TCP，需同时开启两者）。由于面板不提供 TLS／REALITY／快速打开的配置来源，这些形式不予输出。Loon 与 Surge 的官方文档未列出 Mieru 节点格式，相应行降级为注释。
 
 ## TUIC / Hysteria2 分享链
 

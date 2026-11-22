@@ -95,6 +95,7 @@ All three are generated in native format and do not require a subconverter.
 | Trojan (tls/ws) | ✅ | ✅ | ✅ (tls via `over-tls=true` + `tls-host`, ws via `obfs=wss`) |
 | TUIC v4 / v5 | ❌ commented out | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ commented out (no TUIC) |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
+| Mieru | ❌ commented out | ❌ commented out | ✅ `username=` + `password=` (see below) |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http transport (vmess/vless) | ✅ `transport=http` | ❌ commented out | ✅ `obfs=http` (plain text only) |
 | XHTTP | ✅ VLESS/VMess/Trojan: `transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` (incl. `splithttp`) | ❌ commented out |
@@ -119,11 +120,17 @@ For parameters with a fixed value set (`flow`, `reality-short-id`, `grpc-mode`, 
 
 The following three behaviours differ from the Loon documentation examples and are retained on the basis of real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always emits `over-tls=true`, and Hysteria2 still emits `server-ports` for a single port (see the note below).
 
+> Loon AnyTLS nodes carry the client fingerprint from the share link (`fp`) as `tls-profile`, mapped to Loon's vocabulary: `chrome` stays `chrome`, `safari` / `ios` map to `safari-ios18`, and unknown values are omitted. AnyTLS relies on the TLS fingerprint to evade detection; without this field Loon uses its default fingerprint, which fails the handshake against a Chrome-profiled listener and appears as a node timeout. Quantumult X's official sample has no `tls-profile` field, so QX AnyTLS lines do not emit it.
+>
 > SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are handled as commented-out entries.
 >
 > Loon Hysteria 2 nodes always carry `server-ports`, as Loon does not dial without the field: a hopping range is rendered as `server-ports="443,5000:6000"` (a colon separates ranges), and a single-port node falls back to the main port (`server-ports="13290"`). Surge's `port-hopping` is optional and is emitted only when hopping exists.
 >
-> Quantumult X Hysteria 2 nodes follow the official QX 1.9.0 (965) example syntax, for example `hysteria2=example.com:443, password=pwd, tls-host=apple.com, tls-verification=true, udp-relay=true, tag=hy2-01`. QX supports Hysteria 2 from 1.9.0, covering TCP/UDP, Salamander obfuscation and port hopping. A field is emitted only when the share link carries its source: `port-hopping` comes from the hopping range (comma-separated), `port-hopping-interval` is emitted only within 5–3600 seconds, `salamander-password` corresponds to `salamander` obfuscation, `tls-host` comes from the SNI, and `download-bandwidth` is the download bandwidth. `tls-verification` is always emitted per the official examples: `true` for a certificate-verified link, `false` for an insecure one. `tls-alpn` is length-prefixed hexadecimal (for example `h3` encodes to `026833`). Only `salamander` obfuscation is accepted; any other value degrades the whole line to a comment.
+> Quantumult X Hysteria 2 nodes follow the official QX 1.9.0 (965) example syntax, for example `hysteria2=example.com:443, password=pwd, tls-host=apple.com, tls-verification=true, udp-relay=true, tag=hy2-01`. QX supports Hysteria 2 from 1.9.0, covering TCP/UDP, Salamander obfuscation and port hopping. A field is emitted only when the share link carries its source: `port-hopping` comes from the hopping range (comma-separated), `port-hopping-interval` is emitted only within 5–3600 seconds, `salamander-password` corresponds to `salamander` obfuscation, `tls-host` comes from the SNI, and `download-bandwidth` is the download bandwidth. `tls-verification` is always emitted per the official examples: `true` for a certificate-verified link, `false` for an insecure one. Only `salamander` obfuscation is accepted; any other value degrades the whole line to a comment.
+>
+> Hysteria 2 always runs TLS 1.3 over QUIC: the official notes state that `over-tls` and `tls13` are unnecessary, and all four official examples list only the fields above. Therefore, even when the share link carries an `alpn`, certificate pinning (`tls-pubkey-sha256` / `tls-cert-sha256`) or session-resume flags, the QX Hysteria 2 line **omits** these standard-TLS (`over-tls`) parameters; exporting them causes the imported node to fail with a syntax error. The panel's default `alpn=h3` is ignored at this stage.
+>
+> Quantumult X Mieru nodes follow the official example syntax, for example `mieru=example.com:8964, username=name, password=pwd, tag=mieru-01`. The panel's Mieru listener provides only the transport and user credentials, so only the official plain-TCP form is emitted: `username`, `password` and `tag`. When the share link specifies `transport=udp`, `udp-relay=true` and `udp-over-tcp=true` are added per the official note (Mieru's UDP relay runs over TCP and needs both flags). Because the panel provides no TLS / REALITY / fast-open source fields, those forms are not emitted. Loon and Surge do not document a Mieru node format, so their lines are commented out.
 
 ## TUIC / Hysteria2 share links
 
