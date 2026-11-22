@@ -85,7 +85,7 @@ All three are generated in native format and do not require a subconverter.
 
 | Protocol | Loon | Surge | Quantumult X |
 |---|---|---|---|
-| Hysteria2 (salamander / port hopping / download bandwidth) | ✅ `salamander-password`, `server-ports`, `download-bandwidth` | ✅ `salamander-password`, `port-hopping`, `download-bandwidth` | ✅ `password`, `salamander-password`, `port-hopping`, `port-hopping-interval`, `download-bandwidth` (see below) |
+| Hysteria2 (salamander / port hopping / download bandwidth) | ✅ `salamander-password`, `server-ports`, `download-bandwidth` | ✅ `salamander-password`, `port-hopping`, `download-bandwidth` | ✅ `password`, `salamander-password`, `port-hopping`, `port-hopping-interval`, `tls-verification`, `download-bandwidth` (see below) |
 | Shadowsocks (incl. simple-obfs) | ✅ `obfs-name/obfs-host` | ✅ `ss` + `obfs/obfs-host/obfs-uri` | ✅ `shadowsocks=` + `obfs=http/tls` |
 | VMess | ✅ | ✅ `username=` + optional `encrypt-method` | ✅ `method` limited to `none`/`aes-128-gcm`/`chacha20-poly1305` |
 | VLESS | ✅ | ✅ `vless,host,port,username=` (iOS 6.0.0+ / Mac 6.12.0+) | ✅ `vless-flow=` |
@@ -123,7 +123,7 @@ The following three behaviours differ from the Loon documentation examples and a
 >
 > Loon Hysteria 2 nodes always carry `server-ports`, as Loon does not dial without the field: a hopping range is rendered as `server-ports="443,5000:6000"` (a colon separates ranges), and a single-port node falls back to the main port (`server-ports="13290"`). Surge's `port-hopping` is optional and is emitted only when hopping exists.
 >
-> Quantumult X Hysteria 2 nodes follow Sub-Store's QX output format, for example `hysteria2=host:port, password=…, port-hopping=…, salamander-password=…, tls-host=…, tls-alpn=…, udp-relay=true, tag=…`. A field is emitted only when the share link carries its source: `port-hopping` comes from the hopping range (comma-separated), `port-hopping-interval` is emitted only within 5–3600 seconds, `tls-alpn` is length-prefixed hexadecimal (for example `h3` encodes to `026833`), and `tls-verification=false` corresponds to an insecure link. Only `salamander` obfuscation is accepted; any other value degrades the whole line to a comment.
+> Quantumult X Hysteria 2 nodes follow the official QX 1.9.0 (965) example syntax, for example `hysteria2=example.com:443, password=pwd, tls-host=apple.com, tls-verification=true, udp-relay=true, tag=hy2-01`. QX supports Hysteria 2 from 1.9.0, covering TCP/UDP, Salamander obfuscation and port hopping. A field is emitted only when the share link carries its source: `port-hopping` comes from the hopping range (comma-separated), `port-hopping-interval` is emitted only within 5–3600 seconds, `salamander-password` corresponds to `salamander` obfuscation, `tls-host` comes from the SNI, and `download-bandwidth` is the download bandwidth. `tls-verification` is always emitted per the official examples: `true` for a certificate-verified link, `false` for an insecure one. `tls-alpn` is length-prefixed hexadecimal (for example `h3` encodes to `026833`). Only `salamander` obfuscation is accepted; any other value degrades the whole line to a comment.
 
 ## TUIC / Hysteria2 share links
 
