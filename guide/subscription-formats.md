@@ -20,9 +20,31 @@ title: 订阅格式与 target
 | `singbox` / `sing-box` / `sfa` / `sfm` | sing-box JSON（含默认 TUN、DNS、路由等，适配较新 sing-box 迁移）及节点 outbound |
 | `loon` | Loon 插件配置（`[Proxy]` 段，原生格式，见下文） |
 | `surge` | Surge 配置文件（`[General]`/`[Proxy]`/`[Proxy Group]`/`[Rule]` 迷你档，原生格式，见下文） |
-| `quanx` / `quantumult` / `qx` | Quantumult X `[server_local]` 段（原生格式，见下文） |
+| `quanx` / `quantumult` / `qx` | Quantumult X 迷你档：`[general]` + `[server_local]`（原生格式，见下文） |
+| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X 节点片段：只有节点行，没有段头，供「引用资源（`server_remote`）」使用 |
 
 部分客户端有硬编码短路径，也一并注册：`/api/v1/client/json/<token>` 固定 singbox、`/api/v1/client/clash/<token>` 固定 clash、`/api/v1/client/v2ray/<token>` 固定 v2ray；根级 `/sub/<token>`、`/json/<token>`、`/clash/<token>`、`/v2ray/<token>` 等效。短路径只覆盖 clash/v2ray/singbox 三种，其余格式一律用 `?target=`。
+
+`qx-nodes` 与 `quanx` 的节点行完全相同，差别只在段头：QX 的「引用资源」把远端文件当作插入片段解析，带 `[general]` / `[server_local]` 的完整档会被判为 `Response invalid`，所以该 target 不输出任何段头。
+
+## 地址族与诊断
+
+Quantumult X 的原生输出（`quanx` 与 `qx-nodes`）默认把 UDP 协议的拨号地址改写为 IPv4 字面量：Hysteria2、TUIC、ShadowQUIC 走 QUIC，主机名同时存在 A 与 AAAA 记录时客户端可能优先 IPv6，而服务端 IPv6 路径不可达就会一直超时；同一主机上的 TCP 协议不受影响。TLS 的 SNI 仍是原域名，证书校验不变；域名解析失败时保留主机名，不会因此丢节点。Loon 与 Surge 默认不改写。
+
+`?af=` 覆盖该策略：
+
+| 取值 | 行为 |
+|---|---|
+| 缺省 | 按客户端默认：QX 系列固定 IPv4，Loon / Surge 保持主机名 |
+| `4` / `ipv4` / `v4` | 强制把 UDP 协议改写为 IPv4 字面量 |
+| `auto` / `0` / `host` | 不改写，输出与节点导出完全一致的主机名 |
+| `6` / `ipv6` | 不支持，返回 422 |
+
+需要逐节点核对渲染结果时用 `?target=diag`，可加 `&client=` 指定 `loon` / `surge` / `quanx` / `qx-nodes`（缺省 `qx-nodes`），地址族策略同样读 `?af=`。响应为 JSON，每个节点给出最终节点行、拨号 host、是否跳过及原因、地址族改写说明；它只报告结果，不生成配置。
+
+```
+/api/v1/client/sub/<token>?target=diag&client=qx-nodes&af=auto
+```
 
 ## UA 自动识别
 
@@ -46,6 +68,8 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 内核不低于 1.14 时输出显式 `http_clients`，`detour` 指向 `proxy`，与隐式行为一致；低于 1.14 时省略该字段。版本取自 User-Agent 中的 `sing-box x.y.z`（SFA 形如 `SFA (sing-box 1.14.4; language zh_CN)`），可用 `?sbver=1.14` 覆盖。
 
 兼容下限为 sing-box 1.12.0。1.11 及更早版本使用已被移除的旧 DNS 服务器格式，无法与 1.12 起的新格式共存。
+
+节点 outbound 直接由节点模型生成，不经过 Clash / Mihomo 的中间字段，分享链接参数与官方 outbound 字段可逐一对照（字段名以 sing-box 的 outbound 参考为准）。VLESS 的 `encryption` 只在取值不是 `none` 时输出：它是较新的字段，旧内核会把它当作未知字段而拒绝整份配置，省略则等价于默认值。
 
 ### 订阅链接写法
 
@@ -80,6 +104,8 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 - Loon：`[Proxy]` 段每行定义一个节点，密码与 UUID 均以双引号包裹。官方仅在取值含英文逗号时作强制要求，但格式行与全部示例均采用该写法，且 Loon 保存配置时会自动补齐，例如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
 - Surge：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
 - Quantumult X：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
+
+三家客户端共用同一套装配流程：枚举用户绑定的节点、应用地址族策略、重名去重、跳过不支持的协议、渲染节点行、补段头段尾。因此同一节点在三种格式里是否出现、叫什么名字总是一致的。来自远程镜像的节点统一命名为 `R<远程服务器 ID>-原名称`，与 Clash 导出相同，不取分享链接里的 fragment（那是上游客户端的标签）。
 
 ### 协议支持矩阵
 
@@ -120,10 +146,32 @@ VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支
 
 以下三处与 Loon 文档示例存在差异，系依据真机测试结果保留：AnyTLS 的 REALITY 参数降级为仅保留密码，Trojan REALITY 统一输出 `over-tls=true`，Hysteria2 单端口仍输出 `server-ports`（详见下文）。
 
+Quantumult X 的 Hysteria2 行只写 `tls-host` 与 `tls-verification`；后者恒输出，`insecure` 链接为 `false`。`tls-alpn`、`tls-pubkey-sha256`、`tls-cert-sha256` 一类键属于 QX 的标准 TLS（`over-tls`）行，Hysteria2 解析器不接受，因此面板内部的 `alpn=h3` 不会写成 `tls-alpn`。
+
 > SS 的 SIP003 包装插件中，kcptun / shadow-tls / restls / jls 在三款客户端中均无对应表达，按注释降级处理。
 >
 > Loon 的 Hysteria2 节点**始终输出** `server-ports`（Loon 缺少该字段时不发起拨号）：存在端口跳跃时输出区间（`server-ports="443,5000:6000"`，冒号为区间分隔符），单端口时回落至主端口（`server-ports="13290"`）。Surge 的 `port-hopping` 为可选参数，无跳跃时不输出。
 
-## TUIC / Hysteria2 分享链
+## 分享链接（URI）
 
-导出 URI 会带上客户端常用参数（`sni`、`alpn`、`congestion_control`、`allow_insecure` / `allowInsecure` 等）。部分旧版 v2rayNG 能列出 `tuic://` 但无法拨号 QUIC，这类协议更建议 Clash Meta / NekoBox / Hiddify 等。
+每种协议的链接语法只描述一次：scheme、userinfo 形态、路径，以及该语法定义的参数。编码时只输出这些参数，listener 的其它设置不会混进链接、被客户端当成协议字段。
+
+| 协议 | 语法依据 | 链接携带的参数 |
+|---|---|---|
+| Shadowsocks | SIP002 | `plugin` |
+| Hysteria2 | 官方客户端 `share` 输出 | `obfs`、`obfs-password`、`sni`、`insecure`、`pinSHA256`、`ech` |
+| AnyTLS | anytls-go 的 URI 方案文档 | `sni`、`insecure` |
+| VLESS / Trojan / TUIC | 客户端实现约定（Xray / v2rayN、TUIC 客户端），无规范性文档 | 传输与 TLS 参数，如 `type`、`path`、`host`、`security`、`pbk`、`sid`、`flow`、`alpn`、`congestion_control` |
+| VMess | v2rayN 的 base64(JSON) 格式 | JSON 内的 `net`、`path`、`host`、`tls`、`sni` 等 |
+| Snell / Sudoku / ShadowQUIC / Mieru / TrustTunnel | 上游没有链接语法，沿用面板既定形态 | 面板字段 |
+
+几条容易踩到的细节：
+
+- Hysteria2 链接固定带 `/` 路径，形如 `hysteria2://<密码>@<host>:<port>/?...`。上下行带宽与 `alpn` 不在其链接语法里，只出现在 Loon / Surge / QX 的原生配置（`download-bandwidth` 等）。
+- AnyTLS 只带 `sni` 与 `insecure`；`fp`、`alpn`、空闲会话参数不属于该语法。
+- Shadowsocks 按 SIP002 编码：`2022-` 之外的加密方式用 URL-safe 无 padding Base64 编码 `method:password`，AEAD-2022 不编码、直接百分号转义；带插件时 authority 后补 `/`，插件参数值中的 `\`、`;`、`=`、`:` 按 TOR_PT 规则用反斜杠转义。
+- TUIC v4 只有 token 时 userinfo 就是 token，不会写成 `tuic://:token@`。
+
+Snell、Sudoku、ShadowQUIC、Mieru、TrustTunnel 没有可引用的上游语法，当前形态是为了让既有订阅继续可导入而保留的，不应当作标准。
+
+部分旧版 v2rayNG 能列出 `tuic://` 但无法拨号 QUIC，这类协议更建议 Clash Meta / NekoBox / Hiddify 等。
