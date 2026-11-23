@@ -21,15 +21,15 @@ Append `?target=` to switch client formats. When omitted, the format is picked b
 | `loon` | Loon plugin config (`[Proxy]` section, native format — see below) |
 | `surge` | Surge profile (`[General]` / `[Proxy]` / `[Proxy Group]` / `[Rule]` mini profile, native format — see below) |
 | `quanx` / `quantumult` / `qx` | Quantumult X mini profile: `[general]` + `[server_local]` (native format — see below) |
-| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X node snippet: node lines only, no section headers, for "reference resource" (`server_remote`) |
+| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X node snippet: contains only node lines and no section headers; intended for "reference resource" (`server_remote`) |
 
 Some clients hardcode short paths, which are registered as well: `/api/v1/client/json/<token>` forces singbox, `/api/v1/client/clash/<token>` forces clash, `/api/v1/client/v2ray/<token>` forces v2ray; root-level `/sub/<token>`, `/json/<token>`, `/clash/<token>`, `/v2ray/<token>` behave the same. Short paths only cover clash/v2ray/singbox — use `?target=` for everything else.
 
-`qx-nodes` emits exactly the same node lines as `quanx`; only the section headers differ. QX parses a referenced resource as an insert snippet, and a full profile carrying `[general]` / `[server_local]` is rejected as `Response invalid`, so this target writes no headers at all.
+`qx-nodes` produces exactly the same node lines as `quanx`; the only difference lies in the section headers. QX parses a referenced resource as an insert snippet, and a full profile containing `[general]` / `[server_local]` is rejected as `Response invalid`, so this target omits all headers.
 
 ## Address family and diagnostics
 
-Quantumult X output (`quanx` and `qx-nodes`) rewrites the dial address of UDP protocols to an IPv4 literal by default: Hysteria2, TUIC and ShadowQUIC run over QUIC, and when a host has both A and AAAA records the client may prefer IPv6 — if the server's IPv6 path is unreachable the tunnel simply times out, while every TCP protocol on the same host keeps working. The TLS SNI stays the original hostname, so certificate validation is unchanged; a failed lookup keeps the hostname instead of dropping the node. Loon and Surge do not rewrite by default.
+Quantumult X output (`quanx` and `qx-nodes`) rewrites the dial address of UDP protocols to an IPv4 literal by default: Hysteria2, TUIC and ShadowQUIC run over QUIC, and when a host has both A and AAAA records the client may prefer IPv6; if the server's IPv6 path is unreachable, the connection continues to time out, while every TCP protocol on the same host keeps working. The TLS SNI remains the original hostname, so certificate validation is unchanged; if resolution fails, the hostname is retained and the node is not dropped. Loon and Surge do not rewrite by default.
 
 `?af=` overrides the policy:
 
@@ -40,7 +40,7 @@ Quantumult X output (`quanx` and `qx-nodes`) rewrites the dial address of UDP pr
 | `auto` / `0` / `host` | No rewrite; emit the hostname exactly as exported |
 | `6` / `ipv6` | Not supported; returns 422 |
 
-To inspect the rendering per node, use `?target=diag` with an optional `&client=` (`loon` / `surge` / `quanx` / `qx-nodes`, default `qx-nodes`); `?af=` applies here too. The response is JSON and reports, for every node, the final node line, dial host, skip decision and reason, and any address-family note. It only reports — no profile is generated.
+The rendering can be inspected per node with `?target=diag`, together with an optional `&client=` (`loon` / `surge` / `quanx` / `qx-nodes`, default `qx-nodes`); the address-family policy is likewise taken from `?af=`. The response is JSON and reports, for every node, the final node line, dial host, skip decision and reason, and any address-family note. It reports rendering only; no profile is generated.
 
 ```
 /api/v1/client/sub/<token>?target=diag&client=qx-nodes&af=auto
@@ -69,7 +69,7 @@ Cores at or above 1.14 receive an explicit `http_clients` whose `detour` points 
 
 The compatibility floor is sing-box 1.12.0. 1.11 and earlier use the removed legacy DNS server format, which cannot coexist with the 1.12+ format.
 
-Node outbounds are rendered straight from the node model rather than through the Clash / Mihomo intermediate fields, so each share-link parameter maps to a documented official outbound field (names follow sing-box's outbound reference per type). VLESS `encryption` is written only when it is not `none`: it is a newer field, and older cores reject the whole document over an unknown field, while omitting it is equivalent to the default.
+Node outbounds are rendered directly from the node model, without passing through the Clash / Mihomo intermediate fields, so each share-link parameter maps to a documented official outbound field (names follow sing-box's outbound reference per type). VLESS `encryption` is emitted only when its value is not `none`: the field was introduced later, older cores treat it as an unknown field and reject the whole document, and omitting it is equivalent to the default.
 
 ### Subscription link forms
 
@@ -105,7 +105,7 @@ All three are generated in native format and do not require a subconverter.
 - Surge: a complete mini profile consisting of an empty `[General]`, `[Proxy]`, a `[Proxy Group]` that references only real nodes, and `[Rule]`. VMess is written as `username=<UUID>`, and `encrypt-method` is emitted only for `aes-128-gcm` or `chacha20-ietf-poly1305`. `vmess-aead` is an independent Boolean that must match the server setting; the manual defines no rule for deriving it from the cipher, so it is not emitted. VLESS (iOS 6.0.0+ / Mac 6.12.0+) is written as `vless,host,port,username=` and supports REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
 - Quantumult X: one node per line in `[server_local]`, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
-All three share one assembly pipeline: enumerate the user's bound nodes, apply the address-family policy, deduplicate names, skip unsupported protocols, render the node lines, then add the header and footer. Whether a node appears in a given format, and what it is called, therefore stays consistent across the three. Nodes imported from a remote mirror are always named `R<remote server ID>-<name>`, the same way the Clash exporter names them, rather than taking the fragment of the share link (that is the upstream client's label).
+All three share one assembly pipeline: enumerate the user's bound nodes, apply the address-family policy, deduplicate names, skip unsupported protocols, render the node lines, then add the header and footer. Whether a node appears in a given format, and under which name, therefore remains consistent across the three. Nodes imported from a remote mirror are always named `R<remote server ID>-<name>`, matching the Clash exporter, rather than using the share-link fragment (which is the upstream client's label).
 
 ### Protocol matrix
 
@@ -146,7 +146,7 @@ For parameters with a fixed value set (`flow`, `reality-short-id`, `grpc-mode`, 
 
 The following three behaviours differ from the Loon documentation examples and are retained on the basis of real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always emits `over-tls=true`, and Hysteria2 still emits `server-ports` for a single port (see the note below).
 
-A Quantumult X Hysteria2 line carries only `tls-host` and `tls-verification`; the latter is always written and is `false` for an insecure link. Keys such as `tls-alpn`, `tls-pubkey-sha256` and `tls-cert-sha256` belong to QX's standard-TLS (`over-tls`) lines and are rejected by the Hysteria2 parser, so the panel's internal `alpn=h3` never becomes `tls-alpn`.
+A Quantumult X Hysteria2 line emits only `tls-host` and `tls-verification`; the latter is always emitted and is `false` for an insecure link. Keys such as `tls-alpn`, `tls-pubkey-sha256` and `tls-cert-sha256` belong to QX's standard-TLS (`over-tls`) lines and are not accepted by the Hysteria2 parser, so the panel's internal `alpn=h3` is never emitted as `tls-alpn`.
 
 > SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are handled as commented-out entries.
 >
@@ -154,7 +154,7 @@ A Quantumult X Hysteria2 line carries only `tls-host` and `tls-verification`; th
 
 ## Share links (URI)
 
-Each protocol's link grammar is described once: scheme, userinfo shape, path, and the parameters that grammar defines. The encoder writes only those parameters, so a listener setting cannot leak into a link and be read by the client as a protocol field.
+Each protocol's link grammar is described once: scheme, userinfo shape, path, and the parameters that the grammar defines. The encoder emits only those parameters, so a listener setting cannot appear in a link and be interpreted by the client as a protocol field.
 
 | Protocol | Grammar source | Parameters carried |
 |---|---|---|
@@ -165,13 +165,13 @@ Each protocol's link grammar is described once: scheme, userinfo shape, path, an
 | VMess | v2rayN base64(JSON) form | `net`, `path`, `host`, `tls`, `sni` inside the JSON |
 | Snell / Sudoku / ShadowQUIC / Mieru / TrustTunnel | no upstream grammar; the panel-defined form is kept | panel fields |
 
-Details that are easy to trip over:
+The following implementation details are worth noting:
 
-- A Hysteria2 link always carries the `/` path, as in `hysteria2://<password>@<host>:<port>/?...`. Up/down bandwidth and `alpn` are not part of that grammar; they only appear in the Loon / Surge / QX profiles (`download-bandwidth` and friends).
-- AnyTLS carries only `sni` and `insecure`; `fp`, `alpn` and idle-session parameters have no place in the grammar.
-- Shadowsocks follows SIP002: ciphers other than `2022-` encode `method:password` as URL-safe Base64 without padding, AEAD-2022 stays unencoded and percent-escaped; with a plugin the authority gains a trailing `/`, and `\`, `;`, `=` and `:` inside plugin values are backslash-escaped per TOR_PT rules.
-- TUIC v4 with a token only uses the token as the whole userinfo, so it is never written as `tuic://:token@`.
+- A Hysteria2 link always carries the `/` path, as in `hysteria2://<password>@<host>:<port>/?...`. Up/down bandwidth and `alpn` are not part of that grammar and appear only in the Loon / Surge / QX profiles (`download-bandwidth` and similar).
+- AnyTLS carries only `sni` and `insecure`; `fp`, `alpn` and idle-session parameters are not part of the grammar.
+- Shadowsocks follows SIP002: ciphers without the `2022-` prefix encode `method:password` as URL-safe Base64 without padding, AEAD-2022 stays unencoded and percent-escaped; with a plugin the authority gains a trailing `/`, and `\`, `;`, `=` and `:` inside plugin values are backslash-escaped per TOR_PT rules.
+- A TUIC v4 node carrying only a token uses the token as the entire userinfo and is never emitted as `tuic://:token@`.
 
-Snell, Sudoku, ShadowQUIC, Mieru and TrustTunnel have no upstream grammar to cite; the current form exists so that existing subscriptions keep importing, and should not be treated as a standard.
+Snell, Sudoku, ShadowQUIC, Mieru and TrustTunnel have no upstream grammar to cite; the current form is retained solely so that existing subscriptions continue to import, and should not be treated as a standard.
 
-Classic v2rayNG may list `tuic://` but not dial QUIC; prefer Clash Meta / NekoBox / Hiddify for those protocols.
+Classic v2rayNG may recognise `tuic://` but cannot establish a QUIC connection; prefer Clash Meta / NekoBox / Hiddify for these protocols.
