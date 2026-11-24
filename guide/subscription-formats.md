@@ -29,13 +29,15 @@ title: 订阅格式与 target
 
 ## 地址族与诊断
 
-`quanx` 与 `qx-nodes` 默认将 Hysteria2、TUIC、ShadowQUIC 的拨号地址写为 IPv4 字面量。这几种协议使用 QUIC：域名同时有 A 与 AAAA 记录时，客户端可能优先选择 IPv6；服务端 IPv6 不可达时，连接会持续超时，而同一主机的 TCP 节点不受影响。SNI 仍取原域名，证书校验不变。IPv4 解析失败时保留原主机名，节点照常输出。Loon 与 Surge 不使用该策略。
+`quanx` 与 `qx-nodes` 默认将 Hysteria2、TUIC、ShadowQUIC 的拨号地址写为 IPv4 字面量。这几种协议使用 QUIC：域名同时有 A 与 AAAA 记录时，客户端可能优先选择 IPv6；服务端 IPv6 不可达时，连接会持续超时，而同一主机的 TCP 节点不受影响。SNI 仍取原域名，证书校验不变。IPv4 解析失败时保留原主机名，节点照常输出。
+
+Loon、Surge、sing-box、Shadowrocket 与 URI 列表（`uri` / `v2ray`）默认保留主机名，需要时用 `?af=4` 采用同一策略；该参数对所有 target 生效。
 
 `?af=` 覆盖该策略：
 
 | 取值 | 行为 |
 |---|---|
-| 缺省 | 按客户端默认：QX 系列固定 IPv4，Loon / Surge 保持主机名 |
+| 缺省 | 按客户端默认：QX 系列固定 IPv4，其余 target 保持主机名 |
 | `4` / `ipv4` / `v4` | 强制把 UDP 协议改写为 IPv4 字面量 |
 | `auto` / `0` / `host` | 不改写，输出与节点导出完全一致的主机名 |
 | `6` / `ipv6` | 不支持，返回 422 |

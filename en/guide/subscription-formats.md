@@ -29,13 +29,15 @@ Some clients hardcode short paths, which are registered as well: `/api/v1/client
 
 ## Address family and diagnostics
 
-Both QX targets write the dial address of Hysteria2, TUIC and ShadowQUIC as an IPv4 literal by default. These protocols use QUIC: when a hostname has both A and AAAA records, the client may select IPv6; if the server's IPv6 route is unreachable, the connection times out, while TCP nodes on the same host are unaffected. SNI remains the original hostname, so certificate validation is unchanged. If IPv4 resolution fails, the hostname is kept and the node is still emitted. Loon and Surge do not apply this rule.
+Both QX targets write the dial address of Hysteria2, TUIC and ShadowQUIC as an IPv4 literal by default. These protocols use QUIC: when a hostname has both A and AAAA records, the client may select IPv6; if the server's IPv6 route is unreachable, the connection times out, while TCP nodes on the same host are unaffected. SNI remains the original hostname, so certificate validation is unchanged. If IPv4 resolution fails, the hostname is kept and the node is still emitted.
+
+Loon, Surge, sing-box, Shadowrocket and the URI lists (`uri` / `v2ray`) keep the hostname by default; `?af=4` applies the same policy when needed, and the parameter is accepted by every target.
 
 `?af=` overrides the policy:
 
 | Value | Behaviour |
 |---|---|
-| absent | Client default: QX pins UDP protocols to IPv4, Loon / Surge keep the hostname |
+| absent | Client default: QX pins UDP protocols to IPv4, all other targets keep the hostname |
 | `4` / `ipv4` / `v4` | Force UDP protocols to the IPv4 literal |
 | `auto` / `0` / `host` | No rewrite; emit the hostname exactly as exported |
 | `6` / `ipv6` | Not supported; returns 422 |
