@@ -22,6 +22,7 @@ title: 订阅格式与 target
 | `surge` | Surge 配置文件（`[General]`/`[Proxy]`/`[Proxy Group]`/`[Rule]` 迷你档，原生格式，见下文） |
 | `quanx` / `quantumult` / `qx` | Quantumult X 迷你档：`[general]` + `[server_local]`（原生格式，见下文） |
 | `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X 节点片段：仅含节点行，不含段头，供「引用资源（`server_remote`）」使用 |
+| `shadowrocket` | Base64 分享链接列表，内容与 `v2ray` 相同，但 AnyTLS 链接只保留 `sni` 与 `insecure` |
 
 部分客户端有硬编码短路径，也一并注册：`/api/v1/client/json/<token>` 固定 singbox、`/api/v1/client/clash/<token>` 固定 clash、`/api/v1/client/v2ray/<token>` 固定 v2ray；根级 `/sub/<token>`、`/json/<token>`、`/clash/<token>`、`/v2ray/<token>` 等效。短路径只覆盖 clash/v2ray/singbox 三种，其余格式一律用 `?target=`。
 
@@ -31,7 +32,7 @@ title: 订阅格式与 target
 
 `quanx` 与 `qx-nodes` 默认将 Hysteria2、TUIC、ShadowQUIC 的拨号地址写为 IPv4 字面量。这几种协议使用 QUIC：域名同时有 A 与 AAAA 记录时，客户端可能优先选择 IPv6；服务端 IPv6 不可达时，连接会持续超时，而同一主机的 TCP 节点不受影响。SNI 仍取原域名，证书校验不变。IPv4 解析失败时保留原主机名，节点照常输出。
 
-Loon、Surge、sing-box、Shadowrocket 与 URI 列表（`uri` / `v2ray`）默认保留主机名，需要时用 `?af=4` 采用同一策略；该参数对所有 target 生效。
+Loon、Surge、sing-box、Shadowrocket 与 URI 列表（`uri` / `v2ray`）默认保留主机名，需要时用 `?af=4` 采用同一策略。该参数对所有 `?target=` 取值生效；单监听器 access token 订阅只输出 YAML 或 Shadowrocket 列表，不读取该参数。
 
 `?af=` 覆盖该策略：
 
@@ -54,8 +55,9 @@ Loon、Surge、sing-box、Shadowrocket 与 URI 列表（`uri` / `v2ray`）默认
 
 | UA 关键字 | 落到格式 |
 |---|---|
-| `clash` / `mihomo` / `meta` / `stash` / `verge` / `flclash`、Shadowrocket | Mihomo YAML |
+| `clash` / `mihomo` / `meta` / `stash` / `verge` / `flclash` | Mihomo YAML |
 | `sing-box` / `sfa` / `sfm` / `sfi` / `singbox` | sing-box JSON |
+| `shadowrocket` | Base64 分享链接列表（AnyTLS 裁剪） |
 | `surge` | Surge |
 | `quantumult` | Quantumult X |
 | `loon` | Loon |
@@ -107,7 +109,7 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 - Surge：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
 - Quantumult X：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
-Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理和跳过规则一致，同一节点不会在一种格式中出现、在另一种格式中消失。远程镜像节点统一按 `R<远程服务器 ID>-名称` 命名，与 Clash 导出保持一致；分享链接的 fragment 是上游客户端的标签，不作为本面板的节点名。
+Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理与命名规则一致，三份配置基于同一节点集合。各客户端不支持的协议仍按各自规则注释降级，见下表。远程镜像节点统一按 `R<远程服务器 ID>-名称` 命名，与 Clash 导出保持一致；分享链接的 fragment 是上游客户端的标签，不作为本面板的节点名。
 
 ### 协议支持矩阵
 

@@ -22,6 +22,7 @@ Append `?target=` to switch client formats. When omitted, the format is picked b
 | `surge` | Surge profile (`[General]` / `[Proxy]` / `[Proxy Group]` / `[Rule]` mini profile, native format — see below) |
 | `quanx` / `quantumult` / `qx` | Quantumult X mini profile: `[general]` + `[server_local]` (native format — see below) |
 | `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X node snippet: contains only node lines and no section headers; intended for "reference resource" (`server_remote`) |
+| `shadowrocket` | Base64 share-link list, identical to `v2ray` except that AnyTLS links keep only `sni` and `insecure` |
 
 Some clients hardcode short paths, which are registered as well: `/api/v1/client/json/<token>` forces singbox, `/api/v1/client/clash/<token>` forces clash, `/api/v1/client/v2ray/<token>` forces v2ray; root-level `/sub/<token>`, `/json/<token>`, `/clash/<token>`, `/v2ray/<token>` behave the same. Short paths only cover clash/v2ray/singbox — use `?target=` for everything else.
 
@@ -31,7 +32,7 @@ Some clients hardcode short paths, which are registered as well: `/api/v1/client
 
 Both QX targets write the dial address of Hysteria2, TUIC and ShadowQUIC as an IPv4 literal by default. These protocols use QUIC: when a hostname has both A and AAAA records, the client may select IPv6; if the server's IPv6 route is unreachable, the connection times out, while TCP nodes on the same host are unaffected. SNI remains the original hostname, so certificate validation is unchanged. If IPv4 resolution fails, the hostname is kept and the node is still emitted.
 
-Loon, Surge, sing-box, Shadowrocket and the URI lists (`uri` / `v2ray`) keep the hostname by default; `?af=4` applies the same policy when needed, and the parameter is accepted by every target.
+Loon, Surge, sing-box, Shadowrocket and the URI lists (`uri` / `v2ray`) keep the hostname by default; `?af=4` applies the same policy when needed. The parameter applies to every `?target=` value; a single-listener access-token subscription serves YAML or the Shadowrocket list only and does not read it.
 
 `?af=` overrides the policy:
 
@@ -54,8 +55,9 @@ Without `?target=`, the default format is chosen from the User-Agent:
 
 | UA keyword | Format |
 |---|---|
-| `clash` / `mihomo` / `meta` / `stash` / `verge` / `flclash`, Shadowrocket | Mihomo YAML |
+| `clash` / `mihomo` / `meta` / `stash` / `verge` / `flclash` | Mihomo YAML |
 | `sing-box` / `sfa` / `sfm` / `sfi` / `singbox` | sing-box JSON |
+| `shadowrocket` | Base64 share-link list (AnyTLS trimmed) |
 | `surge` | Surge |
 | `quantumult` | Quantumult X |
 | `loon` | Loon |
@@ -107,7 +109,7 @@ All three are generated in native format and do not require a subconverter.
 - Surge: a complete mini profile consisting of an empty `[General]`, `[Proxy]`, a `[Proxy Group]` that references only real nodes, and `[Rule]`. VMess is written as `username=<UUID>`, and `encrypt-method` is emitted only for `aes-128-gcm` or `chacha20-ietf-poly1305`. `vmess-aead` is an independent Boolean that must match the server setting; the manual defines no rule for deriving it from the cipher, so it is not emitted. VLESS (iOS 6.0.0+ / Mac 6.12.0+) is written as `vless,host,port,username=` and supports REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
 - Quantumult X: one node per line in `[server_local]`, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
-Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplication and skip rules are the same, so a node cannot appear in one format and be absent from another. Nodes from a remote mirror are named `R<remote server ID>-<name>`, as in the Clash export. The share-link fragment belongs to the upstream client and is not used as the node name here.
+Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplication and naming rules are the same, so all three profiles are built from the same node set. Protocols a client does not support are still degraded to a comment by that client's own rules, as the table below shows. Nodes from a remote mirror are named `R<remote server ID>-<name>`, as in the Clash export. The share-link fragment belongs to the upstream client and is not used as the node name here.
 
 ### Protocol matrix
 
