@@ -25,11 +25,11 @@ Append `?target=` to switch client formats. When omitted, the format is picked b
 
 Some clients hardcode short paths, which are registered as well: `/api/v1/client/json/<token>` forces singbox, `/api/v1/client/clash/<token>` forces clash, `/api/v1/client/v2ray/<token>` forces v2ray; root-level `/sub/<token>`, `/json/<token>`, `/clash/<token>`, `/v2ray/<token>` behave the same. Short paths only cover clash/v2ray/singbox — use `?target=` for everything else.
 
-`qx-nodes` is `quanx` without the section headers. QX treats a referenced resource as an insert snippet, and a full profile with `[general]` / `[server_local]` gets rejected as `Response invalid`. Hence node lines only.
+`qx-nodes` emits the same node lines as `quanx` but without the `[general]` / `[server_local]` headers. QX parses a referenced resource as an insert snippet; a full profile in that position returns `Response invalid`.
 
 ## Address family and diagnostics
 
-QX's two targets rewrite the dial address of Hysteria2, TUIC and ShadowQUIC to an IPv4 literal. These protocols use QUIC: when a hostname has both A and AAAA records the client may pick IPv6, and if the server's IPv6 route is dead the connection just times out, while TCP nodes on the same host work fine. SNI stays the original hostname, so certificates still validate. If the IPv4 lookup fails, the hostname is kept and the node is still emitted. Loon and Surge don't apply this rewrite.
+Both QX targets write the dial address of Hysteria2, TUIC and ShadowQUIC as an IPv4 literal by default. These protocols use QUIC: when a hostname has both A and AAAA records, the client may select IPv6; if the server's IPv6 route is unreachable, the connection times out, while TCP nodes on the same host are unaffected. SNI remains the original hostname, so certificate validation is unchanged. If IPv4 resolution fails, the hostname is kept and the node is still emitted. Loon and Surge do not apply this rule.
 
 `?af=` overrides the policy:
 
@@ -40,7 +40,7 @@ QX's two targets rewrite the dial address of Hysteria2, TUIC and ShadowQUIC to a
 | `auto` / `0` / `host` | No rewrite; emit the hostname exactly as exported |
 | `6` / `ipv6` | Not supported; returns 422 |
 
-To see what happened to a particular node, use `?target=diag`, optionally with `&client=` (`loon` / `surge` / `quanx` / `qx-nodes`, default `qx-nodes`); `?af=` still applies. The response is JSON, one entry per node, with the rendered line, the address it dials, whether it was skipped and why, and any address-family note. Nothing is written as a profile.
+To check the rendering of individual nodes, use `?target=diag`. `&client=` selects `loon`, `surge`, `quanx` or `qx-nodes` (default `qx-nodes`); `?af=` follows the same rules as above. The response is JSON with one entry per node: the rendered line, dial address, skip decision and reason, and any address-family note. The endpoint reports rendering only and writes no profile.
 
 ```
 /api/v1/client/sub/<token>?target=diag&client=qx-nodes&af=auto
@@ -69,7 +69,7 @@ Cores at or above 1.14 receive an explicit `http_clients` whose `detour` points 
 
 The compatibility floor is sing-box 1.12.0. 1.11 and earlier use the removed legacy DNS server format, which cannot coexist with the 1.12+ format.
 
-Outbounds now come straight from the node model. There's no Clash / Mihomo structure in between, so a share-link parameter maps directly to its official outbound field. VLESS `encryption` is only written when it isn't `none`: older cores don't know the newer field and reject the entire config; leaving it out means the same thing as `none`.
+Outbounds are rendered directly from the node model, with no Clash / Mihomo intermediate structure. Share-link parameters map to official outbound fields by type, using the names in sing-box's outbound reference. VLESS `encryption` is written only when its value is not `none`: older cores report an unknown field and reject the entire document, while omitting it has the same effect as the default.
 
 ### Subscription link forms
 
@@ -105,7 +105,7 @@ All three are generated in native format and do not require a subconverter.
 - Surge: a complete mini profile consisting of an empty `[General]`, `[Proxy]`, a `[Proxy Group]` that references only real nodes, and `[Rule]`. VMess is written as `username=<UUID>`, and `encrypt-method` is emitted only for `aes-128-gcm` or `chacha20-ietf-poly1305`. `vmess-aead` is an independent Boolean that must match the server setting; the manual defines no rule for deriving it from the cipher, so it is not emitted. VLESS (iOS 6.0.0+ / Mac 6.12.0+) is written as `vless,host,port,username=` and supports REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
 - Quantumult X: one node per line in `[server_local]`, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
-Loon, Surge and QX now walk the same assembly path: node enumeration, name deduplication and the skip rules are shared, so a node can't show up in one format and disappear from another. Mirrored nodes get the `R<remote server ID>-` prefix, same as in Clash. We don't take the name from the share-link fragment; that's the label the upstream client gave it.
+Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplication and skip rules are the same, so a node cannot appear in one format and be absent from another. Nodes from a remote mirror are named `R<remote server ID>-<name>`, as in the Clash export. The share-link fragment belongs to the upstream client and is not used as the node name here.
 
 ### Protocol matrix
 
@@ -146,7 +146,7 @@ For parameters with a fixed value set (`flow`, `reality-short-id`, `grpc-mode`, 
 
 The following three behaviours differ from the Loon documentation examples and are retained on the basis of real-device testing: AnyTLS REALITY is reduced to the password only, Trojan REALITY always emits `over-tls=true`, and Hysteria2 still emits `server-ports` for a single port (see the note below).
 
-On a QX Hysteria2 line, only `tls-host` and `tls-verification` are written; `tls-verification` always appears and is `false` for an insecure link. Keys like `tls-alpn`, `tls-pubkey-sha256` and `tls-cert-sha256` belong to standard-TLS (`over-tls`) lines. QX's hy2 parser rejects them, which is why the panel's internal `alpn=h3` used to break imports and is no longer emitted as `tls-alpn`.
+On a QX Hysteria2 line, only `tls-host` and `tls-verification` are written; the latter is always present and is `false` for an insecure link. Keys such as `tls-alpn`, `tls-pubkey-sha256` and `tls-cert-sha256` belong to QX's standard-TLS (`over-tls`) lines and are not accepted by the Hysteria2 parser. The panel's forced `alpn=h3` previously broke imports for this reason and is no longer written as `tls-alpn`.
 
 > SIP003 plugins kcptun / shadow-tls / restls / jls have no equivalent in any of the three clients and are handled as commented-out entries.
 >
@@ -154,7 +154,7 @@ On a QX Hysteria2 line, only `tls-host` and `tls-verification` are written; `tls
 
 ## Share links (URI)
 
-Share links have no single spec, so each protocol is described on its own: scheme, userinfo shape, path and the parameters it accepts. The encoder follows that description; listener settings the client won't understand are left out.
+Share links have no single specification, so each protocol is described separately: scheme, userinfo form, path and accepted parameters. The encoder emits only what the table defines; listener settings outside that grammar do not appear in the link.
 
 | Protocol | Grammar source | Parameters carried |
 |---|---|---|
@@ -165,13 +165,13 @@ Share links have no single spec, so each protocol is described on its own: schem
 | VMess | v2rayN base64(JSON) form | `net`, `path`, `host`, `tls`, `sni` inside the JSON |
 | Snell / Sudoku / ShadowQUIC / Mieru / TrustTunnel | no upstream grammar; the panel-defined form is kept | panel fields |
 
-A few things that tend to cause trouble:
+A few implementation details:
 
-- A Hysteria2 link always carries `/`, as in `hysteria2://<password>@<host>:<port>/?...`. Up/down bandwidth and `alpn` aren't part of that grammar; they live in the Loon / Surge / QX profiles (`download-bandwidth` and the like).
-- AnyTLS has only `sni` and `insecure`. There are no link fields for `fp`, `alpn` or the idle-session settings.
-- Shadowsocks follows SIP002: ciphers without the `2022-` prefix encode `method:password` as URL-safe Base64 with padding stripped; AEAD-2022 stays unencoded and is percent-escaped. A plugin adds `/` after the authority, and `\`, `;`, `=` and `:` inside plugin values are backslash-escaped per TOR_PT rules.
-- TUIC v4 with only a token uses the token as the whole userinfo, so you won't see `tuic://:token@`.
+- A Hysteria2 link always carries the `/` path, as in `hysteria2://<password>@<host>:<port>/?...`. Up/down bandwidth and `alpn` are outside that grammar; they appear only in the Loon / Surge / QX profiles (`download-bandwidth` and similar).
+- AnyTLS defines only `sni` and `insecure`; `fp`, `alpn` and the idle-session settings have no link fields.
+- Shadowsocks follows SIP002: ciphers without the `2022-` prefix encode `method:password` as URL-safe Base64 with padding stripped; AEAD-2022 remains unencoded and percent-escaped. A plugin follows the `/` path, and `\`, `;`, `=` and `:` in plugin values are backslash-escaped per TOR_PT rules.
+- When a TUIC v4 node carries only a token, the userinfo consists of that token alone and never becomes `tuic://:token@`.
 
-Snell, Sudoku, ShadowQUIC, Mieru and TrustTunnel have no upstream spec to point at. Their links keep the old panel-defined form so existing subscriptions still import; treat it as legacy, not a standard.
+Snell, Sudoku, ShadowQUIC, Mieru and TrustTunnel have no upstream specification to follow; the current form is retained for compatibility with existing subscriptions and should not be treated as a standard.
 
-Classic v2rayNG recognises `tuic://` but can't dial QUIC. Clash Meta, NekoBox and Hiddify handle these protocols better.
+Classic v2rayNG can list `tuic://` but cannot establish a QUIC connection; Clash Meta, NekoBox and Hiddify are better suited to these protocols.

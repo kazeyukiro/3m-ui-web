@@ -25,11 +25,11 @@ title: 订阅格式与 target
 
 部分客户端有硬编码短路径，也一并注册：`/api/v1/client/json/<token>` 固定 singbox、`/api/v1/client/clash/<token>` 固定 clash、`/api/v1/client/v2ray/<token>` 固定 v2ray；根级 `/sub/<token>`、`/json/<token>`、`/clash/<token>`、`/v2ray/<token>` 等效。短路径只覆盖 clash/v2ray/singbox 三种，其余格式一律用 `?target=`。
 
-`qx-nodes` 就是 `quanx` 去掉段头。QX 的「引用资源」按插入片段解析远端文件，里面若带 `[general]` / `[server_local]`，会报 `Response invalid`。所以这个 target 只给节点行。
+`qx-nodes` 输出与 `quanx` 相同的节点行，但不带 `[general]` / `[server_local]` 段头。QX 的「引用资源」把远端文件作为插入片段解析；完整配置放在该位置会得到 `Response invalid`。
 
 ## 地址族与诊断
 
-QX 的两个 target 会把 Hysteria2、TUIC、ShadowQUIC 的拨号地址改成 IPv4。这几种协议走 QUIC：域名同时有 A 和 AAAA 记录时客户端可能选 IPv6；服务端 IPv6 不通的话，连接就一直超时，同一台机器上的 TCP 节点却正常。SNI 用原域名，证书校验不受影响。IPv4 解析失败时保留域名，节点仍会输出。Loon 和 Surge 不套用这条规则。
+`quanx` 与 `qx-nodes` 默认将 Hysteria2、TUIC、ShadowQUIC 的拨号地址写为 IPv4 字面量。这几种协议使用 QUIC：域名同时有 A 与 AAAA 记录时，客户端可能优先选择 IPv6；服务端 IPv6 不可达时，连接会持续超时，而同一主机的 TCP 节点不受影响。SNI 仍取原域名，证书校验不变。IPv4 解析失败时保留原主机名，节点照常输出。Loon 与 Surge 不使用该策略。
 
 `?af=` 覆盖该策略：
 
@@ -40,7 +40,7 @@ QX 的两个 target 会把 Hysteria2、TUIC、ShadowQUIC 的拨号地址改成 I
 | `auto` / `0` / `host` | 不改写，输出与节点导出完全一致的主机名 |
 | `6` / `ipv6` | 不支持，返回 422 |
 
-某个节点为什么没出现、被改成了什么，可以用 `?target=diag` 查。加 `&client=` 指定 `loon` / `surge` / `quanx` / `qx-nodes`（默认 `qx-nodes`），地址族策略仍读 `?af=`。返回 JSON，每个节点一条，列出渲染后的节点行、实际拨号地址、是否跳过及原因、地址族改写说明。它只做检查，不生成配置。
+逐个核对节点的渲染结果时，可使用 `?target=diag`；`&client=` 指定 `loon` / `surge` / `quanx` / `qx-nodes`（默认 `qx-nodes`），`?af=` 仍按上述规则取值。响应为 JSON，每个节点包含渲染后的节点行、实际拨号地址、是否跳过及原因、地址族改写说明。该端点只报告渲染结果，不生成配置。
 
 ```
 /api/v1/client/sub/<token>?target=diag&client=qx-nodes&af=auto
@@ -69,7 +69,7 @@ UA 命中不了任何关键字时回落到 Clash 风格。需要稳定输出请�
 
 兼容下限为 sing-box 1.12.0。1.11 及更早版本使用已被移除的旧 DNS 服务器格式，无法与 1.12 起的新格式共存。
 
-outbound 现在直接由节点模型生成，不再经过 Clash / Mihomo 那层中间结构，分享链接里的参数对应哪个官方 outbound 字段可以更直接地核对。VLESS 的 `encryption` 只在非 `none` 时写入：老内核不认识这个较新的字段，会连整份配置一起拒掉；省略它和写 `none` 是同一个意思。
+outbound 直接由节点模型渲染，不再经过 Clash / Mihomo 的中间结构；分享链接参数与官方 outbound 字段按类型对应，字段名以 sing-box 的 outbound 参考为准。VLESS 的 `encryption` 仅在取值非 `none` 时写入：旧内核遇到该字段会报未知字段并拒绝整份配置，而省略该字段与取默认值等价。
 
 ### 订阅链接写法
 
@@ -105,7 +105,7 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 - Surge：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
 - Quantumult X：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
 
-Loon、Surge、QX 现在走同一条装配路径：节点枚举、重名处理和跳过规则共用一套，不会出现一家有、另一家没的情况。远程镜像节点的名字统一加 `R<远程服务器 ID>-` 前缀，和 Clash 导出一致；分享链接里的 fragment 不用，那是上游客户端起的标签。
+Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理和跳过规则一致，同一节点不会在一种格式中出现、在另一种格式中消失。远程镜像节点统一按 `R<远程服务器 ID>-名称` 命名，与 Clash 导出保持一致；分享链接的 fragment 是上游客户端的标签，不作为本面板的节点名。
 
 ### 协议支持矩阵
 
@@ -146,7 +146,7 @@ VLESS Encryption 可叠加于上述任意组合；HTTPUpgrade 与 mKCP 不受支
 
 以下三处与 Loon 文档示例存在差异，系依据真机测试结果保留：AnyTLS 的 REALITY 参数降级为仅保留密码，Trojan REALITY 统一输出 `over-tls=true`，Hysteria2 单端口仍输出 `server-ports`（详见下文）。
 
-QX 的 Hysteria2 节点行只输出 `tls-host` 和 `tls-verification`，后者总在，insecure 链接时为 `false`。`tls-alpn`、`tls-pubkey-sha256`、`tls-cert-sha256` 这些键只在标准 TLS（`over-tls`）节点行里出现，hy2 的解析器不收；之前面板强制写入的 `alpn=h3` 就曾让配置导入失败，现在不会变成 `tls-alpn`。
+QX 的 Hysteria2 节点行只写入 `tls-host` 与 `tls-verification`，后者始终输出；`insecure` 链接取 `false`。`tls-alpn`、`tls-pubkey-sha256`、`tls-cert-sha256` 等键用于 QX 的标准 TLS（`over-tls`）节点行，Hysteria2 解析器不接受。此前面板强制携带的 `alpn=h3` 曾因此导致导入失败，现不再写为 `tls-alpn`。
 
 > SS 的 SIP003 包装插件中，kcptun / shadow-tls / restls / jls 在三款客户端中均无对应表达，按注释降级处理。
 >
@@ -154,7 +154,7 @@ QX 的 Hysteria2 节点行只输出 `tls-host` 和 `tls-verification`，后者�
 
 ## 分享链接（URI）
 
-分享链接没有统一规范，每种协议单列一行：scheme、userinfo 写法、路径，以及允许的参数。生成链接时照这个表取值，listener 上那些客户端不认的设置不会被塞进去。
+分享链接没有统一规范，各协议的写法分别列在下表：scheme、userinfo 形式、路径以及允许的参数。编码器仅按表中定义输出，listener 上该语法未定义的设置不会写入链接。
 
 | 协议 | 语法依据 | 链接携带的参数 |
 |---|---|---|
@@ -165,13 +165,13 @@ QX 的 Hysteria2 节点行只输出 `tls-host` 和 `tls-verification`，后者�
 | VMess | v2rayN 的 base64(JSON) 格式 | JSON 内的 `net`、`path`、`host`、`tls`、`sni` 等 |
 | Snell / Sudoku / ShadowQUIC / Mieru / TrustTunnel | 上游无链接语法，沿用面板既定形态 | 面板字段 |
 
-几处容易出错的地方：
+实现上有几点需要留意：
 
-- Hysteria2 链接固定带 `/`，形如 `hysteria2://<密码>@<host>:<port>/?...`。上下行带宽和 `alpn` 不属于它的链接语法，只出现在 Loon / Surge / QX 的原生配置里（`download-bandwidth` 等）。
-- AnyTLS 只有 `sni` 和 `insecure`；`fp`、`alpn` 和空闲会话参数都没有对应的链接字段。
-- Shadowsocks 按 SIP002：`2022-` 以外的加密方式把 `method:password` 编成 URL-safe Base64（去掉 padding）；AEAD-2022 不编码，直接百分号转义。有插件时在 authority 后补 `/`，插件值里的 `\`、`;`、`=`、`:` 按 TOR_PT 规则加反斜杠。
-- TUIC v4 只有 token 时，userinfo 就是 token，不会出现 `tuic://:token@`。
+- Hysteria2 链接固定带 `/` 路径，形如 `hysteria2://<密码>@<host>:<port>/?...`。上下行带宽和 `alpn` 不在该语法内，仅出现在 Loon / Surge / QX 的原生配置（`download-bandwidth` 等）。
+- AnyTLS 仅定义 `sni` 与 `insecure`；`fp`、`alpn` 和空闲会话参数不属于该语法。
+- Shadowsocks 按 SIP002 编码：`2022-` 之外的加密方式把 `method:password` 编为 URL-safe Base64（去掉 padding）；AEAD-2022 不编码，直接百分号转义。插件写在路径 `/` 之后，插件值中的 `\`、`;`、`=`、`:` 按 TOR_PT 规则转义。
+- TUIC v4 仅有 token 时，userinfo 由 token 单独构成，不会形成 `tuic://:token@`。
 
-Snell、Sudoku、ShadowQUIC、Mieru、TrustTunnel 没有上游规范可对照，现在的链接形态是历史遗留，为了旧订阅还能导入才保留，别当作标准格式。
+Snell、Sudoku、ShadowQUIC、Mieru、TrustTunnel 没有上游规范可对照，当前写法为兼容既有订阅而保留，不应视为标准。
 
-旧版 v2rayNG 能识别 `tuic://`，但拨不动 QUIC；这类协议用 Clash Meta / NekoBox / Hiddify 更稳。
+旧版 v2rayNG 可以列出 `tuic://`，但无法建立 QUIC 连接；这类协议更适合 Clash Meta / NekoBox / Hiddify 等客户端。
