@@ -125,7 +125,8 @@ Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理与
 | Trojan（tls/ws） | ✅ | ✅ | ✅（tls 经 `over-tls=true` + `tls-host`，ws 经 `obfs=wss`） |
 | TUIC v4 / v5 | ❌ 注释降级 | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ 注释降级（不支持 TUIC） |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
-| Mieru | ❌ 注释降级 | ❌ 注释降级 | ✅ `username=` + `password=` |
+| Mieru | ✅ `username=` + `password=`（仅 TCP 传输） | ❌ 注释降级 | ✅ `username=` + `password=` |
+| Snell（v4 / v5） | ✅ `version=4/5`、`obfs=http`、`obfs-host`、`obfs-uri`、`udp` | ❌ 注释降级 | ❌ 注释降级 |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http 传输（vmess/vless） | ✅ `transport=http` | ❌ 注释降级 | ✅ `obfs=http`（仅明文） |
 | XHTTP | ✅ VLESS/VMess/Trojan：`transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode`（含 `splithttp`） | ❌ 注释降级 |
@@ -134,6 +135,13 @@ Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理与
 | VLESS Encryption | ❌ 忽略该字段 | ✅ `encryption=` 透传 | ❌ 忽略该字段 |
 
 Loon 的 XHTTP 依据[官方文档](https://nsloon.app/docs/Node)，作为 VLESS、VMess、Trojan 的 `transport` 取值输出，字段为 `transport=xhttp`、`path`、`host`、`over-tls`、`alpn` 与 `xhttp-mode`。`xhttp-mode` 接受 `auto`、`packet-up`、`stream-up`、`stream-one`（默认 `auto`），超出该集合的取值整行降级；VLESS 的 XHTTP 节点按官方说明省略 `flow`。分享链接中的 `mode` 映射到 `xhttp-mode`。目前仅导出官方文档列出的基础参数，其余 `xhttp-*` 高级参数尚未映射，不输出。
+
+Loon 3.5.4 起新增 Snell 与 Tailscale，官方节点文档另列 WireGuard 与 Mieru。面板目前可写出 Snell 与 Mieru：
+
+- Snell 按 `Snell,服务器,端口,"PSK",version=4|5` 输出，开启 HTTP 混淆时补 `obfs=http`、`obfs-host`、`obfs-uri`，监听器启用 UDP 时补 `udp=true` 与 `block-quic=false`。`version` 超出 4 / 5，或混淆方式不是 `none` / `http` 时，整行降级为注释。
+- Mieru 按 `mieru,服务器,端口,"用户名","密码"` 输出。Loon 只连接 Mieru 的 TCP 监听端口，因此 `transport=UDP` 的节点降级为注释；`transport`、`multiplexing`、`traffic-pattern` 在 Loon 中没有对应参数，不写入。
+
+WireGuard 与 Tailscale 不导出。面板没有这两类监听器，订阅节点也不解析它们的链接，`interface-ip`、`private-key`、`peers` 或 `auth-key`、`exit-node` 等必需字段没有来源，生成的节点无法连接。
 
 Surge 的 VLESS 按传输方式区分，支持组合如下（[官方手册](https://manual.nssurge.com/policies/vless.html)）：
 

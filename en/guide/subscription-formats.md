@@ -125,7 +125,8 @@ Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplica
 | Trojan (tls/ws) | ✅ | ✅ | ✅ (tls via `over-tls=true` + `tls-host`, ws via `obfs=wss`) |
 | TUIC v4 / v5 | ❌ commented out | ✅ `tuic,token=` / `tuic-v5,uuid=,password=` | ❌ commented out (no TUIC) |
 | AnyTLS | ✅ | ✅ | ✅ `over-tls=true` + `tls-host` |
-| Mieru | ❌ commented out | ❌ commented out | ✅ `username=` + `password=` |
+| Mieru | ✅ `username=` + `password=` (TCP transport only) | ❌ commented out | ✅ `username=` + `password=` |
+| Snell (v4 / v5) | ✅ `version=4/5`, `obfs=http`, `obfs-host`, `obfs-uri`, `udp` | ❌ commented out | ❌ commented out |
 | WebSocket | ✅ | ✅ `ws-headers=Host:…` | ✅ `obfs=ws` / `obfs=wss` |
 | http transport (vmess/vless) | ✅ `transport=http` | ❌ commented out | ✅ `obfs=http` (plain text only) |
 | XHTTP | ✅ VLESS/VMess/Trojan: `transport=xhttp` / `path` / `host` / `alpn` / `xhttp-mode` | ✅ `xhttp=true` / `xhttp-path` / `xhttp-host` / `xhttp-mode` (incl. `splithttp`) | ❌ commented out |
@@ -134,6 +135,13 @@ Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplica
 | VLESS Encryption | ❌ field ignored | ✅ `encryption=` passthrough | ❌ field ignored |
 
 Loon's XHTTP follows the [official documentation](https://nsloon.app/en/docs/Node): it is emitted as a `transport` value for VLESS, VMess and Trojan, with the fields `transport=xhttp`, `path`, `host`, `over-tls`, `alpn` and `xhttp-mode`. `xhttp-mode` accepts `auto`, `packet-up`, `stream-up` and `stream-one` (default `auto`); a value outside that set degrades the whole line. As the manual states, VLESS nodes omit `flow` under XHTTP. The share-link `mode` field maps to `xhttp-mode`. Only the basic parameters documented by Loon are exported; the remaining `xhttp-*` advanced parameters are not yet mapped and are therefore omitted.
+
+Loon 3.5.4 added Snell and Tailscale, and the node reference also documents WireGuard and Mieru. The panel writes Snell and Mieru lines:
+
+- Snell is emitted as `Snell,server,port,"PSK",version=4|5`. With HTTP obfuscation the line also carries `obfs=http`, `obfs-host` and `obfs-uri`; when the listener enables UDP it carries `udp=true` and `block-quic=false`. A `version` outside 4 and 5, or an obfuscation mode other than `none` / `http`, degrades the whole line to a comment.
+- Mieru is emitted as `mieru,server,port,"username","password"`. Loon dials the Mieru TCP listener only, so a node with `transport=UDP` degrades to a comment. `transport`, `multiplexing` and `traffic-pattern` have no Loon argument and are not written.
+
+WireGuard and Tailscale are not exported. The panel has neither listener type and does not parse their links, so the required fields — `interface-ip`, `private-key`, `peers`, or `auth-key` and `exit-node` — have no source, and a generated node could not connect.
 
 The supported VLESS transport and security combinations in Surge are as follows ([manual](https://manual.nssurge.com/policies/vless.html)):
 
