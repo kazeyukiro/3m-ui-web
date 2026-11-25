@@ -20,13 +20,15 @@ title: 订阅格式与 target
 | `singbox` / `sing-box` / `sfa` / `sfm` | sing-box JSON（含默认 TUN、DNS、路由等，适配较新 sing-box 迁移）及节点 outbound |
 | `loon` | Loon 插件配置（`[Proxy]` 段，原生格式，见下文） |
 | `surge` | Surge 配置文件（`[General]`/`[Proxy]`/`[Proxy Group]`/`[Rule]` 迷你档，原生格式，见下文） |
-| `quanx` / `quantumult` / `qx` | Quantumult X 迷你档：`[general]` + `[server_local]`（原生格式，见下文） |
-| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X 节点片段：仅含节点行，不含段头，供「引用资源（`server_remote`）」使用 |
+| `quanx` / `quantumult` / `qx` | Quantumult X 完整配置：`[general]`、`[dns]`、`[policy]`、`[server_local]`、`[filter_local]`、`[rewrite_local]`、`[task_local]`、`[http_backend]`、`[mitm]` 九段（原生格式，见下文） |
+| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X 节点片段：仅含节点行，不含段头，供「添加节点订阅（`server_remote`）」使用 |
 | `shadowrocket` | Base64 分享链接列表，内容与 `v2ray` 相同，但 AnyTLS 链接只保留 `sni` 与 `insecure` |
 
 部分客户端有硬编码短路径，也一并注册：`/api/v1/client/json/<token>` 固定 singbox、`/api/v1/client/clash/<token>` 固定 clash、`/api/v1/client/v2ray/<token>` 固定 v2ray；根级 `/sub/<token>`、`/json/<token>`、`/clash/<token>`、`/v2ray/<token>` 等效。短路径只覆盖 clash/v2ray/singbox 三种，其余格式一律用 `?target=`。
 
-`qx-nodes` 输出与 `quanx` 相同的节点行，但不带 `[general]` / `[server_local]` 段头。QX 的「引用资源」把远端文件作为插入片段解析；完整配置放在该位置会得到 `Response invalid`。
+`quanx` 与 `qx-nodes` 的节点行逐字相同，差别只在文档结构。`quanx` 是完整配置，对应 QX「导入配置」；`qx-nodes` 去掉全部段头，只留节点行，对应「添加节点订阅（`server_remote`）」。两者不能互换：完整配置作为远端资源会被判 `Response invalid`；只有节点行的片段导入后没有 `[policy]`，节点无法被任何连接引用。
+
+QX 的 UA 自动识别返回完整配置。需要在「添加节点订阅」里使用同一 token 时，显式带 `?target=qx-nodes`。
 
 ## 地址族与诊断
 
@@ -107,7 +109,7 @@ sing-box://import-remote?url=https%3A%2F%2Fexample.com%2Fapi%2Fv1%2Fclient%2Fsub
 
 - Loon：`[Proxy]` 段每行定义一个节点，密码与 UUID 均以双引号包裹。官方仅在取值含英文逗号时作强制要求，但格式行与全部示例均采用该写法，且 Loon 保存配置时会自动补齐，例如 `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
 - Surge：输出完整的迷你配置，包含空的 `[General]`、`[Proxy]`、仅引用真实节点的 `[Proxy Group]` 与 `[Rule]`。VMess 采用 `username=<UUID>` 形式，仅当加密方式为 `aes-128-gcm` 或 `chacha20-ietf-poly1305` 时输出 `encrypt-method`。`vmess-aead` 为独立布尔参数，须与服务端设置一致，官方未提供由加密方式推导的规则，故不予输出。VLESS（iOS 6.0.0+ / Mac 6.12.0+）采用 `vless,host,port,username=` 形式，支持 REALITY、Vision、WS、gRPC、XHTTP 与 VLESS Encryption。
-- Quantumult X：`[server_local]` 段每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`
+- Quantumult X：导出完整配置，段序与官方 `sample.conf` 一致，为 `[general]`、`[dns]`、`[policy]`、`[server_local]`、`[filter_local]`、`[rewrite_local]`、`[task_local]`、`[http_backend]`、`[mitm]`。`[server_local]` 每行定义一个节点，例如 `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`。`[policy]` 定义名为 `PROXY` 的 `static` 策略，成员为本次实际渲染出的全部 tag 追加 `direct`；降级为注释的节点不会进入成员列表。`[filter_local]` 为 `geoip, cn, direct` 与 `final, PROXY`。没有可用节点时策略退化为 `static=PROXY, direct`，配置仍可导入。`[dns]` 只有 `223.5.5.5` 与 `119.29.29.29` 两个 `server` 行，其余段留空，不写入未经验证的键值。
 
 Loon、Surge 与 QX 共用同一套装配流程：节点枚举、重名处理与命名规则一致，三份配置基于同一节点集合。各客户端不支持的协议仍按各自规则注释降级，见下表。远程镜像节点统一按 `R<远程服务器 ID>-名称` 命名，与 Clash 导出保持一致；分享链接的 fragment 是上游客户端的标签，不作为本面板的节点名。
 

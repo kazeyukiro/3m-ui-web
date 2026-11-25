@@ -14,7 +14,7 @@ Common formats:
 - Default / Clash Meta: Mihomo client YAML
 - `?target=v2ray` / `base64`: always Base64 of share links (required by classic clients)
 - `?target=singbox`: sing-box JSON
-- `?target=loon` / `surge` / `quanx`: native Loon / Surge / Quantumult X configs (no subconverter needed; unsupported protocols are emitted as comment lines)
+- `?target=loon` / `surge` / `quanx`: native Loon / Surge / Quantumult X configs (no subconverter needed; unsupported protocols are emitted as comment lines). `quanx` is the complete profile for QX's "import configuration"; `?target=qx-nodes` returns node lines only, for an added subscription
 
 Without `?target=`, the format is picked from the client's User-Agent. The full target list, UA detection rules and the protocol matrix for the three Apple clients are documented under [Subscription formats & target](./subscription-formats).
 

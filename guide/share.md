@@ -9,9 +9,11 @@ description: 3m-ui · 分享 / 订阅
 
 ## 订阅页签
 
-列出该用户的订阅链接，可复制或生成二维码：`Mihomo / Clash YAML`、`V2Ray / Base64`、`Sing-box JSON`、`Loon`、`Surge`、`Quantumult X`，以及 `?html=1` 的订阅信息页。
+列出该用户的订阅链接，可复制或生成二维码：`Mihomo / Clash YAML`、`V2Ray / Base64`、`Sing-box JSON`、`Loon`、`Surge`、`Quantumult X 配置（导入配置）`、`Quantumult X 节点订阅（添加订阅）`，以及 `?html=1` 的订阅信息页。
 
-格式由 `?target=` 指定；不带 `target` 时按 `User-Agent` 自动选择（Clash/Mihomo → YAML，v2rayNG → Base64，sing-box → JSON，Loon/Surge/Quantumult X → 各自原生格式）。响应头包含流量与到期信息（`Subscription-Userinfo`）。
+Quantumult X 的两个链接指向同一 token 的不同输出：`?target=quanx` 是完整配置，用于「导入配置」；`?target=qx-nodes` 只有节点行，用于「添加节点订阅」的远端资源。完整配置不能作为节点资源提交，节点行片段导入后也没有策略组可选中，两者不通用。
+
+格式由 `?target=` 指定；不带 `target` 时按 `User-Agent` 自动选择（Clash/Mihomo → YAML，v2rayNG → Base64，sing-box → JSON，Loon/Surge/Quantumult X → 各自原生格式，其中 Quantumult X 返回完整配置）。响应头包含流量与到期信息（`Subscription-Userinfo`）。
 
 ## URI 页签
 

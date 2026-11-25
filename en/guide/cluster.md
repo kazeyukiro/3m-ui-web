@@ -28,7 +28,7 @@ Bound users receive local listeners plus mirrored remote nodes in every export f
 | Clash / Mihomo | default subscription output, or `?target=clash` |
 | v2ray / BASE64 | `?target=v2ray` (auto-detected by v2rayN / v2rayNG) |
 | sing-box | `?target=singbox` |
-| Loon / Surge / Quantumult X | `?target=loon` / `surge` / `quanx` |
+| Loon / Surge / Quantumult X | `?target=loon` / `surge` / `quanx` (complete QX profile); QX node snippet via `?target=qx-nodes` |
 
 Mirrored node names carry an `R<remote-id>-` prefix so they never collide with local nodes. A user bound to mirrors only — with no local listener — still gets every format.
 

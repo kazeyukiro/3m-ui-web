@@ -9,9 +9,11 @@ The Share page works per user: after selecting a user it offers two tabs, `?tab=
 
 ## Subscription tab
 
-Lists that user's subscription links, each copyable or renderable as a QR code: `Mihomo / Clash YAML`, `V2Ray / Base64`, `Sing-box JSON`, `Loon`, `Surge`, `Quantumult X`, plus the `?html=1` subscription info page.
+Lists that user's subscription links, each copyable or renderable as a QR code: `Mihomo / Clash YAML`, `V2Ray / Base64`, `Sing-box JSON`, `Loon`, `Surge`, `Quantumult X profile (import configuration)`, `Quantumult X nodes (add subscription)`, plus the `?html=1` subscription info page.
 
-The format is selected by `?target=`; without `target` the `User-Agent` decides (Clash/Mihomo → YAML, v2rayNG → Base64, sing-box → JSON, Loon/Surge/Quantumult X → their native formats). Response headers carry traffic and expiry info (`Subscription-Userinfo`).
+The two Quantumult X links point at different bodies from the same token: `?target=quanx` is a complete profile for "import configuration", while `?target=qx-nodes` carries node lines only for a remote resource in "add subscription". A complete profile is rejected as a node resource, and a node-only snippet imports without a policy group; they are not interchangeable.
+
+The format is selected by `?target=`; without `target` the `User-Agent` decides (Clash/Mihomo → YAML, v2rayNG → Base64, sing-box → JSON, Loon/Surge/Quantumult X → their native formats, where Quantumult X receives the complete profile). Response headers carry traffic and expiry info (`Subscription-Userinfo`).
 
 ## URI tab
 
