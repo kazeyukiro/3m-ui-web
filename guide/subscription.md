@@ -14,7 +14,7 @@ description: 3m-ui · 订阅
 - 默认 / Clash Meta：Mihomo 客户端 YAML
 - `?target=v2ray` 或 base64：分享链接的 Base64
 - `?target=singbox`：sing-box JSON
-- `?target=loon` / `surge` / `quanx`：Loon / Surge / Quantumult X 的原生配置（无 subconverter 依赖，不支持的协议以注释行降级）。`quanx` 为完整配置，适用于 QX「导入配置」；`?target=qx-nodes` 只输出节点行，适用于「添加节点订阅」
+- `?target=loon` / `surge` / `quanx`：Loon / Surge / Quantumult X 的原生配置（无 subconverter 依赖，不支持的协议以注释行降级）。`quanx` 带 `[server_local]` 段头，适用于 QX「导入配置」；`?target=qx-nodes` 不带段头，适用于「添加节点订阅」
 
 不带 `?target=` 时按客户端 UA 自动选择格式；完整 target 清单、UA 识别规则与三家 Apple 客户端的协议支持矩阵见[订阅格式与 target](./subscription-formats)。
 

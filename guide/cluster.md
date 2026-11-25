@@ -28,7 +28,7 @@ title: 多机节点
 | Clash / Mihomo | 订阅链接默认输出，或 `?target=clash` |
 | v2ray / BASE64 | `?target=v2ray`（v2rayN / v2rayNG 自动识别） |
 | sing-box | `?target=singbox` |
-| Loon / Surge / Quantumult X | `?target=loon` / `surge` / `quanx`（QX 完整配置）；QX 节点片段用 `?target=qx-nodes` |
+| Loon / Surge / Quantumult X | `?target=loon` / `surge` / `quanx`；QX 不带段头的节点片段用 `?target=qx-nodes` |
 
 镜像节点名带 `R<远端ID>-` 前缀，避免与本机节点重名。只绑了镜像、没有本机节点的用户同样能拿到全部格式的订阅。
 

@@ -20,15 +20,15 @@ Append `?target=` to switch client formats. When omitted, the format is picked b
 | `singbox` / `sing-box` / `sfa` / `sfm` | sing-box JSON (default TUN, DNS, routes for newer sing-box releases) plus node outbounds |
 | `loon` | Loon plugin config (`[Proxy]` section, native format — see below) |
 | `surge` | Surge profile (`[General]` / `[Proxy]` / `[Proxy Group]` / `[Rule]` mini profile, native format — see below) |
-| `quanx` / `quantumult` / `qx` | Complete Quantumult X profile: `[general]`, `[dns]`, `[policy]`, `[server_local]`, `[filter_local]`, `[rewrite_local]`, `[task_local]`, `[http_backend]`, `[mitm]` (native format — see below) |
-| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | Quantumult X node snippet: node lines only, no section headers; intended for an added subscription (`server_remote`) |
+| `quanx` / `quantumult` / `qx` | Quantumult X node section: `[server_local]` plus one node per line (native format — see below) |
+| `qx-nodes` / `quanx-nodes` / `qx-snippet` / `quantumult-nodes` | The same node lines without a section header; intended for an added subscription (`server_remote`) |
 | `shadowrocket` | Base64 share-link list, identical to `v2ray` except that AnyTLS links keep only `sni` and `insecure` |
 
 Some clients hardcode short paths, which are registered as well: `/api/v1/client/json/<token>` forces singbox, `/api/v1/client/clash/<token>` forces clash, `/api/v1/client/v2ray/<token>` forces v2ray; root-level `/sub/<token>`, `/json/<token>`, `/clash/<token>`, `/v2ray/<token>` behave the same. Short paths only cover clash/v2ray/singbox — use `?target=` for everything else.
 
-`quanx` and `qx-nodes` emit identical node lines and differ only in document structure. `quanx` is a complete profile for QX's "import configuration"; `qx-nodes` drops every section header and keeps node lines only, for an added subscription (`server_remote`). Neither substitutes for the other: a complete profile submitted as a remote resource returns `Response invalid`, while a node-only snippet imports without `[policy]`, leaving the nodes unreachable by any connection.
+`quanx` and `qx-nodes` emit identical node lines and differ only in the header: `quanx` starts with `[server_local]` for a configuration import, `qx-nodes` carries no header at all for an added subscription (`server_remote`). Neither substitutes for the other: a document with a section header is rejected as a remote resource with `Response invalid`.
 
-QX User-Agent detection returns the complete profile. To use the same token as an added subscription, request `?target=qx-nodes` explicitly.
+Neither writes `[general]`, `[dns]`, `[policy]` or `[filter_local]`. QX merges a configuration import by section, so emitting those replaces the settings, policy groups and routing rules already in the app, and an import whose policy members do not resolve to imported tags is rejected outright.
 
 ## Address family and diagnostics
 
@@ -109,7 +109,7 @@ All three are generated in native format and do not require a subconverter.
 
 - Loon: one node per line in `[Proxy]`, with the password or UUID enclosed in double quotes. The manual only mandates quoting when the value contains a comma, but every format line and example uses quotes, and Loon adds them when saving the configuration. For example: `vmess-ws = VMess,127.0.0.1,20015,auto,"91066351-60f7-44b9-ad7e-c4bcc82524a6",transport=ws,alterId=0,path=/vmessws,host=cdn.example.com,over-tls=true,sni=cdn.example.com,udp=true,block-quic=false`
 - Surge: a complete mini profile consisting of an empty `[General]`, `[Proxy]`, a `[Proxy Group]` that references only real nodes, and `[Rule]`. VMess is written as `username=<UUID>`, and `encrypt-method` is emitted only for `aes-128-gcm` or `chacha20-ietf-poly1305`. `vmess-aead` is an independent Boolean that must match the server setting; the manual defines no rule for deriving it from the cipher, so it is not emitted. VLESS (iOS 6.0.0+ / Mac 6.12.0+) is written as `vless,host,port,username=` and supports REALITY, Vision, WS, gRPC, XHTTP and VLESS Encryption.
-- Quantumult X: a complete profile whose section order matches the official `sample.conf`: `[general]`, `[dns]`, `[policy]`, `[server_local]`, `[filter_local]`, `[rewrite_local]`, `[task_local]`, `[http_backend]`, `[mitm]`. `[server_local]` holds one node per line, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`. `[policy]` defines a `static` group named `PROXY` whose members are every tag rendered in this response followed by `direct`; nodes degraded to comments never enter the list. `[filter_local]` carries `geoip, cn, direct` and `final, PROXY`. With no usable node the group degrades to `static=PROXY, direct` so the profile still imports. `[dns]` contains only two `server` lines, `223.5.5.5` and `119.29.29.29`; the remaining sections are left empty rather than filled with unverified keys.
+- Quantumult X: the `[server_local]` section only, one node per line, for example `vless=127.0.0.1:20024, method=none, password=91066351-60f7-44b9-ad7e-c4bcc82524a6, obfs=wss, obfs-host=cdn.example.com, obfs-uri=/nm, udp-relay=true, tag="less-name-#1 &?测"`. No other section is written, for the reason given above: QX merges by section and a node source must not overwrite the user's own policies and rules. An anytls line follows the official `sample.conf` example and carries `over-tls`, `tls-host` and `tls-verification`, never `tls-alpn`.
 
 Loon, Surge and QX share one assembly pipeline: node enumeration, name deduplication and naming rules are the same, so all three profiles are built from the same node set. Protocols a client does not support are still degraded to a comment by that client's own rules, as the table below shows. Nodes from a remote mirror are named `R<remote server ID>-<name>`, as in the Clash export. The share-link fragment belongs to the upstream client and is not used as the node name here.
 
@@ -182,7 +182,7 @@ Share links have no single specification, so each protocol is described separate
 A few implementation details:
 
 - A Hysteria2 link always carries the `/` path, as in `hysteria2://<password>@<host>:<port>/?...`. Up/down bandwidth and `alpn` are outside that grammar; they appear only in the Loon / Surge / QX profiles (`download-bandwidth` and similar).
-- AnyTLS defines only `sni` and `insecure`; `fp`, `alpn` and the idle-session settings have no link fields.
+- The published AnyTLS grammar defines only `sni` and `insecure`. The panel also writes `fp`, which clients read as the TLS ClientHello fingerprint — the v1.4.7 output carried it too; `alpn` and the idle-session settings are still omitted.
 - Shadowsocks follows SIP002: ciphers without the `2022-` prefix encode `method:password` as URL-safe Base64 with padding stripped; AEAD-2022 remains unencoded and percent-escaped. A plugin follows the `/` path, and `\`, `;`, `=` and `:` in plugin values are backslash-escaped per TOR_PT rules.
 - When a TUIC v4 node carries only a token, the userinfo consists of that token alone and never becomes `tuic://:token@`.
 
